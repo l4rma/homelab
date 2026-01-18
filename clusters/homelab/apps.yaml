@@ -1,0 +1,12 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: apps
+  namespace: flux-system
+spec:
+  interval: 10m
+  path: ./apps # This tells Flux where the apps live relative to the repo root
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system # This refers to the repo definition created during bootstrap
