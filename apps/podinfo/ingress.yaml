@@ -3,11 +3,17 @@ kind: Ingress
 metadata:
   name: podinfo
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - podinfo.k8s
+      secretName: podinfo-tls
   rules:
-    - http:
+    - host: podinfo.k8s
+      http:
         paths:
           - path: /
             pathType: Prefix
