@@ -13,3 +13,5 @@ spec:
         kind: HelmRepository
         name: metallb
         namespace: flux-system
+  install:
+    createNamespace: true
