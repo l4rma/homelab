@@ -5,8 +5,9 @@ metadata:
   namespace: podinfo
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    kubernetes.io/ingress.class: "ingress-nginx"
+#   kubernetes.io/ingress.class: "ingress-nginx"
 spec:
+  ingressClassName: nginx
   tls:
   - hosts:
     - podinfo.magelssen.io
@@ -21,4 +22,4 @@ spec:
           service:
             name: podinfo
             port:
-              number: 30443
+              number: 80
