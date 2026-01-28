@@ -4,6 +4,4 @@ resources:
   - helmrelease.yaml
   - helmrepository.yaml
   - namespace.yaml
-  - certificate-ca.yaml
   - cluster-issuer.yaml
-  - selfsigned-issuer.yaml
