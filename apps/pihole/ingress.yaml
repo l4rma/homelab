@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pihole
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - pihole.magelssen.io
+      secretName: pihole-tls
+  rules:
+    - host: pihole.magelssen.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pihole
+                port:
+                  number: 80
