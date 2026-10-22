@@ -28,14 +28,14 @@ Bruk multi-arch-images, siden pi5 er arm64. De fleste workloads havner på pi5 i
 
 Ingen StorageClass og ingen metrics-server (`kubectl top` virker ikke) per oktober 2026.
 
-### Infrastruktur (Flux, `infrastructure/`)
+### Infrastruktur (Flux, `kubernetes/infrastructure/`)
 - **cert-manager** v1.19.2: `ClusterIssuer letsencrypt-prod`, Route53 DNS-01 for `magelssen.io`
 - **ingress-nginx** 4.15.1: LoadBalancer via MetalLB
 - **metallb** 0.15.3: L2, pool `main-pool`
 - **external-secrets** 1.3.1
 - **claude-readonly**: ServiceAccount med lesetilgang for Claude Code
 
-### Apper (Flux, `apps/`)
+### Apper (Flux, `kubernetes/apps/`)
 Alle har Ingress på `<navn>.magelssen.io` (homarr bruker `dashboard.magelssen.io`).
 - **podinfo**: kjører i klusteret
 - **homarr, jellyfin, nextcloud, omada, pihole, radarr, sonarr**: kjører *utenfor*
@@ -53,17 +53,17 @@ Planen er å flytte alle disse inn i Flux etter hvert.
 ## Struktur i repoet
 
 ```
-clusters/homelab/          Flux-entrypoint (bootstrap-path)
-  flux-system/             Generert av flux bootstrap. Ikke rediger.
-  infrastructure.yaml      Flux Kustomization "infrastructure" -> ./infrastructure (60m)
-  apps.yaml                Flux Kustomization "apps" -> ./apps (5m)
-infrastructure/<komponent>/  namespace.yaml, helmrepository.yaml, helmrelease.yaml, kustomization.yaml
-apps/<app>/                  namespace.yaml, service.yaml, ingress.yaml, kustomization.yaml
-scripts/                     Hjelpescripts som kjøres lokalt
-docs/                        Planer og notater
+kubernetes/
+  clusters/homelab/            Flux-entrypoint (bootstrap-path ./kubernetes/clusters/homelab)
+    flux-system/               Generert av flux bootstrap. Ikke rediger.
+    infrastructure.yaml        Flux Kustomization "infrastructure" -> ./kubernetes/infrastructure (60m)
+    apps.yaml                  Flux Kustomization "apps" -> ./kubernetes/apps (5m, dependsOn infrastructure)
+  infrastructure/<komponent>/  namespace.yaml, helmrepository.yaml, helmrelease.yaml, kustomization.yaml
+  apps/<app>/                  namespace.yaml, service.yaml, ingress.yaml, kustomization.yaml
+scripts/                       Hjelpescripts som kjøres lokalt
 ```
 
-`infrastructure/` og `apps/` har **ingen** rot-`kustomization.yaml`. Flux genererer
+`kubernetes/infrastructure/` og `kubernetes/apps/` har **ingen** rot-`kustomization.yaml`. Flux genererer
 en selv og tar med alle undermapper. En ny mappe med egen `kustomization.yaml`
 synkes derfor automatisk, og ingen rotliste må oppdateres.
 
