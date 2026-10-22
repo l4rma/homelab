@@ -57,7 +57,7 @@ Installert manuelt, så ikke endre disse ved å forvente at Flux tar dem:
 ```
 clusters/homelab/          Flux-entrypoint (bootstrap-path)
   flux-system/             Generert av flux bootstrap. Ikke rediger.
-  infrastructure.yaml      Flux Kustomization "infrastruxture" -> ./infrastructure (60m)
+  infrastructure.yaml      Flux Kustomization "infrastructure" -> ./infrastructure (60m)
   apps.yaml                Flux Kustomization "apps" -> ./apps (5m)
 infrastructure/<komponent>/  namespace.yaml, helmrepository.yaml, helmrelease.yaml, kustomization.yaml
 apps/<app>/                  namespace.yaml, service.yaml, ingress.yaml, kustomization.yaml
@@ -68,8 +68,6 @@ docs/                        Planer og notater
 `infrastructure/` og `apps/` har **ingen** rot-`kustomization.yaml`. Flux genererer
 en selv og tar med alle undermapper. En ny mappe med egen `kustomization.yaml`
 synkes derfor automatisk, og ingen rotliste må oppdateres.
-
-Navnet på Flux Kustomizationen er stavet `infrastruxture` (sic).
 
 ## Arbeidsregler for Claude
 
