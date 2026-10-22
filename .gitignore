@@ -5,3 +5,21 @@ kubeconfig*
 *.kubeconfig
 .env
 tmp/
+
+# Terraform: state and variables may contain secrets.
+# .terraform.lock.hcl is intentionally NOT ignored; it must be committed.
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+*.auto.tfvars
+crash.log
+crash.*.log
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Ansible
+ansible/*.retry
+.vault_pass*
