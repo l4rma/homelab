@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Generates a read-only kubeconfig for Claude Code from the claude-readonly
-# ServiceAccount token (infrastructure/claude-readonly). Output is never committed.
+# ServiceAccount token (kubernetes/infrastructure/claude-readonly). Output is never committed.
 set -euo pipefail
 
 ADMIN_CONTEXT="homelab"
@@ -12,7 +12,7 @@ admin() { kubectl --context "$ADMIN_CONTEXT" "$@"; }
 
 if ! admin get secret "$SECRET" -n "$NAMESPACE" >/dev/null 2>&1; then
   echo "ERROR: secret $NAMESPACE/$SECRET not found (context: $ADMIN_CONTEXT)." >&2
-  echo "Flux has probably not synced infrastructure/claude-readonly yet." >&2
+  echo "Flux has probably not synced kubernetes/infrastructure/claude-readonly yet." >&2
   echo "Check: kubectl get kustomization -n flux-system" >&2
   exit 1
 fi
