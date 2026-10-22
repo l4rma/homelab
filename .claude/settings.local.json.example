@@ -1,0 +1,5 @@
+{
+  "env": {
+    "KUBECONFIG": "/home/<user>/.kube/claude-readonly.yaml"
+  }
+}

@@ -1,0 +1,7 @@
+# Secrets and local config (repo is public)
+.claude/settings.local.json
+*.agekey
+kubeconfig*
+*.kubeconfig
+.env
+tmp/

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(kubectl get *)",
+      "Bash(kubectl describe *)",
+      "Bash(kubectl logs *)",
+      "Bash(kubectl top *)",
+      "Bash(kubectl events *)",
+      "Bash(kubectl explain *)",
+      "Bash(kubectl auth can-i *)",
+      "Bash(kubectl kustomize *)",
+      "Bash(flux get *)",
+      "Bash(flux logs *)",
+      "Bash(flux tree *)",
+      "Bash(kustomize build *)"
+    ],
+    "deny": [
+      "Bash(kubectl delete *)",
+      "Bash(kubectl apply *)",
+      "Bash(kubectl edit *)",
+      "Bash(kubectl patch *)",
+      "Bash(kubectl exec *)",
+      "Bash(kubectl config *)",
+      "Bash(kubectl *--kubeconfig*)",
+      "Bash(flux reconcile *)",
+      "Bash(flux suspend *)",
+      "Read(~/.kube/config)",
+      "Bash(cat ~/.kube/config*)",
+      "Bash(cat /home/larma/.kube/config*)"
+    ]
+  }
+}
