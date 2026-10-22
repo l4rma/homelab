@@ -5,6 +5,8 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
+  dependsOn:
+    - name: infrastructure
   path: ./apps # This tells Flux where the apps live relative to the repo root
   prune: true
   sourceRef:
