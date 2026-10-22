@@ -41,16 +41,14 @@ Alle har Ingress på `<navn>.magelssen.io` (homarr bruker `dashboard.magelssen.i
 - **homarr, jellyfin, nextcloud, omada, pihole, radarr, sonarr**: kjører *utenfor*
   klusteret. Repoet har bare `Service` + manuelle `Endpoints` + `Ingress` som
   ruter til eksterne IP-er.
-- **tmp-podinfo**: <!-- TODO: midlertidig? -->
 
 ### Kjører i klusteret, men styres ikke av Flux
 Installert manuelt, så ikke endre disse ved å forvente at Flux tar dem:
 - `monitoring`: kube-prometheus-stack (Prometheus, Alertmanager, Grafana)
 - `uptime-kuma`, `kuma`
 - `default`: home-assistant (hostNetwork på pi5), nginx
-- `podinfo2`
 
-<!-- TODO: skal noen av disse flyttes inn i repoet? -->
+Planen er å flytte alle disse inn i Flux etter hvert.
 
 ## Struktur i repoet
 
