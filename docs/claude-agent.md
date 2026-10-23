@@ -82,6 +82,39 @@ PROXMOX_TOKEN_VALUE=<token secret>
 `uvx` comes from [uv](https://docs.astral.sh/uv/getting-started/installation/).
 The raw API tool is turned off (`PROXMOX_DISABLE_RAW_API=true`).
 
+### TrueNAS (helper script, until the MCP server exists)
+
+There is no TrueNAS MCP server yet. Until there is, Claude calls the TrueNAS API
+with `scripts/truenas-api.py <method> [param ...]`, which uses the official client
+([truenas/api_client](https://github.com/truenas/api_client), pinned to the
+TrueNAS version) and prints the result as JSON. The script reads the key itself,
+so Claude never sees it.
+
+What Claude may do is decided by the TrueNAS user the key belongs to, not by the
+script. Start with read-only, and change the user's privilege on TrueNAS to give
+more access later.
+
+On TrueNAS (25.10):
+
+1. Credentials → Users → Add: username `claude`, no password login, shell
+   `nologin`, no SMB access, no home directory.
+2. Give it the **Read-Only Administrator** role (TrueNAS access in the user form,
+   or through a group with that privilege under Credentials → Groups).
+3. Create an API key for `claude` (Credentials → Users → API Keys). It is shown
+   once. Give it an expiry date if you want to renew it regularly.
+
+Store the key:
+
+```sh
+install -m 600 /dev/null ~/.config/homelab-mcp/truenas.env
+$EDITOR ~/.config/homelab-mcp/truenas.env   # TRUENAS_API_KEY=<key>
+```
+
+The script connects to `wss://truenas.magelssen.io/api/current` through
+ingress-nginx (`kubernetes/apps/truenas`), which has a trusted Let's Encrypt
+certificate, the same way as Proxmox. TrueNAS revokes an API key that is used over
+an unencrypted connection, so the script only accepts `wss://`.
+
 ### Updating a server
 
 Bump the pinned version (`VERSION` or `IMAGE`) in the wrapper script in its own PR.
