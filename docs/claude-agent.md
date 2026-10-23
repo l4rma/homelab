@@ -63,20 +63,20 @@ pveum user token add claude@pve mcp --privsep 1   # prints the secret once
 pveum acl modify / --tokens 'claude@pve!mcp' --roles PVEAuditor
 ```
 
-Copy the Proxmox root CA so TLS can be verified against the self-signed certificate:
+The server connects to `proxmox.magelssen.io:443` through ingress-nginx
+(`kubernetes/apps/proxmox`), which has a trusted Let's Encrypt certificate, so TLS
+is verified without a custom CA. Store the token:
 
 ```sh
-scp root@<proxmox>:/etc/pve/pve-root-ca.pem ~/.config/homelab-mcp/pve-root-ca.pem
+mkdir -p ~/.config/homelab-mcp && chmod 700 ~/.config/homelab-mcp
 install -m 600 /dev/null ~/.config/homelab-mcp/proxmox.env
 $EDITOR ~/.config/homelab-mcp/proxmox.env
 ```
 
 ```sh
-PROXMOX_HOST=<proxmox ip or hostname>
 PROXMOX_USER=claude@pve
 PROXMOX_TOKEN_NAME=mcp
 PROXMOX_TOKEN_VALUE=<token secret>
-REQUESTS_CA_BUNDLE=/home/<user>/.config/homelab-mcp/pve-root-ca.pem
 ```
 
 `uvx` comes from [uv](https://docs.astral.sh/uv/getting-started/installation/).

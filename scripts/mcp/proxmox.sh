@@ -2,13 +2,12 @@
 # Starts the Proxmox MCP server (GethosTheWalrus/proxmox-mcp) for Claude Code.
 # Started by .mcp.json. Read-only twice over: the API token only has the PVEAuditor
 # role, and PROXMOX_READ_ONLY makes the server refuse every non-GET request.
-# Connection details and the token live outside the repo in
+# Connects through ingress-nginx (kubernetes/apps/proxmox), which has a trusted
+# Let's Encrypt certificate. The token lives outside the repo in
 # ~/.config/homelab-mcp/proxmox.env:
-#   PROXMOX_HOST=<proxmox ip or hostname>
 #   PROXMOX_USER=claude@pve
 #   PROXMOX_TOKEN_NAME=mcp
 #   PROXMOX_TOKEN_VALUE=<token secret>
-#   REQUESTS_CA_BUNDLE=<path to pve-root-ca.pem>
 set -euo pipefail
 
 VERSION="1.4.4"
@@ -23,6 +22,8 @@ set -a
 source "$ENV_FILE"
 set +a
 
+export PROXMOX_HOST=proxmox.magelssen.io
+export PROXMOX_PORT=443
 export PROXMOX_READ_ONLY=true
 export PROXMOX_DISABLE_RAW_API=true
 export PROXMOX_VERIFY_SSL=1
