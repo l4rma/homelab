@@ -31,6 +31,9 @@ architecture.
 - You have **read-only** access to all systems. For Kubernetes this is the
   `claude/claude-readonly` ServiceAccount (details in `kubernetes/CLAUDE.md`). You
   cannot read secrets.
+- Read-only MCP servers for Kubernetes, GitHub and Proxmox are set up in `.mcp.json`
+  (see `docs/claude-agent.md`). Use them to read the real state instead of relying
+  on hand-written docs.
 - All changes go through Git, never directly against a system. Flux (and later
   Terraform runs started by a human) roll out what is merged to `main`.
 - Create a new branch for every change. Explain what you change and why.
