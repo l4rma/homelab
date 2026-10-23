@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "kubernetes": {
+      "command": "scripts/mcp/kubernetes.sh"
+    },
+    "github": {
+      "command": "scripts/mcp/github.sh"
+    },
+    "proxmox": {
+      "command": "scripts/mcp/proxmox.sh"
+    }
+  }
+}

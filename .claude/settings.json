@@ -13,7 +13,10 @@
       "Bash(flux get *)",
       "Bash(flux logs *)",
       "Bash(flux tree *)",
-      "Bash(kustomize build *)"
+      "Bash(kustomize build *)",
+      "mcp__kubernetes",
+      "mcp__github",
+      "mcp__proxmox"
     ],
     "deny": [
       "Bash(kubectl delete *)",
@@ -27,7 +30,10 @@
       "Bash(flux suspend *)",
       "Read(~/.kube/config)",
       "Bash(cat ~/.kube/config*)",
-      "Bash(cat /home/larma/.kube/config*)"
+      "Bash(cat /home/larma/.kube/config*)",
+      "Read(~/.config/homelab-mcp/**)",
+      "Bash(cat ~/.config/homelab-mcp/*)",
+      "Bash(cat /home/larma/.config/homelab-mcp/*)"
     ]
   }
 }
