@@ -34,6 +34,11 @@ architecture.
 - Read-only MCP servers for Kubernetes, GitHub and Proxmox are set up in `.mcp.json`
   (see `docs/claude-agent.md`). Use them to read the real state instead of relying
   on hand-written docs.
+- For how-to and reference questions, use the official docs as the main source,
+  and prefer the page for the version that runs here:
+  - TrueNAS: https://www.truenas.com/docs/
+  - Proxmox VE: https://pve.proxmox.com/pve-docs/
+  - Kubernetes: https://kubernetes.io/docs/home/
 - All changes go through Git, never directly against a system. Flux (and later
   Terraform runs started by a human) roll out what is merged to `main`.
 - Create a new branch for every change. Explain what you change and why.
