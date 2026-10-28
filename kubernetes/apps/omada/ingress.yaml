@@ -5,6 +5,8 @@ metadata:
   namespace: default
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/proxy-ssl-verify: "off"
 spec:
   ingressClassName: nginx
   tls:
@@ -21,4 +23,4 @@ spec:
               service:
                 name: omada
                 port:
-                  number: 80
+                  number: 443
