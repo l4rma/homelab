@@ -65,7 +65,7 @@ same ingress and TLS as everything else until they are moved into Kubernetes.
 | Lenovo ThinkCentre M720q | Kubernetes worker (`lenovo2`) | TBD <!-- TODO: CPU, RAM, disk --> |
 | Raspberry Pi 5 | Kubernetes worker (`pi5`, arm64) | TBD <!-- TODO: RAM, storage --> |
 | Proxmox VE host | Hypervisor for TrueNAS and other services | TBD <!-- TODO: model, CPU, RAM, disks --> |
-| TrueNAS SCALE (VM) | NAS: NFS/SMB, storage, backups | TBD <!-- TODO: pool layout, capacity --> |
+| TrueNAS SCALE (VM) | NAS: NFS/SMB, storage, backups | Pool `Firelink`, 3 disks in RAIDZ1, ~7.2 TiB usable. Layout: [docs/storage.md](docs/storage.md) |
 | Network | TP-Link Omada | TBD <!-- TODO: router, switches, access points --> |
 
 ### Network
