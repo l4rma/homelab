@@ -60,12 +60,13 @@ one and includes every subdirectory, so a new directory with its own
 All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
 home-assistant uses `ha.magelssen.io`).
 - **podinfo**: runs in the cluster
-- **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, NodePort
-  31313 and `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
+- **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
+  Service, reached on `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
 - **home-assistant**: runs in the cluster. hostNetwork + privileged, pinned to pi5,
   `Recreate`, image pinned, `TZ=Europe/Oslo`. NFS PV on `BlightTown/home-assistant`,
-  NodePort 31234 and `ha.magelssen.io` (needs `http.trusted_proxies` in HA's
-  `configuration.yaml`, which lives on the NFS volume, not in Git).
+  ClusterIP Service, reached on `ha.magelssen.io` (needs `http.trusted_proxies` in HA's
+  `configuration.yaml`, which lives on the NFS volume, not in Git) and, via hostNetwork,
+  on `192.168.30.12:8123`.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
   `Ingress`:

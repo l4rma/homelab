@@ -3,12 +3,10 @@ kind: Service
 metadata:
   name: uptime-kuma-svc
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: uptime-kuma
   ports:
     - name: web-ui
       port: 3001
       targetPort: 3001
-      # Fixed: bookmarks and monitors use this port.
-      nodePort: 31313
