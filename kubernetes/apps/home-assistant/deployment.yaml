@@ -5,9 +5,7 @@ metadata:
   labels:
     app: home-assistant
 spec:
-  # 0 during the namespace move: the old pod in `default` must be gone before a new
-  # pod opens the same SQLite database on NFS. The next PR sets this back to 1.
-  replicas: 0
+  replicas: 1
   # hostNetwork: two pods cannot share port 8123, so stop the old one first.
   strategy:
     type: Recreate
