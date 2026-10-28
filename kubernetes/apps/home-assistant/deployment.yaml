@@ -23,8 +23,8 @@ spec:
         kubernetes.io/hostname: pi5
       containers:
         - name: home-assistant
-          # Pinned to the version that runs (it was :stable). Upgrade in its own PR.
-          image: ghcr.io/home-assistant/home-assistant:2025.12.5
+          # Pinned. Upgrade in its own PR, with a ZFS snapshot first.
+          image: ghcr.io/home-assistant/home-assistant:2026.10.4
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
