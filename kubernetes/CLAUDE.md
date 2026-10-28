@@ -59,12 +59,11 @@ one and includes every subdirectory, so a new directory with its own
 ### Apps (`apps/`)
 All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`).
 - **podinfo**: runs in the cluster
-- **homarr, jellyfin, nextcloud, omada, pihole, proxmox, radarr, sonarr, truenas**:
+- **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
   `Ingress`:
   - `192.168.20.4` (Portainer LXC on Proxmox): homarr, jellyfin, radarr, sonarr
   - `192.168.20.20`: pihole
-  - `192.168.10.24`: nextcloud (HTTPS backend, `proxy-ssl-verify: off`)
   - `192.168.10.4` (TrueNAS app): omada
   - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
   - `192.168.10.4:443`: truenas web UI and API (HTTPS backend, `proxy-ssl-verify: off`)

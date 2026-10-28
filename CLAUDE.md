@@ -10,7 +10,7 @@ architecture.
   M720q and a Raspberry Pi 5), managed by Flux from `kubernetes/`.
 - **Proxmox VE**: runs TrueNAS SCALE in a VM (NFS/SMB, storage, backups, Omada
   controller app) and VMs/LXCs for services not yet in Kubernetes (Pi-hole,
-  Nextcloud, and Portainer with Homarr, Jellyfin, Radarr and Sonarr).
+  and Portainer with Homarr, Jellyfin, Radarr and Sonarr).
 - **AWS**: Route53 hosts `magelssen.io`, used by cert-manager for DNS-01.
 - **Goal**: move the services on Proxmox into Kubernetes, and manage Proxmox and AWS
   as code.
