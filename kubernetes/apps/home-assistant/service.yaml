@@ -5,12 +5,12 @@ metadata:
   labels:
     app: home-assistant
 spec:
-  # ClusterIP during the move: NodePort 31234 is still held by the old Service in
-  # `default` until Flux prunes it. The next PR makes this NodePort 31234 again.
-  type: ClusterIP
+  type: NodePort
   selector:
     app: home-assistant
   ports:
     - name: home-assistant-web
       port: 8123
       targetPort: 8123
+      # Fixed: Uptime Kuma and bookmarks use this port.
+      nodePort: 31234
