@@ -34,7 +34,7 @@ flowchart TB
         direction TB
         truenas["TrueNAS SCALE VM<br/>NFS/SMB, backups, Omada controller"]
         portainer["LXC with Portainer<br/>Homarr, Jellyfin, Radarr, Sonarr"]
-        otherservices["Pi-hole, Nextcloud"]
+        otherservices["Pi-hole"]
     end
 
     route53["AWS Route53<br/>magelssen.io"]
@@ -155,8 +155,9 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
 
 - Move the manually installed workloads (kube-prometheus-stack, Uptime Kuma, Home
   Assistant) into Flux
-- Move the services on Proxmox and TrueNAS (Pi-hole, Nextcloud, Jellyfin, Radarr,
-  Sonarr, Homarr, Omada) into Kubernetes
+- Move the services on Proxmox and TrueNAS (Pi-hole, Jellyfin, Radarr, Sonarr,
+  Homarr, Omada) into Kubernetes
+- Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
 - Secrets with SOPS and/or External Secrets, starting with the Route53 credentials
 - Migrate from ingress-nginx to the Gateway API
 - Proxmox VMs and LXCs with Terraform
