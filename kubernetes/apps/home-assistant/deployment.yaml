@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-assistant
+  labels:
+    app: home-assistant
+spec:
+  replicas: 1
+  # Same as the live object for the Flux takeover. Recreate comes in the next change
+  # (hostNetwork: two pods cannot share port 8123).
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  selector:
+    matchLabels:
+      app: home-assistant
+  template:
+    metadata:
+      labels:
+        app: home-assistant
+    spec:
+      hostNetwork: true
+      containers:
+        - name: home-assistant
+          # Unchanged for the takeover. Pinned in the next change.
+          image: ghcr.io/home-assistant/home-assistant:stable
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8123
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: home-assistant-config-volume
+              mountPath: /config
+            - name: home-assistant-time-volume
+              mountPath: /etc/localtime
+              readOnly: true
+      volumes:
+        - name: home-assistant-config-volume
+          persistentVolumeClaim:
+            claimName: home-assistant-pvc
+        - name: home-assistant-time-volume
+          persistentVolumeClaim:
+            claimName: home-assistant-time-pvc
