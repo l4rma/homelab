@@ -1,0 +1,19 @@
+# Static NFS volume on TrueNAS (dataset Firelink/BlightTown/uptime-kuma).
+# spec.nfs is immutable: changing it means a new PV.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: uptime-kuma-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  claimRef:
+    name: uptime-kuma-pvc
+    namespace: uptime-kuma
+  nfs:
+    path: /mnt/Firelink/BlightTown/uptime-kuma
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""

@@ -59,6 +59,8 @@ one and includes every subdirectory, so a new directory with its own
 ### Apps (`apps/`)
 All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`).
 - **podinfo**: runs in the cluster
+- **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, NodePort
+  31313 (no Ingress yet), image pinned, `Recreate` (SQLite).
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
   `Ingress`:
@@ -72,7 +74,7 @@ All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.i
 Installed manually, so do not expect Flux to manage them. The plan is to move them
 into Flux.
 - `monitoring`: kube-prometheus-stack (Prometheus, Alertmanager, Grafana)
-- `uptime-kuma`, `kuma`
+- `kuma`: empty namespace (leftover from the Uptime Kuma install, can be deleted)
 - `default`: home-assistant (hostNetwork on pi5, NFS PV), nginx
 
 ## Working rules
