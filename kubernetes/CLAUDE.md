@@ -60,7 +60,7 @@ one and includes every subdirectory, so a new directory with its own
 All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`).
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, NodePort
-  31313 (no Ingress yet), image pinned, `Recreate` (SQLite).
+  31313 and `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
   `Ingress`:
