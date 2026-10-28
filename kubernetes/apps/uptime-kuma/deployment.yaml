@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: uptime-kuma
+spec:
+  replicas: 1
+  # SQLite: never run two pods against the same database file.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: uptime-kuma
+  template:
+    metadata:
+      labels:
+        app: uptime-kuma
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: uptime-kuma
+          # Pinned: 2.1.3 last migrated the database. Upgrade in its own PR.
+          image: louislam/uptime-kuma:2.1.3
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+          ports:
+            - name: web-ui
+              containerPort: 3001
+          livenessProbe:
+            tcpSocket:
+              port: web-ui
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web-ui
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 512Mi
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: uptime-kuma-pvc
