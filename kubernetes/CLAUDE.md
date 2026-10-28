@@ -61,6 +61,9 @@ All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.i
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, NodePort
   31313 and `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
+- **home-assistant**: runs in the cluster, in `default` (hostNetwork, privileged, on pi5 today
+  but not pinned). NFS PV on `BlightTown/home-assistant`, NodePort 31234, no Ingress yet.
+  Taken over as it ran; Recreate, pinned image, nodeSelector and TZ come next.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
   `Ingress`:
@@ -75,7 +78,7 @@ Installed manually, so do not expect Flux to manage them. The plan is to move th
 into Flux.
 - `monitoring`: kube-prometheus-stack (Prometheus, Alertmanager, Grafana)
 - `kuma`: empty namespace (leftover from the Uptime Kuma install, can be deleted)
-- `default`: home-assistant (hostNetwork on pi5, NFS PV), nginx
+- `default`: nginx (Deployment + NodePort 31137, purpose unknown)
 
 ## Working rules
 

@@ -1,0 +1,36 @@
+# Static NFS volume on TrueNAS (dataset Firelink/BlightTown/home-assistant).
+# spec.nfs is immutable: changing it means a new PV.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: home-assistant-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 512Mi
+  claimRef:
+    name: home-assistant-pvc
+    namespace: default
+  nfs:
+    path: /mnt/Firelink/BlightTown/home-assistant
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+---
+# The node's /etc/localtime. To be replaced by the TZ env var.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: home-assistant-time-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Mi
+  claimRef:
+    name: home-assistant-time-pvc
+    namespace: default
+  hostPath:
+    path: /etc/localtime
+  persistentVolumeReclaimPolicy: Retain
