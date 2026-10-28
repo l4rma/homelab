@@ -61,9 +61,9 @@ All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.i
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, NodePort
   31313 and `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
-- **home-assistant**: runs in the cluster, in `default` (hostNetwork, privileged, on pi5 today
-  but not pinned). NFS PV on `BlightTown/home-assistant`, NodePort 31234, no Ingress yet.
-  Taken over as it ran; Recreate, pinned image, nodeSelector and TZ come next.
+- **home-assistant**: runs in the cluster. hostNetwork + privileged, pinned to pi5,
+  `Recreate`, image pinned, `TZ=Europe/Oslo`. NFS PV on `BlightTown/home-assistant`.
+  Namespace move in progress: `replicas: 0` and a ClusterIP Service until the next PR.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
   `Ingress`:
