@@ -64,7 +64,7 @@ All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.i
   `Ingress`:
   - `192.168.20.4` (Portainer LXC on Proxmox): homarr, jellyfin, radarr, sonarr
   - `192.168.20.20`: pihole
-  - `192.168.10.4` (TrueNAS app): omada
+  - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `proxy-ssl-verify: off`)
   - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
   - `192.168.10.4:443`: truenas web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
 
