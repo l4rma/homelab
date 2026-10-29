@@ -59,7 +59,10 @@ one and includes every subdirectory, so a new directory with its own
   created manually and are not in Git.
 - **ingress-nginx** 4.15.1: LoadBalancer via MetalLB
 - **metallb** 0.15.3: L2, pool `main-pool`
-- **external-secrets** 1.3.1: installed, no SecretStore yet
+- **external-secrets** 1.3.1: `ClusterSecretStore aws-ssm` (AWS SSM Parameter Store,
+  `eu-west-1`, paths `/homelab/<namespace>/<name>`). The IAM key
+  (`external-secrets/aws-ssm-credentials`) was created manually and is not in Git. How to
+  add a secret: `docs/secrets.md`
 - **claude-readonly**: the read-only ServiceAccount and RBAC for Claude Code
 - **local-path-provisioner** v0.0.37: upstream manifest in the repo, patched to `Retain`
   and a pinned busybox. Volumes under `/opt/local-path-provisioner` on each node
