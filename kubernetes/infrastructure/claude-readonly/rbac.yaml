@@ -63,6 +63,10 @@ rules:
   - apiGroups: ["metrics.k8s.io"]
     resources: ["pods", "nodes"]
     verbs: ["get", "list"]
+  # Prometheus Operator objects (ServiceMonitors, PrometheusRules, ...). No secrets.
+  - apiGroups: ["monitoring.coreos.com"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -72,6 +76,36 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: claude-readonly-extra
+subjects:
+  - kind: ServiceAccount
+    name: claude-readonly
+    namespace: claude
+---
+# Query Prometheus' HTTP API through the API server (read-only GET). Limited to the
+# Prometheus Service. The proxy name can be "<svc>" or "<svc>:<port>".
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: claude-readonly-prometheus
+  namespace: monitoring
+rules:
+  - apiGroups: [""]
+    resources: ["services/proxy"]
+    resourceNames:
+      - kube-prometheus-stack-prometheus
+      - kube-prometheus-stack-prometheus:9090
+      - kube-prometheus-stack-prometheus:http-web
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: claude-readonly-prometheus
+  namespace: monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: claude-readonly-prometheus
 subjects:
   - kind: ServiceAccount
     name: claude-readonly

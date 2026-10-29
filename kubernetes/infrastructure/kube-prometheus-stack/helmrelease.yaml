@@ -1,0 +1,97 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  interval: 1h
+  # The first install pulls many images, some of them on pi5.
+  timeout: 15m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: "92.14.1"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+  install:
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
+  values:
+    # kubeadm binds etcd, controller-manager, scheduler and kube-proxy metrics to
+    # 127.0.0.1, so Prometheus cannot scrape them and their alerts would always fire.
+    # Off until the bind addresses are changed on the nodes.
+    kubeEtcd:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+
+    prometheus:
+      prometheusSpec:
+        # Pick up monitors and rules from every namespace, not only from this release.
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+        scrapeConfigSelectorNilUsesHelmValues: false
+        retention: 30d
+        # Below the PVC size: local-path does not enforce the size.
+        retentionSize: 15GB
+        # Most free disk (NVMe). The Lenovos are kept for Immich and Jellyfin.
+        nodeSelector:
+          kubernetes.io/hostname: pi5
+        resources:
+          requests:
+            cpu: 200m
+            memory: 768Mi
+          limits:
+            memory: 2Gi
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: local-path
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 20Gi
+
+    grafana:
+      defaultDashboardsTimezone: Europe/Oslo
+      # SQLite on a ReadWriteOnce volume: stop the old pod before the new one starts.
+      deploymentStrategy:
+        type: Recreate
+      # For what is made in the UI. Dashboards that matter go in Git as ConfigMaps.
+      persistence:
+        enabled: true
+        type: pvc
+        storageClassName: local-path
+        size: 1Gi
+      # No adminPassword: the chart generates one in the Secret
+      # kube-prometheus-stack-grafana (key admin-password) and keeps it on upgrades.
+      grafana.ini:
+        server:
+          root_url: https://grafana.magelssen.io
+      ingress:
+        enabled: true
+        ingressClassName: nginx
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-prod
+        hosts:
+          - grafana.magelssen.io
+        tls:
+          - secretName: grafana-tls
+            hosts:
+              - grafana.magelssen.io
+      resources:
+        requests:
+          cpu: 50m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
