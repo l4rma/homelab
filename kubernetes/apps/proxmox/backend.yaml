@@ -1,16 +1,16 @@
 # Self-signed certificate on the host, so the certificate is not verified.
-# HTTP/1.1 only, like ingress-nginx: over HTTP/2 Envoy sends websockets as extended
-# CONNECT, which TrueNAS's nginx answers with 400.
+# `wss` makes Envoy talk HTTP/1.1 to the backend, like ingress-nginx did. Over HTTP/2
+# Envoy sends websockets as extended CONNECT, which TrueNAS's nginx answers with 400.
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: Backend
 metadata:
   name: proxmox
 spec:
+  appProtocols:
+    - gateway.envoyproxy.io/wss
   endpoints:
     - ip:
         address: 192.168.10.3
         port: 8006
   tls:
     insecureSkipVerify: true
-    alpnProtocols:
-      - http/1.1
