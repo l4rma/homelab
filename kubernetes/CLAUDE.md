@@ -29,7 +29,10 @@ ingress-nginx on `192.168.30.200`.
 
 Read-only ServiceAccount `claude/claude-readonly` via `KUBECONFIG` in
 `.claude/settings.local.json` (gitignored). Bound to the built-in `view` ClusterRole
-plus `claude-readonly-extra` (nodes, PVs, CRDs, Flux resources). No access to secrets.
+plus `claude-readonly-extra` (nodes, PVs, CRDs, Flux and Prometheus Operator resources)
+and `GET` on the Prometheus Service proxy in `monitoring`, for PromQL queries:
+`kubectl get --raw '/api/v1/namespaces/monitoring/services/kube-prometheus-stack-prometheus:9090/proxy/api/v1/query?query=up'`.
+No access to secrets.
 Never run `kubectl apply/create/delete/patch/edit/exec` or `flux reconcile/suspend`.
 
 ## Flux layout
@@ -60,6 +63,11 @@ one and includes every subdirectory, so a new directory with its own
 - **claude-readonly**: the read-only ServiceAccount and RBAC for Claude Code
 - **local-path-provisioner** v0.0.37: upstream manifest in the repo, patched to `Retain`
   and a pinned busybox. Volumes under `/opt/local-path-provisioner` on each node
+- **kube-prometheus-stack** 92.14.1 in `monitoring`: Prometheus (pinned to pi5, 20Gi
+  local-path, 30d / 15GB), Grafana on `grafana.magelssen.io` (1Gi local-path, generated
+  admin password in Secret `kube-prometheus-stack-grafana`), Alertmanager. Picks up
+  ServiceMonitors and rules from all namespaces. etcd, controller-manager, scheduler and
+  kube-proxy are not scraped (kubeadm binds them to 127.0.0.1)
 - **metrics-server** 3.14.0 (app 0.9.0): in `kube-system`, `--kubelet-insecure-tls`. Gives
   `kubectl top`
 
@@ -82,11 +90,6 @@ home-assistant uses `ha.magelssen.io`).
   - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `proxy-ssl-verify: off`)
   - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
   - `192.168.10.4:443`: truenas web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
-
-### Running in the cluster, not managed by Flux
-Installed manually, so do not expect Flux to manage them. The plan is to move them
-into Flux.
-- `monitoring`: kube-prometheus-stack (Prometheus, Alertmanager, Grafana)
 
 ## Working rules
 
