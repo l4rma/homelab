@@ -30,7 +30,33 @@ spec:
             - name: TZ
               value: Europe/Oslo
           ports:
-            - containerPort: 8123
+            - name: http
+              containerPort: 8123
+          # HA takes about 1.5 minutes to start. Until then the pod is not Ready, so the
+          # Ingress does not send traffic to it.
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # Uses ~400Mi idle. Room for Zigbee and more integrations later.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
           securityContext:
             privileged: true
           volumeMounts:

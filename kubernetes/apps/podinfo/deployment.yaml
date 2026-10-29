@@ -15,4 +15,19 @@ spec:
       - name: podinfod
         image: ghcr.io/stefanprodan/podinfo:6.4.0
         ports:
-        - containerPort: 9898
+        - name: http
+          containerPort: 9898
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            memory: 64Mi
