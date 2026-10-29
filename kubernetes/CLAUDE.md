@@ -66,6 +66,8 @@ one and includes every subdirectory, so a new directory with its own
 - **claude-readonly**: the read-only ServiceAccount and RBAC for Claude Code
 - **local-path-provisioner** v0.0.37: upstream manifest in the repo, patched to `Retain`
   and a pinned busybox. Volumes under `/opt/local-path-provisioner` on each node
+- **cloudnative-pg** chart 0.29.1 (operator 1.30.1) in `cnpg-system`: the operator only.
+  One Postgres `Cluster` per app, defined in the app's folder, on `local-path`
 - **kube-prometheus-stack** 92.14.1 in `monitoring`: Prometheus (pinned to pi5, 20Gi
   local-path, 30d / 15GB), Grafana on `grafana.magelssen.io` (1Gi local-path, generated
   admin password in Secret `kube-prometheus-stack-grafana`), Alertmanager. Picks up
