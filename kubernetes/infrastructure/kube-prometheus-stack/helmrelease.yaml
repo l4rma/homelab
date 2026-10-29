@@ -110,17 +110,6 @@ spec:
       grafana.ini:
         server:
           root_url: https://grafana.magelssen.io
-      ingress:
-        enabled: true
-        ingressClassName: nginx
-        annotations:
-          cert-manager.io/cluster-issuer: letsencrypt-prod
-        hosts:
-          - grafana.magelssen.io
-        tls:
-          - secretName: grafana-tls
-            hosts:
-              - grafana.magelssen.io
       # Grafana 12 uses ~500Mi with the bundled dashboards; 512Mi got it OOM-killed.
       resources:
         requests:

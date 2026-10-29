@@ -4,4 +4,3 @@ namespace: sonarr
 resources:
   - namespace.yaml
   - service.yaml
-  - ingress.yaml

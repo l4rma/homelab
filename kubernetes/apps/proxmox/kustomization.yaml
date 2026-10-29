@@ -4,4 +4,3 @@ namespace: proxmox
 resources:
   - namespace.yaml
   - service.yaml
-  - ingress.yaml

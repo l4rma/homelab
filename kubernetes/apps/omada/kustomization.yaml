@@ -4,4 +4,3 @@ namespace: omada
 resources:
   - namespace.yaml
   - service.yaml
-  - ingress.yaml
