@@ -20,3 +20,24 @@ spec:
   values:
     crds:
       enabled: true
+    # Requests about the observed peak, memory limits about twice that, no CPU limits.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 96Mi
+      limits:
+        memory: 256Mi
+    cainjector:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 96Mi
+        limits:
+          memory: 256Mi
+    webhook:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 48Mi
+        limits:
+          memory: 128Mi

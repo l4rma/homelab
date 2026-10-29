@@ -20,3 +20,10 @@ spec:
       # kubeadm kubelets use self-signed serving certificates. The connection is still
       # TLS, only the kubelet's certificate is not verified.
       - --kubelet-insecure-tls
+    # The chart asks for 100m/200Mi; it uses ~25Mi here.
+    resources:
+      requests:
+        cpu: 10m
+        memory: 48Mi
+      limits:
+        memory: 128Mi

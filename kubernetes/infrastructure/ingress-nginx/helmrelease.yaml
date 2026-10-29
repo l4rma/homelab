@@ -17,4 +17,10 @@ spec:
     controller:
       service:
         type: LoadBalancer
-      externalTrafficPolicy: Local
+      # Requests about the observed peak, memory limit with room for nginx reloads.
+      resources:
+        requests:
+          cpu: 100m
+          memory: 192Mi
+        limits:
+          memory: 512Mi
