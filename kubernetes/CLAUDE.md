@@ -14,9 +14,10 @@ notification controllers; no image automation).
 | lenovo2 | worker        | 192.168.30.11 | amd64 | Lenovo ThinkCentre M720q   | Ubuntu 24.04 |
 | pi5     | worker        | 192.168.30.12 | arm64 | Raspberry Pi 5             | Ubuntu 24.04 |
 
-Use multi-arch images, since pi5 is arm64. Most workloads land on pi5 today, because few
-pods have resource requests. Kubelet reservations and the removed taint on lenovo1 are set
-by hand, see `docs/kubernetes-nodes.md`.
+Use multi-arch images, since pi5 is arm64. Every workload has resource requests (request
+about the observed peak, memory limit about 2x, no CPU limits), so the scheduler spreads
+them by allocatable. Kubelet reservations and the removed taint on lenovo1 are set by hand,
+see `docs/kubernetes-nodes.md`. The iGPU (`gpu.intel.com/i915`) exists only on the Lenovos.
 
 Storage: static NFS PersistentVolumes from TrueNAS for files and app configs, and the
 `local-path` StorageClass (node-local disk, `Retain`, not the default) for databases.
@@ -29,7 +30,8 @@ Envoy Gateway on `192.168.30.200`.
 
 Read-only ServiceAccount `claude/claude-readonly` via `KUBECONFIG` in
 `.claude/settings.local.json` (gitignored). Bound to the built-in `view` ClusterRole
-plus `claude-readonly-extra` (nodes, PVs, CRDs, Flux and Prometheus Operator resources)
+plus `claude-readonly-extra` (nodes, PVs, CRDs, Flux, Prometheus Operator and Gateway API
+resources)
 and `GET` on the Prometheus Service proxy in `monitoring`, for PromQL queries:
 `kubectl get --raw '/api/v1/namespaces/monitoring/services/kube-prometheus-stack-prometheus:9090/proxy/api/v1/query?query=up'`.
 No access to secrets.

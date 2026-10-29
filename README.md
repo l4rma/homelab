@@ -92,7 +92,10 @@ The network is split into VLANs by purpose:
 | Flux | Pull-based GitOps: the cluster pulls from Git, so nothing outside needs access to the cluster. No GUI, which forces me to understand Kubernetes properly. It is also what I use at work. |
 | MetalLB + Envoy Gateway | LoadBalancer IPs on bare metal, and the Gateway API (the successor to Ingress) for routing. Replaced ingress-nginx, which was retired upstream. |
 | cert-manager + Route53 | Real Let's Encrypt certificates through DNS-01, which works without exposing the cluster to the internet. |
-| SOPS / External Secrets (planned) | Secrets in Git encrypted, or pulled from an external store, since the repo is public. |
+| External Secrets + AWS SSM | The repo is public, so no secret is stored in Git, not even encrypted. Secrets live in SSM Parameter Store (free tier) and are copied into the cluster. See [docs/secrets.md](docs/secrets.md). |
+| kube-prometheus-stack | Prometheus, Grafana and Alertmanager in one chart, with dashboards for the cluster out of the box. Also the data for sizing resource requests. |
+| local-path + NFS | Databases on the node's own disk, files on the NAS over NFS. Databases on NFS are slow and corrupt easily. The reasoning: [docs/storage.md](docs/storage.md). |
+| CloudNativePG | Postgres as a Kubernetes operator: one small cluster per app, with failover and backups to S3 later. |
 | Terraform (planned) | Proxmox VMs and LXCs, and later AWS, as code. |
 | Ansible (planned) | Configure nodes and rebuild the cluster from freshly installed machines. |
 | Crossplane + AWS (planned) | Provision cloud resources from Kubernetes. |
@@ -121,9 +124,11 @@ The network is split into VLANs by purpose:
 6. Flux uses server-side apply and prunes resources that were removed from Git.
    Rolling back is a `git revert`.
 
-The goal is that nothing is applied to the cluster by hand. A few things were created
-manually before the GitOps setup (some workloads and the Route53 credentials), and
-they are being moved into Git.
+The goal is that nothing is applied to the cluster by hand. Every workload is in Git.
+What is still done by hand: the two bootstrap AWS keys (cert-manager's Route53 key and
+the key external-secrets uses to read SSM) and the kubelet settings on the nodes
+([docs/kubernetes-nodes.md](docs/kubernetes-nodes.md)), until Terraform and Ansible
+take over.
 
 ## Claude as an agent
 
@@ -131,8 +136,9 @@ Claude Code works in this repository as an agent. It can inspect the cluster and
 propose changes, but it cannot change anything by itself:
 
 - Read-only ServiceAccount: `claude-readonly` is bound to the built-in `view`
-  ClusterRole plus a small extra ClusterRole for nodes, persistent volumes, CRDs and
-  Flux resources. It has no access to secrets. The RBAC is managed by Flux like
+  ClusterRole plus a small extra ClusterRole for nodes, persistent volumes, CRDs,
+  Flux, Prometheus Operator and Gateway API resources, and may run PromQL queries
+  through the Prometheus Service. It has no access to secrets. The RBAC is managed by Flux like
   everything else, in [`kubernetes/infrastructure/claude-readonly`](kubernetes/infrastructure/claude-readonly/).
 - Separate kubeconfig: a [script](scripts/create-claude-kubeconfig.sh) builds a
   kubeconfig from the ServiceAccount token. Claude Code uses it through a gitignored
@@ -153,14 +159,14 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
 
 ## Roadmap
 
-- Move the manually installed workloads (kube-prometheus-stack, Uptime Kuma, Home
-  Assistant) into Flux
+- Immich, with Postgres on CloudNativePG and the iGPU for machine learning
 - Move the services on Proxmox and TrueNAS (Pi-hole, Jellyfin, Radarr, Sonarr,
   Homarr, Omada) into Kubernetes
 - Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
-- Secrets with SOPS and/or External Secrets, starting with the Route53 credentials
+- Backups: ZFS snapshots and offsite copies of `AnorLondo`, database backups to S3, etcd
+- Move cert-manager's Route53 key to External Secrets
 - Proxmox VMs and LXCs with Terraform
-- MCP servers for Proxmox and the NAS, so Claude can read their state as well
+- An MCP server for the NAS (the Proxmox MCP server is in place)
 - Ansible for the nodes, and a timed rebuild of the cluster from scratch
 - Crossplane with AWS: Route53, S3 for backups, possibly RDS and Bedrock
 - Possibly run the Claude agent in the cloud
