@@ -1,0 +1,35 @@
+# Immich's database: one Postgres instance with VectorChord (smart search, faces).
+# Immich v3.3.5 supports Postgres 14-19, but its built-in database dumps only 14-18.
+# VectorChord must be >= 0.3 and < 2.0, pgvector >= 0.7 and < 0.9 (pgvector comes from
+# the CloudNativePG base image).
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-db
+spec:
+  instances: 1
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.6-1.1.1
+  postgresql:
+    shared_preload_libraries:
+      - vchord.so
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      # Immich expects a superuser: it creates and upgrades its extensions itself, and
+      # its database dumps use pg_dumpall. Runs once, when the cluster is created.
+      postInitSQL:
+        - ALTER ROLE immich SUPERUSER;
+  storage:
+    storageClass: local-path
+    size: 10Gi
+  # local-path pins the volume to the node anyway. pi5 has the most free disk (NVMe).
+  affinity:
+    nodeSelector:
+      kubernetes.io/hostname: pi5
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
