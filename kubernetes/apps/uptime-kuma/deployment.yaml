@@ -43,12 +43,12 @@ spec:
               port: web-ui
             initialDelaySeconds: 30
             periodSeconds: 10
+          # No CPU limit: it would only throttle. Uses ~140Mi.
           resources:
             requests:
               cpu: 50m
-              memory: 128Mi
+              memory: 192Mi
             limits:
-              cpu: 200m
               memory: 512Mi
           volumeMounts:
             - name: data
