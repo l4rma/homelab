@@ -1,0 +1,12 @@
+# Self-signed certificate on the host, so the certificate is not verified.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: omada
+spec:
+  endpoints:
+    - ip:
+        address: 192.168.10.4
+        port: 30077
+  tls:
+    insecureSkipVerify: true

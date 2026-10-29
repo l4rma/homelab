@@ -1,0 +1,9 @@
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: pihole
+spec:
+  endpoints:
+    - ip:
+        address: 192.168.20.20
+        port: 80

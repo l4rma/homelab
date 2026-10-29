@@ -4,3 +4,9 @@ resources:
   - namespace.yaml
   - helmrepository.yaml
   - helmrelease.yaml
+  - envoyproxy.yaml
+  - gatewayclass.yaml
+  - certificate.yaml
+  - gateway.yaml
+  - httproute-redirect.yaml
+  - backendtrafficpolicy.yaml

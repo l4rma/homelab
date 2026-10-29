@@ -110,6 +110,15 @@ spec:
       grafana.ini:
         server:
           root_url: https://grafana.magelssen.io
+      route:
+        main:
+          enabled: true
+          hostnames:
+            - grafana.magelssen.io
+          parentRefs:
+            - name: main
+              namespace: envoy-gateway-system
+              sectionName: https
       # Grafana 12 uses ~500Mi with the bundled dashboards; 512Mi got it OOM-killed.
       resources:
         requests:

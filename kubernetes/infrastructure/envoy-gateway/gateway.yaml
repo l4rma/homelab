@@ -1,0 +1,28 @@
+# The single entry point for <name>.magelssen.io. Apps attach an HTTPRoute to the
+# `https` listener from their own namespace.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: main
+  namespace: envoy-gateway-system
+spec:
+  gatewayClassName: envoy
+  listeners:
+    # Only the redirect to HTTPS (httproute-redirect.yaml) attaches here.
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.magelssen.io"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: wildcard-magelssen-io-tls
+      allowedRoutes:
+        namespaces:
+          from: All
