@@ -32,6 +32,38 @@ spec:
     kubeProxy:
       enabled: false
 
+    # Requests are about the observed peak, limits about twice that. No CPU limits, so
+    # nothing is throttled; CPU requests only steer the scheduler.
+    prometheusOperator:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 48Mi
+        limits:
+          memory: 128Mi
+    kube-state-metrics:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 48Mi
+        limits:
+          memory: 128Mi
+    prometheus-node-exporter:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 24Mi
+        limits:
+          memory: 64Mi
+    alertmanager:
+      alertmanagerSpec:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 48Mi
+          limits:
+            memory: 128Mi
+
     prometheus:
       prometheusSpec:
         # Pick up monitors and rules from every namespace, not only from this release.
@@ -89,9 +121,17 @@ spec:
           - secretName: grafana-tls
             hosts:
               - grafana.magelssen.io
+      # Grafana 12 uses ~500Mi with the bundled dashboards; 512Mi got it OOM-killed.
       resources:
         requests:
           cpu: 50m
-          memory: 256Mi
-        limits:
           memory: 512Mi
+        limits:
+          memory: 1Gi
+      sidecar:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 96Mi
+          limits:
+            memory: 192Mi
