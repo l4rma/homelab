@@ -1,0 +1,17 @@
+# Envoy ends a request after 15s by default. That breaks websockets (Home Assistant,
+# Uptime Kuma, Proxmox console), video streams (Jellyfin) and large uploads (TrueNAS),
+# so turn it off for every route on the Gateway. Idle connections are still closed by
+# Envoy's idle timeouts.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: no-request-timeout
+  namespace: envoy-gateway-system
+spec:
+  targetRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: main
+  timeout:
+    http:
+      requestTimeout: 0s

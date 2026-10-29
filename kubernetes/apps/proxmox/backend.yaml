@@ -1,0 +1,12 @@
+# Self-signed certificate on the host, so the certificate is not verified.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: proxmox
+spec:
+  endpoints:
+    - ip:
+        address: 192.168.10.3
+        port: 8006
+  tls:
+    insecureSkipVerify: true

@@ -24,7 +24,7 @@ flowchart TB
     subgraph k8s["Kubernetes cluster (kubeadm, bare metal, VLAN 30)"]
         direction TB
         flux["Flux"]
-        ingress["ingress-nginx + MetalLB"]
+        ingress["Envoy Gateway + MetalLB"]
         certmanager["cert-manager"]
         apps["Apps"]
         nodes["lenovo1 (control plane)<br/>lenovo2 (worker)<br/>pi5 (worker, arm64)"]
@@ -52,10 +52,10 @@ flowchart TB
     truenas -- "NFS volumes" --> apps
 ```
 
-All services are reached at `<name>.magelssen.io` through ingress-nginx in the
-cluster, with Let's Encrypt certificates. Services that still run on Proxmox are
-exposed through the cluster with a `Service` and manual `Endpoints`, so they get the
-same ingress and TLS as everything else until they are moved into Kubernetes.
+All services are reached at `<name>.magelssen.io` through Envoy Gateway (Gateway API)
+in the cluster, with a Let's Encrypt wildcard certificate. Services that still run on
+Proxmox are exposed through the cluster with an Envoy Gateway `Backend`, so they get the
+same entry point and TLS as everything else until they are moved into Kubernetes.
 
 ## Hardware
 
@@ -90,7 +90,7 @@ The network is split into VLANs by purpose:
 | kubeadm | Upstream Kubernetes with no abstractions on top, which is good practice for the Kubernetes certifications. The cluster started on v1.33 and has been upgraded to v1.36 by hand. |
 | Flannel | Simple CNI that just works. The trade-off is no NetworkPolicy support, which I may revisit. |
 | Flux | Pull-based GitOps: the cluster pulls from Git, so nothing outside needs access to the cluster. No GUI, which forces me to understand Kubernetes properly. It is also what I use at work. |
-| MetalLB + ingress-nginx | LoadBalancer IPs and ingress on bare metal. |
+| MetalLB + Envoy Gateway | LoadBalancer IPs on bare metal, and the Gateway API (the successor to Ingress) for routing. Replaced ingress-nginx, which was retired upstream. |
 | cert-manager + Route53 | Real Let's Encrypt certificates through DNS-01, which works without exposing the cluster to the internet. |
 | SOPS / External Secrets (planned) | Secrets in Git encrypted, or pulled from an external store, since the repo is public. |
 | Terraform (planned) | Proxmox VMs and LXCs, and later AWS, as code. |
@@ -115,7 +115,7 @@ The network is split into VLANs by purpose:
 3. Flux's `GitRepository` polls `main` every minute and fetches the new revision.
 4. The `flux-system` Kustomization applies `kubernetes/clusters/homelab`, which
    defines the other Kustomizations.
-5. `infrastructure` applies `kubernetes/infrastructure` (ingress, certificates,
+5. `infrastructure` applies `kubernetes/infrastructure` (gateway, certificates,
    load balancing, secrets operator). `apps` applies `kubernetes/apps` once
    `infrastructure` is ready.
 6. Flux uses server-side apply and prunes resources that were removed from Git.
@@ -159,7 +159,6 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
   Homarr, Omada) into Kubernetes
 - Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
 - Secrets with SOPS and/or External Secrets, starting with the Route53 credentials
-- Migrate from ingress-nginx to the Gateway API
 - Proxmox VMs and LXCs with Terraform
 - MCP servers for Proxmox and the NAS, so Claude can read their state as well
 - Ansible for the nodes, and a timed rebuild of the cluster from scratch

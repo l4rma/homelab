@@ -23,8 +23,7 @@ Storage: static NFS PersistentVolumes from TrueNAS for files and app configs, an
 A local-path volume pins its pod to the node it was created on.
 
 Network: nodes are on VLAN 30 (`192.168.30.0/24`). MetalLB pool `192.168.30.200-240`.
-`192.168.30.200` is reserved for the Envoy Gateway (in progress: ingress-nginx was removed,
-the Gateway and HTTPRoutes come in the next PR, so no site is reachable until then).
+Envoy Gateway on `192.168.30.200`.
 
 ## Access
 
@@ -59,7 +58,11 @@ one and includes every subdirectory, so a new directory with its own
   `magelssen.io`. The AWS credentials (`cert-manager/cert-manager-iam-creds`) were
   created manually and are not in Git.
 - **envoy-gateway** v1.9.3 in `envoy-gateway-system`: the Gateway API controller and CRDs
-  (experimental channel), with the `Backend` resource enabled
+  (experimental channel), with the `Backend` resource enabled. GatewayClass `envoy`, one
+  Gateway `main` on `.200` (via the `EnvoyProxy` resource): listener `http` only redirects
+  to HTTPS, listener `https` serves `*.magelssen.io` with one wildcard certificate
+  (`wildcard-magelssen-io-tls`) and accepts HTTPRoutes from all namespaces. A
+  `BackendTrafficPolicy` turns off Envoy's 15s request timeout for the whole Gateway
 - **metallb** 0.15.3: L2, pool `main-pool`
 - **external-secrets** 1.3.1: `ClusterSecretStore aws-ssm` (AWS SSM Parameter Store,
   `eu-west-1`, paths `/homelab/<namespace>/<name>`). The IAM key
@@ -82,9 +85,10 @@ one and includes every subdirectory, so a new directory with its own
   `kubectl top`
 
 ### Apps (`apps/`)
-All are meant to be reached on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
-home-assistant uses `ha.magelssen.io`). Their Ingresses were removed with ingress-nginx;
-HTTPRoutes replace them.
+Each has an `httproute.yaml` attached to the `https` listener of Gateway
+`envoy-gateway-system/main`, on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
+home-assistant uses `ha.magelssen.io`). Grafana's HTTPRoute comes from the
+kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hole record.
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
   Service, reached on `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
@@ -94,18 +98,19 @@ HTTPRoutes replace them.
   `configuration.yaml`, which lives on the NFS volume, not in Git) and, via hostNetwork,
   on `192.168.30.12:8123`.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
-  run *outside* the cluster. The repo only has a `Service` and manual `Endpoints`:
+  run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
+  and an HTTPRoute:
   - `192.168.20.4` (Portainer LXC on Proxmox): homarr, jellyfin, radarr, sonarr
   - `192.168.20.20`: pihole
-  - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `proxy-ssl-verify: off`)
-  - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
-  - `192.168.10.4:443`: truenas web UI and API (HTTPS backend, `proxy-ssl-verify: off`)
+  - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `insecureSkipVerify`)
+  - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `insecureSkipVerify`)
+  - `192.168.10.4:443`: truenas web UI and API (HTTPS backend, `insecureSkipVerify`)
 
 ## Working rules
 
 - Conventions: one directory per component, one file per resource type
   (`namespace.yaml`, `helmrepository.yaml`, `helmrelease.yaml`, `service.yaml`,
-  `ingress.yaml`, `kustomization.yaml`).
+  `httproute.yaml`, `backend.yaml`, `kustomization.yaml`).
 - Run `kubectl kustomize <dir>` on every directory you change before saying you are
   done. For `clusters/homelab`, `infrastructure` and `apps`, build with a generated root
   `kustomization.yaml` in a scratch copy, since Flux generates it.

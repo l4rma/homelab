@@ -63,7 +63,7 @@ pveum user token add claude@pve mcp --privsep 1   # prints the secret once
 pveum acl modify / --tokens 'claude@pve!mcp' --roles PVEAuditor
 ```
 
-The server connects to `proxmox.magelssen.io:443` through ingress-nginx
+The server connects to `proxmox.magelssen.io:443` through Envoy Gateway
 (`kubernetes/apps/proxmox`), which has a trusted Let's Encrypt certificate, so TLS
 is verified without a custom CA. Store the token:
 
@@ -111,7 +111,7 @@ $EDITOR ~/.config/homelab-mcp/truenas.env   # TRUENAS_API_KEY=<key>
 ```
 
 The script connects to `wss://truenas.magelssen.io/api/current` through
-ingress-nginx (`kubernetes/apps/truenas`), which has a trusted Let's Encrypt
+Envoy Gateway (`kubernetes/apps/truenas`), which has a trusted Let's Encrypt
 certificate, the same way as Proxmox. TrueNAS revokes an API key that is used over
 an unencrypted connection, so the script only accepts `wss://`.
 

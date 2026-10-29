@@ -1,0 +1,23 @@
+# How Envoy Gateway runs the Envoy proxy pods for Gateways of the `envoy` class.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: envoy
+  namespace: envoy-gateway-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        # Same IP as ingress-nginx had, so the Pi-hole records stay as they are.
+        # externalTrafficPolicy is Local by default: apps see the real client IP.
+        annotations:
+          metallb.io/loadBalancerIPs: 192.168.30.200
+      envoyDeployment:
+        container:
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
