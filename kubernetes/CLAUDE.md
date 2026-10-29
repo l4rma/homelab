@@ -10,11 +10,13 @@ notification controllers; no image automation).
 
 | Node    | Role          | IP            | Arch  | Hardware                   | OS           |
 |---------|---------------|---------------|-------|----------------------------|--------------|
-| lenovo1 | control-plane | 192.168.30.10 | amd64 | Lenovo ThinkCentre M720q   | Ubuntu 24.04 |
+| lenovo1 | control-plane, untainted | 192.168.30.10 | amd64 | Lenovo ThinkCentre M720q   | Ubuntu 24.04 |
 | lenovo2 | worker        | 192.168.30.11 | amd64 | Lenovo ThinkCentre M720q   | Ubuntu 24.04 |
 | pi5     | worker        | 192.168.30.12 | arm64 | Raspberry Pi 5             | Ubuntu 24.04 |
 
-Use multi-arch images, since pi5 is arm64. Most workloads land on pi5 today.
+Use multi-arch images, since pi5 is arm64. Most workloads land on pi5 today, because few
+pods have resource requests. Kubelet reservations and the removed taint on lenovo1 are set
+by hand, see `docs/kubernetes-nodes.md`.
 
 There is no StorageClass and no metrics-server (`kubectl top` does not work) as of
 October 2026. Persistent data uses static NFS PersistentVolumes from TrueNAS.
@@ -80,8 +82,6 @@ home-assistant uses `ha.magelssen.io`).
 Installed manually, so do not expect Flux to manage them. The plan is to move them
 into Flux.
 - `monitoring`: kube-prometheus-stack (Prometheus, Alertmanager, Grafana)
-- `kuma`: empty namespace (leftover from the Uptime Kuma install, can be deleted)
-- `default`: nginx (Deployment + NodePort 31137, purpose unknown)
 
 ## Working rules
 
