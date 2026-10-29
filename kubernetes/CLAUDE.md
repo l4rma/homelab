@@ -18,7 +18,9 @@ Use multi-arch images, since pi5 is arm64. Most workloads land on pi5 today, bec
 pods have resource requests. Kubelet reservations and the removed taint on lenovo1 are set
 by hand, see `docs/kubernetes-nodes.md`.
 
-There is no StorageClass as of October 2026. Persistent data uses static NFS PersistentVolumes from TrueNAS.
+Storage: static NFS PersistentVolumes from TrueNAS for files and app configs, and the
+`local-path` StorageClass (node-local disk, `Retain`, not the default) for databases.
+A local-path volume pins its pod to the node it was created on.
 
 Network: nodes are on VLAN 30 (`192.168.30.0/24`). MetalLB pool `192.168.30.200-240`,
 ingress-nginx on `192.168.30.200`.
@@ -56,6 +58,8 @@ one and includes every subdirectory, so a new directory with its own
 - **metallb** 0.15.3: L2, pool `main-pool`
 - **external-secrets** 1.3.1: installed, no SecretStore yet
 - **claude-readonly**: the read-only ServiceAccount and RBAC for Claude Code
+- **local-path-provisioner** v0.0.37: upstream manifest in the repo, patched to `Retain`
+  and a pinned busybox. Volumes under `/opt/local-path-provisioner` on each node
 - **metrics-server** 3.14.0 (app 0.9.0): in `kube-system`, `--kubelet-insecure-tls`. Gives
   `kubectl top`
 

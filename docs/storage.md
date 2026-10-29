@@ -46,6 +46,42 @@ Firelink
 | Personal devices | SMB | `AnorLondo` |
 | Omada (TrueNAS app) | host path | `Catacombs/data` (moving to `UndeadParish/omada`) |
 
+## Kubernetes: NFS or node-local disk
+
+Two kinds of storage, chosen by the kind of data:
+
+| Data | Where | StorageClass |
+|---|---|---|
+| Files: photos, documents, media, app config folders | NFS from TrueNAS | none (static PVs) |
+| Databases: Postgres (CloudNativePG), SQLite, Prometheus | The node's own disk | `local-path` |
+
+Why databases are not on NFS:
+
+- SQLite needs file locking that NFS does not provide reliably. Uptime Kuma's README
+  says NFS is not supported, and the *arr apps are known to corrupt their databases
+  on NFS. Postgres is slow and fragile on NFS (every `fsync` goes over the network),
+  and Immich's docs require local storage for its database.
+- Local disk does not stop when TrueNAS or Proxmox restarts.
+
+What it costs, and how that is handled:
+
+- A local-path volume pins its pod to one node. If that node is down, the app is down.
+  Postgres gets its redundancy from CloudNativePG instead (more instances on other
+  nodes), not from the storage.
+- Local volumes are outside ZFS snapshots, so each database needs its own backup to
+  the NAS or S3 (see the backup plan).
+- The PVC size is not enforced. Volumes share the node's root disk:
+
+| Node | Root disk | Free (October 2026) |
+|---|---|---|
+| lenovo1 | 98 GB (LVM) | 80 GB |
+| lenovo2 | 196 GB (LVM) | 155 GB |
+| pi5 | 459 GB (NVMe) | 417 GB |
+
+Rejected: iSCSI from TrueNAS (democratic-csi) and replicated storage (Longhorn,
+Rook-Ceph). Both would let a stateful pod move between nodes, but add a lot of moving
+parts, and Ceph is too heavy for 8 GB nodes.
+
 ## Things to know
 
 - **An NFS share does not reach into child datasets.** A share on `BlightTown` shows each
