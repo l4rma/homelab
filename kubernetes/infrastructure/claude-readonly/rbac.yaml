@@ -67,6 +67,10 @@ rules:
   - apiGroups: ["monitoring.coreos.com"]
     resources: ["*"]
     verbs: ["get", "list", "watch"]
+  # Gateway API and Envoy Gateway objects (Gateways, HTTPRoutes, Backends, policies).
+  - apiGroups: ["gateway.networking.k8s.io", "gateway.envoyproxy.io"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

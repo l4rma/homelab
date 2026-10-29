@@ -22,8 +22,9 @@ Storage: static NFS PersistentVolumes from TrueNAS for files and app configs, an
 `local-path` StorageClass (node-local disk, `Retain`, not the default) for databases.
 A local-path volume pins its pod to the node it was created on.
 
-Network: nodes are on VLAN 30 (`192.168.30.0/24`). MetalLB pool `192.168.30.200-240`,
-ingress-nginx on `192.168.30.200`.
+Network: nodes are on VLAN 30 (`192.168.30.0/24`). MetalLB pool `192.168.30.200-240`.
+`192.168.30.200` is reserved for the Envoy Gateway (in progress: ingress-nginx was removed,
+the Gateway and HTTPRoutes come in the next PR, so no site is reachable until then).
 
 ## Access
 
@@ -57,7 +58,8 @@ one and includes every subdirectory, so a new directory with its own
 - **cert-manager** v1.19.2: `ClusterIssuer letsencrypt-prod`, Route53 DNS-01 for
   `magelssen.io`. The AWS credentials (`cert-manager/cert-manager-iam-creds`) were
   created manually and are not in Git.
-- **ingress-nginx** 4.15.1: LoadBalancer via MetalLB
+- **envoy-gateway** v1.9.3 in `envoy-gateway-system`: the Gateway API controller and CRDs
+  (experimental channel), with the `Backend` resource enabled
 - **metallb** 0.15.3: L2, pool `main-pool`
 - **external-secrets** 1.3.1: `ClusterSecretStore aws-ssm` (AWS SSM Parameter Store,
   `eu-west-1`, paths `/homelab/<namespace>/<name>`). The IAM key
@@ -80,8 +82,9 @@ one and includes every subdirectory, so a new directory with its own
   `kubectl top`
 
 ### Apps (`apps/`)
-All have an Ingress on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
-home-assistant uses `ha.magelssen.io`).
+All are meant to be reached on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
+home-assistant uses `ha.magelssen.io`). Their Ingresses were removed with ingress-nginx;
+HTTPRoutes replace them.
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
   Service, reached on `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
@@ -91,8 +94,7 @@ home-assistant uses `ha.magelssen.io`).
   `configuration.yaml`, which lives on the NFS volume, not in Git) and, via hostNetwork,
   on `192.168.30.12:8123`.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
-  run *outside* the cluster. The repo only has a `Service`, manual `Endpoints` and an
-  `Ingress`:
+  run *outside* the cluster. The repo only has a `Service` and manual `Endpoints`:
   - `192.168.20.4` (Portainer LXC on Proxmox): homarr, jellyfin, radarr, sonarr
   - `192.168.20.20`: pihole
   - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `proxy-ssl-verify: off`)

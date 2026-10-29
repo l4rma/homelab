@@ -4,4 +4,3 @@ namespace: radarr
 resources:
   - namespace.yaml
   - service.yaml
-  - ingress.yaml

@@ -4,4 +4,3 @@ namespace: truenas
 resources:
   - namespace.yaml
   - service.yaml
-  - ingress.yaml
