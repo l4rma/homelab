@@ -99,10 +99,15 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   ClusterIP Service, reached on `ha.magelssen.io` (needs `http.trusted_proxies` in HA's
   `configuration.yaml`, which lives on the NFS volume, not in Git) and, via hostNetwork,
   on `192.168.30.12:8123`.
-- **immich** (being set up, phase 11): CloudNativePG `Cluster` `immich-db` (1 instance,
-  Postgres 18 + VectorChord, `local-path` on pi5, the `immich` role is a superuser, password
-  in the CNPG-generated Secret `immich-db-app`) and Valkey (no persistence). The server and
-  machine learning follow.
+- **immich**: runs in the cluster, on `immich.magelssen.io`. Server and machine learning
+  pinned to the same version, both run as UID/GID 3000 (`larma` on TrueNAS, owns the
+  datasets). The server asks for `gpu.intel.com/i915` (Quick Sync) and the `render` group
+  (993); ML runs on CPU on the amd64 nodes. NFS PVs: `AnorLondo/immich` at `/data`
+  (originals, profile, database dumps) and `BlightTown/immich` with the subfolders `thumbs`,
+  `encoded-video` (mounted inside `/data`) and `model-cache`, created by init containers.
+  CloudNativePG `Cluster` `immich-db` (1 instance, Postgres 18 + VectorChord, `local-path`
+  on pi5, the `immich` role is a superuser, `DB_URL` from the CNPG Secret `immich-db-app`),
+  Valkey without persistence. Metrics via ServiceMonitor and PodMonitor.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:

@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-machine-learning
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: immich-machine-learning
+  template:
+    metadata:
+      labels:
+        app: immich-machine-learning
+    spec:
+      # CPU inference first (OpenVINO on older iGPUs is "more likely to experience
+      # issues", per Immich's docs). On the Lenovos: pi5's CPU is much slower.
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      securityContext:
+        runAsUser: 3000
+        runAsGroup: 3000
+        runAsNonRoot: true
+      initContainers:
+        # The server's init container creates the same folder, but this pod may start first.
+        - name: create-folders
+          image: docker.io/library/busybox:1.37.0
+          command: ["mkdir", "-p", "/cache/model-cache"]
+          volumeMounts:
+            - name: cache
+              mountPath: /cache
+      containers:
+        - name: immich-machine-learning
+          # Pinned, same version as the server.
+          image: ghcr.io/immich-app/immich-machine-learning:v3.3.5
+          env:
+            - name: TZ
+              value: Europe/Oslo
+          ports:
+            - name: http
+              containerPort: 3003
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          startupProbe:
+            httpGet:
+              path: /ping
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # Models are loaded on demand and unloaded after 5 minutes idle. A large import
+          # with smart search and faces can use 2-3Gi.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 1Gi
+            limits:
+              memory: 4Gi
+          volumeMounts:
+            # Downloaded models, so a restart does not download them again.
+            - name: cache
+              mountPath: /cache
+              subPath: model-cache
+      volumes:
+        - name: cache
+          persistentVolumeClaim:
+            claimName: immich-cache-pvc

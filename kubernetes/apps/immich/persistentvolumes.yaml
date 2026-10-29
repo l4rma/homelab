@@ -1,0 +1,42 @@
+# Static NFS volumes on TrueNAS. spec.nfs is immutable: changing it means a new PV.
+# Both datasets are owned by larma (3000:3000), the user Immich runs as.
+#
+# Originals, profile pictures and Immich's database dumps. Irreplaceable: snapshotted
+# daily (AnorLondo task) and later backed up offsite.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-library-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Ti
+  claimRef:
+    name: immich-library-pvc
+    namespace: immich
+  nfs:
+    path: /mnt/Firelink/AnorLondo/immich
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+---
+# Thumbnails, transcoded videos and the machine learning model cache. All of it can be
+# regenerated. Shared by the server and machine learning pods.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-cache-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 200Gi
+  claimRef:
+    name: immich-cache-pvc
+    namespace: immich
+  nfs:
+    path: /mnt/Firelink/BlightTown/immich
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
