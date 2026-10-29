@@ -99,6 +99,10 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   ClusterIP Service, reached on `ha.magelssen.io` (needs `http.trusted_proxies` in HA's
   `configuration.yaml`, which lives on the NFS volume, not in Git) and, via hostNetwork,
   on `192.168.30.12:8123`.
+- **immich** (being set up, phase 11): CloudNativePG `Cluster` `immich-db` (1 instance,
+  Postgres 18 + VectorChord, `local-path` on pi5, the `immich` role is a superuser, password
+  in the CNPG-generated Secret `immich-db-app`) and Valkey (no persistence). The server and
+  machine learning follow.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:
