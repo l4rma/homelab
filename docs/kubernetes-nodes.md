@@ -1,6 +1,6 @@
 # Kubernetes nodes
 
-Node settings that live outside Git: kubelet configuration and taints. They were set by
+Node settings that live outside Git: packages, kubelet configuration and taints. They were set by
 hand in October 2026 and must be repeated on a new or reinstalled node. Later this moves
 to Ansible.
 
@@ -9,6 +9,20 @@ to Ansible.
 | `lenovo1` | control plane, also runs workloads | 6 cores | 8 GB | ~100 GB | 5500m CPU, ~6.3 GiB |
 | `lenovo2` | worker | 6 cores | 8 GB | ~200 GB | 5500m CPU, ~6.3 GiB |
 | `pi5` | worker (arm64) | 4 cores | 8 GB | ~480 GB | 3500m CPU, ~6.5 GiB |
+
+## Packages
+
+Every node needs **`nfs-common`**, the NFS client (`mount.nfs`). The kubelet mounts the
+static NFS PersistentVolumes itself, on whichever node the pod lands. Without it the pod
+stays in `Init` or `ContainerCreating` with `mount failed: exit status 32 ... bad option;
+... you might need a /sbin/mount.<type> helper program`.
+
+```
+sudo apt-get update && sudo apt-get install -y nfs-common
+```
+
+`lenovo1` lacked it until 2026-10-29: it had the control-plane taint, so no NFS pod had
+run there before.
 
 ## Kubelet reservations
 
