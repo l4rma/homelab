@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-server
+spec:
+  replicas: 1
+  # Never two servers at once (database migrations, the RWO library volume).
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: immich-server
+  template:
+    metadata:
+      labels:
+        app: immich-server
+    spec:
+      securityContext:
+        runAsUser: 3000
+        runAsGroup: 3000
+        runAsNonRoot: true
+        # render group on the Lenovos: access to /dev/dri/renderD128 for Quick Sync.
+        supplementalGroups: [993]
+      initContainers:
+        # thumbs/ and encoded-video/ are mounted inside /data. Create the mount points and
+        # the target folders as uid 3000 first: NFS maps root to nobody, so the container
+        # runtime could not create them itself.
+        - name: create-folders
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - mkdir
+            - -p
+            - /library/thumbs
+            - /library/encoded-video
+            - /cache/thumbs
+            - /cache/encoded-video
+            - /cache/model-cache
+          volumeMounts:
+            - name: library
+              mountPath: /library
+            - name: cache
+              mountPath: /cache
+      containers:
+        - name: immich-server
+          # Pinned. The server and machine learning must have the same version.
+          # Upgrade both in their own PR, after reading the release notes.
+          image: ghcr.io/immich-app/immich-server:v3.3.5
+          env:
+            - name: TZ
+              value: Europe/Oslo
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: immich-db-app # created by CloudNativePG
+                  key: uri
+            - name: REDIS_HOSTNAME
+              value: immich-valkey
+            - name: IMMICH_MACHINE_LEARNING_URL
+              value: http://immich-machine-learning:3003
+            - name: IMMICH_TELEMETRY_INCLUDE
+              value: all
+          ports:
+            - name: http
+              containerPort: 2283
+            - name: api-metrics
+              containerPort: 8081
+            - name: ms-metrics
+              containerPort: 8082
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          # Database migrations on first start and after upgrades can take a while.
+          startupProbe:
+            httpGet:
+              path: /api/server/ping
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/server/ping
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # First guess, review after a large import. No CPU limit.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+              gpu.intel.com/i915: 1
+          volumeMounts:
+            - name: library
+              mountPath: /data
+            - name: cache
+              mountPath: /data/thumbs
+              subPath: thumbs
+            - name: cache
+              mountPath: /data/encoded-video
+              subPath: encoded-video
+      volumes:
+        - name: library
+          persistentVolumeClaim:
+            claimName: immich-library-pvc
+        - name: cache
+          persistentVolumeClaim:
+            claimName: immich-cache-pvc

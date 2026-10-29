@@ -1,0 +1,13 @@
+# Immich's Prometheus metrics (IMMICH_TELEMETRY_INCLUDE=all): the API and the
+# microservices (background jobs) worker.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: immich-server
+spec:
+  selector:
+    matchLabels:
+      app: immich-server
+  endpoints:
+    - port: api-metrics
+    - port: ms-metrics

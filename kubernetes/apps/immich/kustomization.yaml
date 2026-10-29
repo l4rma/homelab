@@ -7,3 +7,11 @@ resources:
   - postgres-podmonitor.yaml
   - valkey-deployment.yaml
   - valkey-service.yaml
+  - persistentvolumes.yaml
+  - persistentvolumeclaims.yaml
+  - server-deployment.yaml
+  - server-service.yaml
+  - server-servicemonitor.yaml
+  - machine-learning-deployment.yaml
+  - machine-learning-service.yaml
+  - httproute.yaml
