@@ -23,11 +23,12 @@ inherits that policy. Dark Souls names at the top level, plain names below.
 ```
 Firelink
 ├── AnorLondo
-│   ├── immich            photo library (planned)
+│   ├── immich            Immich originals, profile/ and backups/ (DB dumps)
 │   └── nextcloud         Nextcloud user files (planned)
 ├── DukesArchives         movies/ series/ downloads/  (folders, not datasets)
 ├── BlightTown
 │   ├── home-assistant
+│   ├── immich            Immich thumbs/ and encoded-video/ (can be regenerated)
 │   └── uptime-kuma
 ├── SensFortress          template/iso, template/cache, images/
 ├── UndeadParish
@@ -40,7 +41,7 @@ Firelink
 
 | Consumer | How | Path |
 |---|---|---|
-| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>` |
+| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich` |
 | Proxmox storage `SensFortress` | SMB (CIFS), mounted by Proxmox at `/mnt/pve/SensFortress` | `SensFortress` |
 | Plex (LXC 101) and the docker LXC (102) | SMB, `/etc/fstab` on pve at `/mnt/dukesarchives`, bind-mounted into the LXCs | `DukesArchives` |
 | Personal devices | SMB | `AnorLondo` |
@@ -78,9 +79,29 @@ What it costs, and how that is handled:
 | lenovo2 | 196 GB (LVM) | 155 GB |
 | pi5 | 459 GB (NVMe) | 417 GB |
 
+Immich is split across two datasets, as Immich's "custom locations" guide allows:
+`AnorLondo/immich` is mounted at `/data` (originals, profile pictures, database dumps)
+and `BlightTown/immich` at `/data/thumbs` and `/data/encoded-video`. The generated
+files can be 10–20% of the library and do not need the offsite backup. Immich runs as
+UID/GID 3000 (`larma` on TrueNAS), which owns both datasets, so the originals can also
+be read over SMB with the same account. NFS maps root to `nobody`, so running as root
+would not work.
+
 Rejected: iSCSI from TrueNAS (democratic-csi) and replicated storage (Longhorn,
 Rook-Ceph). Both would let a stateful pod move between nodes, but add a lot of moving
 parts, and Ceph is too heavy for 8 GB nodes.
+
+## Snapshots
+
+| Dataset | Schedule | Kept | Notes |
+|---|---|---|---|
+| `AnorLondo` (recursive) | Daily at 00:00 | 30 days | Empty snapshots allowed |
+
+Snapshots protect against deleting or overwriting by mistake, not against losing the
+pool. Real backups come with the backup plan. "Allow taking empty snapshots" is on
+because each snapshot expires after 30 days whether or not a newer one exists: without
+it, a dataset that does not change for 30 days ends up with no snapshot at all. An
+unchanged snapshot only costs a few KB of metadata.
 
 ## Things to know
 
