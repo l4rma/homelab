@@ -87,13 +87,14 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 5
-          # First guess, review after a large import. No CPU limit.
+          # Peaked at 1.5Gi on the first test upload (thumbnails, metadata, video). A big
+          # import runs several jobs in parallel, so leave room. No CPU limit.
           resources:
             requests:
               cpu: 100m
-              memory: 512Mi
+              memory: 1536Mi
             limits:
-              memory: 2Gi
+              memory: 3Gi
               gpu.intel.com/i915: 1
           volumeMounts:
             - name: library

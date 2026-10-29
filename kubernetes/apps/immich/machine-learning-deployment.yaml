@@ -60,12 +60,13 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 5
-          # Models are loaded on demand and unloaded after 5 minutes idle. A large import
-          # with smart search and faces can use 2-3Gi.
+          # Models are loaded on demand and unloaded after 5 minutes idle. With smart search,
+          # faces and OCR loaded at once it peaked at 2.9Gi, so request that much: the
+          # scheduler then keeps room for it on the node.
           resources:
             requests:
               cpu: 100m
-              memory: 1Gi
+              memory: 3Gi
             limits:
               memory: 4Gi
           volumeMounts:
