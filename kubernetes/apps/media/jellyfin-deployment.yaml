@@ -82,14 +82,13 @@ spec:
             - name: cache
               mountPath: /config/cache
             # Item IDs come from the file paths, so these must stay exactly as they were.
+            # Writable, because downloaded subtitles are saved next to the media.
             - name: media
               mountPath: /data/movies
               subPath: movies
-              readOnly: true
             - name: media
               mountPath: /data/tvshows
               subPath: series
-              readOnly: true
       volumes:
         - name: config
           persistentVolumeClaim:

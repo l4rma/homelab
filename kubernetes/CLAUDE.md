@@ -114,7 +114,7 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   and daily database dumps kept for 14 days.
 - **media**: the media stack, moving here from the Portainer LXC. NFS PV for all of
   `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
-  an init container that waits for `/config/.restored`, and the media read-only at its old
+  an init container that waits for `/config/.restored`, and the media writable (subtitles) at its old
   paths (`/data/movies`, `/data/tvshows`), because item IDs come from the paths.
 - **homarr, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
