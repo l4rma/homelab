@@ -116,6 +116,9 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
   an init container that waits for `/config/.restored`, and the media writable (subtitles) at its old
   paths (`/data/movies`, `/data/tvshows`), because item IDs come from the paths.
+  **qbittorrent** runs on pi5 with gluetun as a native sidecar (NordVPN, credentials from SSM).
+  gluetun's firewall is the kill switch and DNS goes through it, so the pod cannot resolve
+  cluster names. Only qbittorrent is behind the VPN.
 - **homarr, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:

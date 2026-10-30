@@ -1,0 +1,126 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorrent
+spec:
+  replicas: 1
+  # Never two clients on the same files.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: qbittorrent
+  template:
+    metadata:
+      labels:
+        app: qbittorrent
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi5
+      # gluetun's DNS, inside the tunnel, so lookups do not leak through CoreDNS. qbittorrent
+      # needs no cluster names.
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 127.0.0.1
+      initContainers:
+        # Native sidecar: it starts first, and qbittorrent waits for its startup probe. They
+        # share the network namespace, so gluetun's firewall is the kill switch: no VPN, no traffic.
+        - name: gluetun
+          # Pinned by digest, because the running build came from :latest.
+          image: docker.io/qmcgaw/gluetun@sha256:2733bb22b27e3efa7a9f2cef9057ec12791b8b225793fcd3dbfd0508404dfc25
+          restartPolicy: Always
+          env:
+            - name: TZ
+              value: Europe/Oslo
+            - name: VPN_SERVICE_PROVIDER
+              value: nordvpn
+            - name: VPN_TYPE
+              value: openvpn
+            - name: SERVER_COUNTRIES
+              value: Netherlands
+            # The web UI, for Envoy, radarr, sonarr and the kubelet's probes. Only gluetun's
+            # own subnet may connect otherwise.
+            - name: FIREWALL_INPUT_PORTS
+              value: "8080"
+            - name: OPENVPN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: gluetun-secrets
+                  key: OPENVPN_USER
+            - name: OPENVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gluetun-secrets
+                  key: OPENVPN_PASSWORD
+          securityContext:
+            capabilities:
+              add: ["NET_ADMIN"]
+          # The health server listens on 127.0.0.1 only, so httpGet cannot reach it.
+          startupProbe:
+            exec:
+              command: ["/gluetun-entrypoint", "healthcheck"]
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
+          # 51Mi in the old LXC. Sized from one sample: review after a week. No CPU limit.
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 128Mi
+      containers:
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:5.3.0_v2.1.2-ls485
+          env:
+            - name: PUID
+              value: "3000"
+            - name: PGID
+              value: "3000"
+            - name: TZ
+              value: Europe/Oslo
+            - name: WEBUI_PORT
+              value: "8080"
+            - name: TORRENTING_PORT
+              value: "6881"
+          ports:
+            - name: http
+              containerPort: 8080
+          # tcpSocket, because host header validation answers an httpGet from the kubelet with 401.
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # 18Mi of its own memory when idle. The rest is page cache, reclaimed at the limit, so
+          # the working set sits close to it: only OOMKilled means too little. No CPU limit.
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 2Gi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            # Same path as radarr and sonarr see, which keep the whole volume at /data.
+            - name: media
+              mountPath: /data/downloads
+              subPath: downloads
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: qbittorrent-config-pvc
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-dukesarchives-pvc
