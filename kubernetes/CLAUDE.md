@@ -108,6 +108,10 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   CloudNativePG `Cluster` `immich-db` (1 instance, Postgres 18 + VectorChord, `local-path`
   on pi5, the `immich` role is a superuser, `DB_URL` from the CNPG Secret `immich-db-app`),
   Valkey without persistence. Metrics via ServiceMonitor and PodMonitor.
+  Settings made in the Immich UI live in its database, not in Git: Quick Sync with hardware
+  decoding, transcode policy "Required", thumbnail and metadata job concurrency 2 (the
+  defaults, 3 and 5, pushed the server close to its memory limit during the first import),
+  and daily database dumps kept for 14 days.
 - **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:
