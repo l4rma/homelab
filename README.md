@@ -159,7 +159,6 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
 
 ## Roadmap
 
-- Immich, with Postgres on CloudNativePG and the iGPU for machine learning
 - Move the services on Proxmox and TrueNAS (Pi-hole, Jellyfin, Radarr, Sonarr,
   Homarr, Omada) into Kubernetes
 - Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
