@@ -12,3 +12,12 @@ resources:
   - qbittorrent-deployment.yaml
   - qbittorrent-service.yaml
   - qbittorrent-httproute.yaml
+  - radarr-deployment.yaml
+  - radarr-service.yaml
+  - radarr-httproute.yaml
+  - sonarr-deployment.yaml
+  - sonarr-service.yaml
+  - sonarr-httproute.yaml
+  - prowlarr-deployment.yaml
+  - prowlarr-service.yaml
+  - prowlarr-httproute.yaml

@@ -119,10 +119,12 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   **qbittorrent** runs on pi5 with gluetun as a native sidecar (NordVPN, credentials from SSM).
   gluetun's firewall is the kill switch and DNS goes through it, so the pod cannot resolve
   cluster names. Only qbittorrent is behind the VPN.
-- **homarr, omada, pihole, proxmox, radarr, sonarr, truenas**:
+  **radarr**, **sonarr** and **prowlarr** run on pi5 outside the VPN, config on `local-path`.
+  radarr and sonarr mount the whole volume at `/data`, so imports can be hardlinks.
+- **homarr, omada, pihole, proxmox, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:
-  - `192.168.20.4` (Portainer LXC on Proxmox): homarr, radarr, sonarr
+  - `192.168.20.4` (Portainer LXC on Proxmox): homarr
   - `192.168.20.20`: pihole
   - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `insecureSkipVerify`)
   - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `insecureSkipVerify`)
