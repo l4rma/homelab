@@ -5,3 +5,6 @@ resources:
   - namespace.yaml
   - persistentvolumes.yaml
   - persistentvolumeclaims.yaml
+  - jellyfin-deployment.yaml
+  - jellyfin-service.yaml
+  - jellyfin-httproute.yaml

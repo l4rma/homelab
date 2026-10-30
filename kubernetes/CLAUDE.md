@@ -112,10 +112,14 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   decoding, transcode policy "Required", thumbnail and metadata job concurrency 2 (the
   defaults, 3 and 5, pushed the server close to its memory limit during the first import),
   and daily database dumps kept for 14 days.
-- **homarr, jellyfin, omada, pihole, proxmox, radarr, sonarr, truenas**:
+- **media**: the media stack, moving here from the Portainer LXC. NFS PV for all of
+  `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
+  an init container that waits for `/config/.restored`, and the media read-only at its old
+  paths (`/data/movies`, `/data/tvshows`), because item IDs come from the paths.
+- **homarr, omada, pihole, proxmox, radarr, sonarr, truenas**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:
-  - `192.168.20.4` (Portainer LXC on Proxmox): homarr, jellyfin, radarr, sonarr
+  - `192.168.20.4` (Portainer LXC on Proxmox): homarr, radarr, sonarr
   - `192.168.20.20`: pihole
   - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `insecureSkipVerify`)
   - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `insecureSkipVerify`)

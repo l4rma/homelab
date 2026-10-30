@@ -1,9 +1,0 @@
-apiVersion: gateway.envoyproxy.io/v1alpha1
-kind: Backend
-metadata:
-  name: jellyfin
-spec:
-  endpoints:
-    - ip:
-        address: 192.168.20.4
-        port: 8096

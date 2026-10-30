@@ -10,3 +10,16 @@ spec:
       storage: 7Ti
   storageClassName: ""
   volumeName: media-dukesarchives-pv
+---
+# Jellyfin's database and metadata (SQLite, so not on NFS). Holds users and watch history.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: local-path

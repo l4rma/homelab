@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyfin
+spec:
+  replicas: 1
+  # Never two servers at once (SQLite).
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      # local-path pins the pod to this node anyway. lenovo2 has an iGPU and the most free disk.
+      nodeSelector:
+        kubernetes.io/hostname: lenovo2
+      initContainers:
+        # Restore guard: an empty /config would start a new server without users or watch
+        # history. Wait until the old config is restored and .restored exists.
+        - name: wait-for-restore
+          image: docker.io/library/busybox:1.37.0
+          command:
+            - sh
+            - -c
+            - until [ -f /config/.restored ]; do echo "waiting for /config/.restored"; sleep 10; done
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 32Mi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      containers:
+        - name: jellyfin
+          # Pinned to the version the data comes from: Jellyfin has no downgrade path.
+          # Upgrade in its own PR, after a backup. The image starts as root, adds its user to
+          # the group of /dev/dri, and then runs Jellyfin as PUID.
+          image: lscr.io/linuxserver/jellyfin:10.11.6ubu2404-ls22
+          env:
+            - name: PUID
+              value: "3000"
+            - name: PGID
+              value: "3000"
+            - name: TZ
+              value: Europe/Oslo
+          ports:
+            - name: http
+              containerPort: 8096
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # 430Mi idle in the old LXC. Sized from one sample: review after a week. No CPU limit.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 2Gi
+              gpu.intel.com/i915: 1
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: cache
+              mountPath: /config/cache
+            # Item IDs come from the file paths, so these must stay exactly as they were.
+            - name: media
+              mountPath: /data/movies
+              subPath: movies
+              readOnly: true
+            - name: media
+              mountPath: /data/tvshows
+              subPath: series
+              readOnly: true
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: jellyfin-config-pvc
+        # Image cache and transcodes. Can be regenerated.
+        - name: cache
+          emptyDir:
+            sizeLimit: 20Gi
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-dukesarchives-pvc

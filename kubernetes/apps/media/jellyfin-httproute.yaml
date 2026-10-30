@@ -11,6 +11,5 @@ spec:
     - jellyfin.magelssen.io
   rules:
     - backendRefs:
-        - group: gateway.envoyproxy.io
-          kind: Backend
-          name: jellyfin
+        - name: jellyfin
+          port: 8096
