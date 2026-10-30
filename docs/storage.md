@@ -41,7 +41,7 @@ Firelink
 
 | Consumer | How | Path |
 |---|---|---|
-| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich` |
+| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich`, `/mnt/Firelink/DukesArchives` |
 | Proxmox storage `SensFortress` | SMB (CIFS), mounted by Proxmox at `/mnt/pve/SensFortress` | `SensFortress` |
 | Plex (LXC 101) and the docker LXC (102) | SMB, `/etc/fstab` on pve at `/mnt/dukesarchives`, bind-mounted into the LXCs | `DukesArchives` |
 | Personal devices | SMB | `AnorLondo` |

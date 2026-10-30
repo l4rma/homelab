@@ -1,0 +1,20 @@
+# Static NFS volume on TrueNAS. spec.nfs is immutable: changing it means a new PV.
+# The whole DukesArchives dataset (downloads, movies, series), owned by larma (3000:3000).
+# One volume, because hardlinks from downloads to the library do not work across mounts.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-dukesarchives-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 7Ti
+  claimRef:
+    name: media-dukesarchives-pvc
+    namespace: media
+  nfs:
+    path: /mnt/Firelink/DukesArchives
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
