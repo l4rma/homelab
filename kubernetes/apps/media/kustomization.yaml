@@ -5,6 +5,10 @@ resources:
   - namespace.yaml
   - persistentvolumes.yaml
   - persistentvolumeclaims.yaml
+  - externalsecret.yaml
   - jellyfin-deployment.yaml
   - jellyfin-service.yaml
   - jellyfin-httproute.yaml
+  - qbittorrent-deployment.yaml
+  - qbittorrent-service.yaml
+  - qbittorrent-httproute.yaml
