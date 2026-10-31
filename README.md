@@ -33,8 +33,7 @@ flowchart TB
     subgraph proxmox["Proxmox VE"]
         direction TB
         truenas["TrueNAS SCALE VM<br/>NFS/SMB, backups, Omada controller"]
-        portainer["LXC with Portainer<br/>Homarr, Jellyfin, Radarr, Sonarr"]
-        otherservices["Pi-hole"]
+        otherservices["LXCs<br/>Pi-hole, Plex, Tailscale"]
     end
 
     route53["AWS Route53<br/>magelssen.io"]
@@ -96,6 +95,7 @@ The network is split into VLANs by purpose:
 | kube-prometheus-stack | Prometheus, Grafana and Alertmanager in one chart, with dashboards for the cluster out of the box. Also the data for sizing resource requests. |
 | local-path + NFS | Databases on the node's own disk, files on the NAS over NFS. Databases on NFS are slow and corrupt easily. The reasoning: [docs/storage.md](docs/storage.md). |
 | CloudNativePG | Postgres as a Kubernetes operator: one small cluster per app, with failover and backups to S3 later. |
+| gluetun | VPN as a sidecar for qBittorrent only. Its firewall is the kill switch, and the rest of the media stack stays outside the VPN. |
 | Terraform (planned) | Proxmox VMs and LXCs, and later AWS, as code. |
 | Ansible (planned) | Configure nodes and rebuild the cluster from freshly installed machines. |
 | Crossplane + AWS (planned) | Provision cloud resources from Kubernetes. |
@@ -108,7 +108,7 @@ The network is split into VLANs by purpose:
 | [`terraform/`](terraform/) | Proxmox and AWS as code. Not started. |
 | [`ansible/`](ansible/) | Node and NAS configuration. Not started. |
 | [`scripts/`](scripts/) | Helper scripts run locally, such as generating the read-only kubeconfig for Claude. |
-| [`docs/`](docs/) | Documentation. |
+| [`docs/`](docs/) | Documentation, including [what runs at which version](docs/versions.md). |
 | `CLAUDE.md` files | Instructions for Claude Code, at the root and per directory. |
 
 ## GitOps flow
@@ -159,8 +159,8 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
 
 ## Roadmap
 
-- Move the services on Proxmox and TrueNAS (Pi-hole, Jellyfin, Radarr, Sonarr,
-  Homarr, Omada) into Kubernetes
+- Move the remaining services on Proxmox and TrueNAS (Pi-hole, Omada) into Kubernetes
+- Upgrade Proxmox VE from 8 to 9 (see [docs/versions.md](docs/versions.md))
 - Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
 - Backups: ZFS snapshots and offsite copies of `AnorLondo`, database backups to S3, etcd
 - Move cert-manager's Route53 key to External Secrets
