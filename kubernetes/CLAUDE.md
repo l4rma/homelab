@@ -112,7 +112,7 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   decoding, transcode policy "Required", thumbnail and metadata job concurrency 2 (the
   defaults, 3 and 5, pushed the server close to its memory limit during the first import),
   and daily database dumps kept for 14 days.
-- **media**: the media stack, moving here from the Portainer LXC. NFS PV for all of
+- **media**: the media stack, moved here from the Portainer LXC. NFS PV for all of
   `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
   an init container that waits for `/config/.restored`, and the media writable (subtitles) at its old
   paths (`/data/movies`, `/data/tvshows`), because item IDs come from the paths.
@@ -120,7 +120,8 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   gluetun's firewall is the kill switch and DNS goes through it, so the pod cannot resolve
   cluster names. Only qbittorrent is behind the VPN. Its UI settings are not in Git: network
   interface `tun0` (with "any interface", the trackers failed with "operation not permitted"
-  after a tunnel reconnect) and save paths under `/data/downloads`.
+  after a tunnel reconnect; a reconnect with `tun0` is untested, and restarting the pod clears
+  it) and save paths under `/data/downloads`.
   **radarr**, **sonarr** and **prowlarr** run on pi5 outside the VPN, config on `local-path`.
   radarr and sonarr mount the whole volume at `/data`, so imports can be hardlinks.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,

@@ -9,8 +9,8 @@ architecture.
 - **Kubernetes**: bare-metal kubeadm cluster with three nodes (two Lenovo ThinkCentre
   M720q and a Raspberry Pi 5), managed by Flux from `kubernetes/`.
 - **Proxmox VE**: runs TrueNAS SCALE in a VM (NFS/SMB, storage, backups, Omada
-  controller app) and VMs/LXCs for services not yet in Kubernetes (Pi-hole,
-  and Portainer with Homarr, Jellyfin, Radarr and Sonarr).
+  controller app) and LXCs for services not in Kubernetes (Pi-hole, Plex, Tailscale).
+  The old docker LXC (102) is no longer in use and is being retired.
 - **AWS**: Route53 hosts `magelssen.io`, used by cert-manager for DNS-01.
 - **Goal**: move the services on Proxmox into Kubernetes, and manage Proxmox and AWS
   as code.
@@ -46,4 +46,5 @@ architecture.
 - No secrets in plain text, anywhere. The repo is public. kubeconfigs, tokens, age
   keys, Terraform state and `.tfvars` files must never be committed.
 - Follow the existing conventions in each directory.
+- When a PR changes a version, update `docs/versions.md` in the same PR.
 - If something is unclear or looks risky, ask instead of guessing.
