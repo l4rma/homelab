@@ -11,6 +11,5 @@ spec:
     - dashboard.magelssen.io
   rules:
     - backendRefs:
-        - group: gateway.envoyproxy.io
-          kind: Backend
-          name: homarr
+        - name: homarr
+          port: 7575

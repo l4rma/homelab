@@ -3,5 +3,8 @@ kind: Kustomization
 namespace: homarr
 resources:
   - namespace.yaml
-  - backend.yaml
+  - externalsecret.yaml
+  - persistentvolumeclaim.yaml
+  - deployment.yaml
+  - service.yaml
   - httproute.yaml
