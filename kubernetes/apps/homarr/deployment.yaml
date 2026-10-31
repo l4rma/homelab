@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homarr
+spec:
+  replicas: 1
+  # Never two instances on the same database (SQLite).
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: homarr
+  template:
+    metadata:
+      labels:
+        app: homarr
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi5
+      containers:
+        - name: homarr
+          image: ghcr.io/homarr-labs/homarr:v2.10.1
+          env:
+            - name: PUID
+              value: "3000"
+            - name: PGID
+              value: "3000"
+            - name: TZ
+              value: Europe/Oslo
+            # Encrypts the credentials of integrations in the database. Changing it makes them unreadable.
+            - name: SECRET_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: homarr-secrets
+                  key: SECRET_ENCRYPTION_KEY
+          ports:
+            - name: http
+              containerPort: 7575
+          startupProbe:
+            httpGet:
+              path: /api/health/live
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /api/health/live
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # Estimated, not measured here: review after a week. No CPU limit.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          volumeMounts:
+            - name: appdata
+              mountPath: /appdata
+      volumes:
+        - name: appdata
+          persistentVolumeClaim:
+            claimName: homarr-appdata-pvc
