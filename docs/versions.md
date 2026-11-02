@@ -102,6 +102,7 @@ Image tags are in the Deployments under `kubernetes/apps/`.
 | Radarr | 6.4.4.10685 (`-ls324`) | 6.4.4.10685 | 2026-10-30 | [Radarr](https://github.com/Radarr/Radarr/releases) |
 | Sonarr | 4.0.20.3014 (`-ls1`) | 4.0.20.3014 | 2026-10-30 | [Sonarr](https://github.com/Sonarr/Sonarr/releases) |
 | Prowlarr | 2.7.0.5723 (`-ls166`) | 2.7.0.5723 | 2026-10-30 | [Prowlarr](https://github.com/Prowlarr/Prowlarr/releases) |
+| Audiobookshelf | 2.37.2 | 2.37.2 | 2026-11-02 | [audiobookshelf](https://github.com/advplyr/audiobookshelf/releases) |
 | Homarr | v2.10.1 | v2.10.1 | 2026-10-31 | [homarr](https://github.com/homarr-labs/homarr/releases) |
 | Home Assistant | 2026.10.4 | 2026.10.4 | 2026-10-28 | [home-assistant](https://github.com/home-assistant/core/releases) |
 | Uptime Kuma | 2.5.8 | 2.5.9 | 2026-10-28 | [uptime-kuma](https://github.com/louislam/uptime-kuma/releases) |

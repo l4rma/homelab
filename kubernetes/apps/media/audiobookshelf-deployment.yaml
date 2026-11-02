@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audiobookshelf
+spec:
+  replicas: 1
+  # Never two instances on the same database (SQLite).
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: audiobookshelf
+  template:
+    metadata:
+      labels:
+        app: audiobookshelf
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi5
+      # The image has no PUID/PGID, so run it as larma (owns DukesArchives) directly.
+      securityContext:
+        runAsUser: 3000
+        runAsGroup: 3000
+        runAsNonRoot: true
+      containers:
+        - name: audiobookshelf
+          image: ghcr.io/advplyr/audiobookshelf:2.37.2
+          env:
+            # The default port 80 is privileged, and the container does not run as root.
+            - name: PORT
+              value: "13378"
+            - name: TZ
+              value: Europe/Oslo
+          ports:
+            - name: http
+              containerPort: 13378
+          # /healthcheck needs no login and does not log every call.
+          startupProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # Estimated, not measured here: review after a week. No CPU limit.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: metadata
+              mountPath: /metadata
+            # Only the audiobooks folder, not the whole volume. It has no imports to hardlink.
+            - name: media
+              mountPath: /audiobooks
+              subPath: audiobooks
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: audiobookshelf-config-pvc
+        - name: metadata
+          persistentVolumeClaim:
+            claimName: audiobookshelf-metadata-pvc
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-dukesarchives-pvc

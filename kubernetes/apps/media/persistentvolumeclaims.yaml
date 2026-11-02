@@ -71,3 +71,29 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: local-path
+---
+# Audiobookshelf's database (SQLite, so not on NFS). Holds users and listening progress.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: audiobookshelf-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-path
+---
+# Covers, cache and Audiobookshelf's own backups.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: audiobookshelf-metadata-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path

@@ -21,3 +21,6 @@ resources:
   - prowlarr-deployment.yaml
   - prowlarr-service.yaml
   - prowlarr-httproute.yaml
+  - audiobookshelf-deployment.yaml
+  - audiobookshelf-service.yaml
+  - audiobookshelf-httproute.yaml
