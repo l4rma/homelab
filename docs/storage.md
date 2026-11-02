@@ -13,7 +13,7 @@ inherits that policy. Dark Souls names at the top level, plain names below.
 | Dataset | Contents | Backup policy |
 |---|---|---|
 | `AnorLondo` | Personal files: photos (Immich), documents (Nextcloud), SMB share | Highest, offsite. Irreplaceable. |
-| `DukesArchives` | Media library: `movies/`, `series/`, `downloads/` | Low. Can be downloaded again. |
+| `DukesArchives` | Media library: `movies/`, `series/`, `audiobooks/`, `downloads/` | Low. Can be downloaded again. |
 | `BlightTown` | Kubernetes app data over NFS, one child dataset per app | Medium |
 | `SensFortress` | The only Proxmox storage (ISOs, LXC templates, VM disks) | Low |
 | `UndeadParish` | Data for TrueNAS apps (Omada) | Medium |
@@ -25,7 +25,7 @@ Firelink
 ├── AnorLondo
 │   ├── immich            Immich originals, profile/ and backups/ (DB dumps)
 │   └── nextcloud         Nextcloud user files (planned)
-├── DukesArchives         movies/ series/ downloads/  (folders, not datasets)
+├── DukesArchives         movies/ series/ audiobooks/ downloads/  (folders, not datasets)
 ├── BlightTown
 │   ├── home-assistant
 │   ├── immich            Immich thumbs/ and encoded-video/ (can be regenerated)
@@ -109,7 +109,7 @@ unchanged snapshot only costs a few KB of metadata.
   child dataset as an empty, root-owned folder. Every app dataset needs its own share.
 - **Kubernetes PVs are static, and `spec.nfs.path` cannot be changed.** Keep the
   dataset at the path the PV points to.
-- **Do not put SQLite on NFS** (Uptime Kuma, the *arr apps, Jellyfin). Use local disk
+- **Do not put SQLite on NFS** (Uptime Kuma, the *arr apps, Jellyfin, Audiobookshelf). Use local disk
   in the cluster instead.
 - **Media stays one dataset.** Radarr and Sonarr hardlink from `downloads/` to
   `movies/` and `series/`, and hardlinks do not work across datasets or across

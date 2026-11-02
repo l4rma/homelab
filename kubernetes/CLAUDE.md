@@ -89,7 +89,7 @@ one and includes every subdirectory, so a new directory with its own
 ### Apps (`apps/`)
 Each has an `httproute.yaml` attached to the `https` listener of Gateway
 `envoy-gateway-system/main`, on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
-home-assistant uses `ha.magelssen.io`). Grafana's HTTPRoute comes from the
+home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`). Grafana's HTTPRoute comes from the
 kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hole record.
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
@@ -124,6 +124,10 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   it) and save paths under `/data/downloads`.
   **radarr**, **sonarr** and **prowlarr** run on pi5 outside the VPN, config on `local-path`.
   radarr and sonarr mount the whole volume at `/data`, so imports can be hardlinks.
+  **audiobookshelf** runs on pi5 on `audiobooks.magelssen.io`, as UID/GID 3000 on port 13378
+  (the image has no PUID/PGID). Config and metadata on `local-path`, and only the
+  `audiobooks/` folder of the volume, at `/audiobooks`. Libraries and users are set up in its
+  UI, not in Git.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,
   `SECRET_ENCRYPTION_KEY` from SSM. Boards are set up in its UI, not in Git.
 - **omada, pihole, proxmox, truenas**:
