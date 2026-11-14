@@ -171,3 +171,7 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
 - Ansible for the nodes, and a timed rebuild of the cluster from scratch
 - Crossplane with AWS: Route53, S3 for backups, possibly RDS and Bedrock
 - Possibly run the Claude agent in the cloud
+
+## License
+
+[MIT](LICENSE). To report a security problem, see [SECURITY.md](SECURITY.md).
