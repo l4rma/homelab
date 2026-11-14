@@ -68,6 +68,7 @@ The network is split into VLANs by purpose:
 | [`ansible/`](ansible/) | Node and NAS configuration. Not started. |
 | [`scripts/`](scripts/) | Helper scripts run locally, such as generating the read-only kubeconfig for Claude. |
 | [`docs/`](docs/) | Documentation, including [what runs at which version](docs/versions.md). |
+| [`.github/`](.github/) | Code owners and the ruleset for `main`. See [docs/github.md](docs/github.md). |
 | `CLAUDE.md` files | Instructions for Claude Code, at the root and per directory. |
 
 ## GitOps flow
