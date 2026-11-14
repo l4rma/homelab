@@ -10,47 +10,6 @@ about it on my blog at [magelssen.io/blog](https://magelssen.io/blog/k8s-part0/)
 
 ## Architecture
 
-```mermaid
-flowchart TB
-    subgraph workstation["Workstation"]
-        admin["Admin"]
-        claude["Claude Code<br/>(read-only agent)"]
-    end
-
-    subgraph github["GitHub"]
-        repo["homelab repo<br/>main branch"]
-    end
-
-    subgraph k8s["Kubernetes cluster (kubeadm, bare metal, VLAN 30)"]
-        direction TB
-        flux["Flux"]
-        ingress["Envoy Gateway + MetalLB"]
-        certmanager["cert-manager"]
-        apps["Apps"]
-        nodes["lenovo1 (control plane)<br/>lenovo2 (worker)<br/>pi5 (worker, arm64)"]
-    end
-
-    subgraph proxmox["Proxmox VE"]
-        direction TB
-        truenas["TrueNAS SCALE VM<br/>NFS/SMB, backups, Omada controller"]
-        otherservices["LXCs<br/>Pi-hole, Plex, Tailscale"]
-    end
-
-    route53["AWS Route53<br/>magelssen.io"]
-
-    claude -- "proposes changes on a branch" --> admin
-    admin -- "review, commit, merge" --> repo
-    flux -- "pulls main" --> repo
-    flux -- "applies" --> ingress
-    flux -- "applies" --> certmanager
-    flux -- "applies" --> apps
-    claude -. "read-only ServiceAccount" .-> k8s
-    certmanager -- "DNS-01" --> route53
-    ingress -- "routes to" --> apps
-    ingress -- "routes to services<br/>not yet in Kubernetes" --> proxmox
-    truenas -- "NFS volumes" --> apps
-```
-
 All services are reached at `<name>.magelssen.io` through Envoy Gateway (Gateway API)
 in the cluster, with a Let's Encrypt wildcard certificate. Services that still run on
 Proxmox are exposed through the cluster with an Envoy Gateway `Backend`, so they get the
@@ -156,21 +115,6 @@ as for a human operator. The repo is public, so no credentials are ever part of 
 setup in Git.
 
 Details: [docs/claude-agent.md](docs/claude-agent.md).
-
-## Roadmap
-
-- Move the remaining services on Proxmox and TrueNAS (Pi-hole, Omada) into Kubernetes
-- Upgrade Proxmox VE from 8 to 9 (see [docs/versions.md](docs/versions.md))
-- Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
-- Local backups: ZFS snapshots, laptop backups with restic (see [docs/backups.md](docs/backups.md)),
-  copies of app data and etcd
-- Offsite backups later: `AnorLondo`, the restic repositories and database backups to S3
-- Move cert-manager's Route53 key to External Secrets
-- Proxmox VMs and LXCs with Terraform
-- An MCP server for the NAS (the Proxmox MCP server is in place)
-- Ansible for the nodes, and a timed rebuild of the cluster from scratch
-- Crossplane with AWS: Route53, S3 for backups, possibly RDS and Bedrock
-- Possibly run the Claude agent in the cloud
 
 ## License
 
