@@ -35,13 +35,16 @@ Firelink
 │   └── omada
 └── Catacombs
     └── backups
+        ├── restic        Laptop backups (restic repositories, one per user, encrypted), see docs/backups.md
+        ├── k8s           Copies of Kubernetes app data (planned)
+        └── truenas       TrueNAS config exports (root only)
 ```
 
 ## Who uses what
 
 | Consumer | How | Path |
 |---|---|---|
-| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich`, `/mnt/Firelink/DukesArchives` |
+| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich`, `/mnt/Firelink/DukesArchives`, `/mnt/Firelink/Catacombs/backups/restic` |
 | Proxmox storage `SensFortress` | SMB (CIFS), mounted by Proxmox at `/mnt/pve/SensFortress` | `SensFortress` |
 | Plex (LXC 101) and the docker LXC (102, being retired) | SMB, `/etc/fstab` on pve at `/mnt/dukesarchives`, bind-mounted into the LXCs | `DukesArchives` |
 | Personal devices | SMB | `AnorLondo` |

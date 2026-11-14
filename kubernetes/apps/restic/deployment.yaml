@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rest-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rest-server
+  template:
+    metadata:
+      labels:
+        app: rest-server
+    spec:
+      # The image runs as root by default. Run as larma, who owns the repository folder.
+      securityContext:
+        runAsUser: 3000
+        runAsGroup: 3000
+        runAsNonRoot: true
+      containers:
+        - name: rest-server
+          image: restic/rest-server:0.14.0
+          # The image's entrypoint creates an htpasswd file in the data folder. Users come from
+          # the Secret instead, so start rest-server directly.
+          # --append-only: a laptop can add backups, but not delete or change them, so ransomware
+          # or a mistake on the laptop cannot destroy its history. Pruning runs on the server.
+          # --private-repos: each user only reaches the repository under /<user>/.
+          command:
+            - rest-server
+            - --path=/data
+            - --htpasswd-file=/etc/rest-server/htpasswd
+            - --listen=:8000
+            - --append-only
+            - --private-repos
+          env:
+            - name: TZ
+              value: Europe/Oslo
+          ports:
+            - name: http
+              containerPort: 8000
+          # Every path needs a login, so the probes only check the port.
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # Estimated, not measured here: review after the first backups. No CPU limit.
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: repositories
+              mountPath: /data
+            # A whole-folder mount, not subPath, so Secret updates reach the pod.
+            - name: htpasswd
+              mountPath: /etc/rest-server
+              readOnly: true
+      volumes:
+        - name: repositories
+          persistentVolumeClaim:
+            claimName: restic-repositories-pvc
+        - name: htpasswd
+          secret:
+            secretName: rest-server-htpasswd

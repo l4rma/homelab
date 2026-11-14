@@ -89,7 +89,7 @@ one and includes every subdirectory, so a new directory with its own
 ### Apps (`apps/`)
 Each has an `httproute.yaml` attached to the `https` listener of Gateway
 `envoy-gateway-system/main`, on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
-home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`). Grafana's HTTPRoute comes from the
+home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`). rest-server (restic) uses `restic.magelssen.io`. Grafana's HTTPRoute comes from the
 kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hole record.
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
@@ -128,6 +128,11 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   (the image has no PUID/PGID). Config and metadata on `local-path`, and only the
   `audiobooks/` folder of the volume, at `/audiobooks`. Libraries and users are set up in its
   UI, not in Git.
+- **restic**: `rest-server` for laptop backups, on `restic.magelssen.io`, as UID/GID 3000.
+  `--append-only` (laptops cannot delete or change backups) and `--private-repos` (each user
+  only reaches `/<user>/`). Repositories on NFS (`Catacombs/backups/restic`). Users come from
+  an htpasswd file in SSM (`/homelab/restic/htpasswd`), which rest-server reloads on change.
+  Pruning cannot run from the laptops in append-only mode. Laptop setup: `docs/backups.md`.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,
   `SECRET_ENCRYPTION_KEY` from SSM. Boards are set up in its UI, not in Git.
 - **omada, pihole, proxmox, truenas**:

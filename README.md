@@ -162,7 +162,9 @@ Details: [docs/claude-agent.md](docs/claude-agent.md).
 - Move the remaining services on Proxmox and TrueNAS (Pi-hole, Omada) into Kubernetes
 - Upgrade Proxmox VE from 8 to 9 (see [docs/versions.md](docs/versions.md))
 - Set up Nextcloud from scratch in Kubernetes (the old LXC is removed)
-- Backups: ZFS snapshots and offsite copies of `AnorLondo`, database backups to S3, etcd
+- Local backups: ZFS snapshots, laptop backups with restic (see [docs/backups.md](docs/backups.md)),
+  copies of app data and etcd
+- Offsite backups later: `AnorLondo`, the restic repositories and database backups to S3
 - Move cert-manager's Route53 key to External Secrets
 - Proxmox VMs and LXCs with Terraform
 - An MCP server for the NAS (the Proxmox MCP server is in place)
