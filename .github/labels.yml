@@ -1,0 +1,78 @@
+# All labels in the repository. Synced by .github/workflows/labels.yml: labels that are not
+# in this file are deleted. Type and area are labels; priority and size are fields on the
+# project board.
+
+# Type: what kind of work
+- name: type/bug
+  color: "#d73a4a"
+  description: Something is broken
+  from_name: bug
+- name: type/feature
+  color: "#a2eeef"
+  description: Something new, or a change to how something works
+  from_name: enhancement
+- name: type/maintenance
+  color: "#fbca04"
+  description: Upgrades, cleanup and other upkeep
+- name: type/incident
+  color: "#b60205"
+  description: An outage or data loss, with a write-up afterwards
+- name: type/docs
+  color: "#0075ca"
+  description: Documentation only
+  from_name: documentation
+- name: type/security
+  color: "#5319e7"
+  description: Security hardening or a security problem
+- name: type/epic
+  color: "#3e4b9e"
+  description: A phase or larger goal, tracked through its sub-issues
+
+# Area: which part of the homelab
+- name: area/kubernetes
+  color: "#c5def5"
+  description: Cluster, nodes and Flux
+- name: area/apps
+  color: "#c5def5"
+  description: "kubernetes/apps: the services that run in the cluster"
+- name: area/infrastructure
+  color: "#c5def5"
+  description: "kubernetes/infrastructure: gateway, certificates, storage, operators"
+- name: area/storage
+  color: "#c5def5"
+  description: TrueNAS, datasets, NFS and SMB
+- name: area/backups
+  color: "#c5def5"
+  description: Snapshots, restic and restore tests
+- name: area/proxmox
+  color: "#c5def5"
+  description: Proxmox VE, its VMs and LXCs
+- name: area/network
+  color: "#c5def5"
+  description: Omada, VLANs, DNS and Pi-hole
+- name: area/aws
+  color: "#c5def5"
+  description: Route53, SSM, S3 and IAM
+- name: area/terraform
+  color: "#c5def5"
+  description: terraform/
+- name: area/ansible
+  color: "#c5def5"
+  description: ansible/
+- name: area/github
+  color: "#c5def5"
+  description: Workflows, repository settings and templates
+- name: area/claude
+  color: "#c5def5"
+  description: The Claude agent, its access and MCP servers
+
+# State
+- name: manual-step
+  color: "#e99695"
+  description: Needs a change by hand outside Git (TrueNAS, Proxmox, AWS or a node)
+- name: blocked
+  color: "#000000"
+  description: Waiting on something else
+- name: dependencies
+  color: "#0366d6"
+  description: Version updates (Renovate)

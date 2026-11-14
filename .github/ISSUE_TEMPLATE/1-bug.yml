@@ -1,0 +1,30 @@
+name: Bug
+description: Something is broken or behaves wrong
+labels: [type/bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: What happens, and what should happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Where
+      description: Service, namespace, node, or host.
+      placeholder: immich / lenovo2 / TrueNAS
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Logs, events, error messages. No secrets.
+      render: text
+  - type: textarea
+    id: since
+    attributes:
+      label: Since when, and what changed
+      description: A merge, an upgrade, a reboot? Link the pull request if there is one.

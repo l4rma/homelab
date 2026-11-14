@@ -1,0 +1,20 @@
+name: pr-labeler
+
+# Adds area labels to a pull request from the paths it changes (.github/labeler.yml).
+# Uses pull_request, not pull_request_target: pull requests from forks get no labels, but
+# no workflow ever runs with write access on code from outside the repository.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  label:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/labeler@bf12e9b00b37c5c0ca2b87b79b2daf7891dbda13 # v7.0.0

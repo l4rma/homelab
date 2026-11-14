@@ -42,6 +42,9 @@ architecture.
 - All changes go through Git, never directly against a system. Flux (and later
   Terraform runs started by a human) roll out what is merged to `main`.
 - Create a new branch for every change. Explain what you change and why.
+- Work is tracked in GitHub issues (epics with sub-issues) and on the project board, see
+  `docs/github.md`. Pull requests follow `.github/pull_request_template.md`, link their
+  issue, and have a short title: it becomes the commit message on `main`.
 - Do not commit, push or merge unless asked.
 - No secrets in plain text, anywhere. The repo is public. kubeconfigs, tokens, age
   keys, Terraform state and `.tfvars` files must never be committed.

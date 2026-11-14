@@ -1,0 +1,54 @@
+# Area labels added to pull requests from the changed paths. Used by
+# .github/workflows/pr-labeler.yml.
+
+area/apps:
+  - changed-files:
+      - any-glob-to-any-file: kubernetes/apps/**
+
+area/infrastructure:
+  - changed-files:
+      - any-glob-to-any-file: kubernetes/infrastructure/**
+
+area/kubernetes:
+  - changed-files:
+      - any-glob-to-any-file:
+          - kubernetes/clusters/**
+          - docs/kubernetes-nodes.md
+
+area/storage:
+  - changed-files:
+      - any-glob-to-any-file: docs/storage.md
+
+area/backups:
+  - changed-files:
+      - any-glob-to-any-file:
+          - kubernetes/apps/restic/**
+          - docs/backups.md
+
+area/terraform:
+  - changed-files:
+      - any-glob-to-any-file: terraform/**
+
+area/ansible:
+  - changed-files:
+      - any-glob-to-any-file: ansible/**
+
+area/github:
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - docs/github.md
+
+area/claude:
+  - changed-files:
+      - any-glob-to-any-file:
+          - kubernetes/infrastructure/claude-readonly/**
+          - .claude/**
+          - .mcp.json
+          - scripts/mcp/**
+          - "**/CLAUDE.md"
+          - docs/claude-agent.md
+
+type/docs:
+  - changed-files:
+      - all-globs-to-all-files: "**/*.md"
