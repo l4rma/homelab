@@ -1,0 +1,20 @@
+# Static NFS volume on TrueNAS. spec.nfs is immutable: changing it means a new PV.
+# The restic repositories for laptop backups, one folder per user, owned by larma (3000:3000).
+# restic encrypts everything on the laptop, so the files are useless without each repository's password.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: restic-repositories-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 1Ti
+  claimRef:
+    name: restic-repositories-pvc
+    namespace: restic
+  nfs:
+    path: /mnt/Firelink/Catacombs/backups/restic
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
