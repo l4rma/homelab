@@ -1,0 +1,40 @@
+name: Incident
+description: An outage or data loss. Open it during the incident, finish the write-up afterwards.
+labels: [type/incident]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Blameless: describe what happened and why, not who. The goal is to stop it happening again.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What was down or lost, and for how long.
+    validations:
+      required: true
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline
+      description: Times for when it started, was noticed, was fixed.
+      placeholder: |
+        - 19:55 ...
+    validations:
+      required: true
+  - type: textarea
+    id: cause
+    attributes:
+      label: Cause
+      description: The root cause, once known.
+  - type: textarea
+    id: fix
+    attributes:
+      label: Fix
+      description: What was done to recover.
+  - type: textarea
+    id: actions
+    attributes:
+      label: Follow-ups
+      description: Changes so it does not happen again. Each one becomes its own issue.
+      placeholder: "- [ ] ..."

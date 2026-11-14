@@ -37,6 +37,48 @@ Docs: [About rulesets](https://docs.github.com/en/repositories/configuring-branc
 [`.github/CODEOWNERS`](../.github/CODEOWNERS): the owner is asked to review every pull
 request.
 
+## Issues and pull requests
+
+- **Issue forms** in [`.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE/): bug, feature or
+  change, maintenance, and incident (a blameless write-up after an outage). Blank issues are
+  off. Security problems go to private reporting instead ([SECURITY.md](../SECURITY.md)).
+- **Pull request template** ([`.github/pull_request_template.md`](../.github/pull_request_template.md)):
+  what and why, how it was verified, manual steps, rollback.
+- **Labels** are defined in [`.github/labels.yml`](../.github/labels.yml) and synced by a
+  workflow after each merge. Labels not in the file are deleted. `type/*` says what kind of
+  work, `area/*` which part of the homelab, `manual-step` that something is done by hand
+  outside Git. Pull requests get `area/*` labels from the paths they change
+  ([`.github/labeler.yml`](../.github/labeler.yml)).
+- **Epics:** each phase or larger goal is an issue labelled `type/epic`, with the steps as
+  [sub-issues](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues).
+
+## Project board
+
+[Homelab](https://github.com/users/l4rma/projects) (GitHub Projects), made by hand:
+
+| Field | Values |
+|---|---|
+| Status | Backlog, Ready, In progress, In review, Done |
+| Priority | P0 (now, something is broken), P1 (next), P2 (later), P3 (someday) |
+| Size | S (an hour), M (an evening), L (a weekend), XL (split it) |
+
+Views: **Board** (by Status), **Epics** (table grouped by parent issue), **Roadmap** (by
+Priority). Built-in workflows: new issues and pull requests from this repository are added
+as Backlog, and closed or merged items move to Done.
+
+## Workflows
+
+All in [`.github/workflows/`](../.github/workflows/). Every workflow starts with
+`permissions: {}` and each job asks only for what it needs. Actions are pinned to a full
+commit SHA with the version in a comment, as GitHub's
+[secure use reference](https://docs.github.com/en/actions/reference/security/secure-use)
+recommends, because a tag can be moved to other code.
+
+| Workflow | What it does |
+|---|---|
+| `labels.yml` | Syncs labels from `.github/labels.yml` (dry run on pull requests) |
+| `pr-labeler.yml` | Adds `area/*` labels to pull requests. Uses `pull_request`, not `pull_request_target`, so code from forks never runs with write access |
+
 ## Settings (by hand)
 
 | Where | Setting |

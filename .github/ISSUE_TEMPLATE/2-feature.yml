@@ -1,0 +1,31 @@
+name: Feature or change
+description: Something new, or a change to how something works
+labels: [type/feature]
+body:
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: The problem or goal.
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: The proposed change. Options considered, if any.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: How we know it works.
+      placeholder: "- [ ] ..."
+    validations:
+      required: true
+  - type: textarea
+    id: manual
+    attributes:
+      label: Manual steps
+      description: Anything done by hand outside Git (TrueNAS, Proxmox, AWS, a node). Add the manual-step label if so.

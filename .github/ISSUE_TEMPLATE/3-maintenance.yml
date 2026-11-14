@@ -1,0 +1,30 @@
+name: Maintenance
+description: An upgrade, cleanup or other upkeep
+labels: [type/maintenance]
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      placeholder: Proxmox VE 8 to 9
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why now
+      description: End of life, security fix, a feature we need, or tidying up.
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risk and rollback
+      description: What can break, and how to get back. Release notes read?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      placeholder: "- [ ] ..."
