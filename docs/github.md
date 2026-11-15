@@ -72,13 +72,16 @@ All in [`.github/workflows/`](../.github/workflows/). Every workflow starts with
 `permissions: {}` and each job asks only for what it needs. Actions are pinned to a full
 commit SHA with the version in a comment, as GitHub's
 [secure use reference](https://docs.github.com/en/actions/reference/security/secure-use)
-recommends, because a tag can be moved to other code.
+recommends, because a tag can be moved to other code. The repository setting "Require actions
+to be pinned to a full-length commit SHA" enforces it: a workflow with an unpinned action does
+not run.
 
 | Workflow | What it does |
 |---|---|
 | `labels.yml` | Syncs labels from `.github/labels.yml` (dry run on pull requests) |
 | `pr-labeler.yml` | Adds `area/*` labels to pull requests. Uses `pull_request`, not `pull_request_target`, so code from forks never runs with write access |
 | `lint.yml` | The required checks: `pre-commit` and `kubernetes` (below) |
+| `scorecard.yml` | [OpenSSF Scorecard](https://scorecard.dev/) grades the repository's security practices (branch protection, pinned actions, token permissions, ...) weekly and after each merge. Results under Security → Code scanning and in the README badge. Some checks cannot pass in a one-person repository (Code-Review, Contributors, Fuzzing) |
 
 ## Checks
 
@@ -86,7 +89,7 @@ Two required checks run on every pull request (`lint.yml`). Run them locally bef
 
 | Check | What | Locally |
 |---|---|---|
-| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, gitleaks | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
+| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, [zizmor](https://docs.zizmor.sh/) (security audit of the workflows: template injection, permissions, credentials, unpinned actions), gitleaks | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
 | `kubernetes` | [flux-schema](https://github.com/fluxcd/flux-schema) builds every kustomize directory under `kubernetes/` and validates each resource against the Kubernetes, Flux and CRD schemas (Gateway API, Envoy Gateway, cert-manager, External Secrets, CloudNativePG ...). Catches wrong fields and types before Flux does | See below |
 
 ```sh
@@ -112,5 +115,6 @@ policies in CI and in the cluster.
 |---|---|
 | General → Pull Requests | Only "Allow squash merging", default message "Pull request title"; "Always suggest updating pull request branches"; "Allow auto-merge"; "Automatically delete head branches" |
 | General → Features | Wiki off, Issues on, Projects on |
+| Actions → General | "Require actions to be pinned to a full-length commit SHA" on |
 | About (on the repo page) | Description, no topics |
 | Advanced Security | Private vulnerability reporting, dependency graph, Dependabot alerts, secret scanning and push protection on. CodeQL default setup. Dependabot security updates off: Renovate will open those pull requests |
