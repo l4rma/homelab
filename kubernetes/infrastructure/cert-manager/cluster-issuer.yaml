@@ -11,7 +11,7 @@ spec:
     solvers:
     - selector:
         dnsZones:
-          - "magelssen.io"
+        - "magelssen.io"
       dns01:
         route53:
           region: eu-west-1
@@ -21,4 +21,3 @@ spec:
           secretAccessKeySecretRef:
             name: cert-manager-iam-creds
             key: secret-access-key
-

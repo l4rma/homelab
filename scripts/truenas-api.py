@@ -20,6 +20,7 @@ Each param is parsed as JSON, or passed as a string if it is not valid JSON:
   scripts/truenas-api.py system.info
   scripts/truenas-api.py pool.query '[["name", "=", "tank"]]'
 """
+
 import json
 import os
 import sys
@@ -57,7 +58,9 @@ def main() -> int:
         print(__doc__.strip(), file=sys.stderr)
         return 2
     if not ENV_FILE.is_file():
-        print(f"ERROR: {ENV_FILE} not found. See docs/claude-agent.md.", file=sys.stderr)
+        print(
+            f"ERROR: {ENV_FILE} not found. See docs/claude-agent.md.", file=sys.stderr
+        )
         return 1
 
     env = read_env_file(ENV_FILE)

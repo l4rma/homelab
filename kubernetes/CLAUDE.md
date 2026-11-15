@@ -56,6 +56,7 @@ one and includes every subdirectory, so a new directory with its own
 ## Contents
 
 ### Infrastructure (`infrastructure/`)
+
 - **cert-manager** v1.19.2: `ClusterIssuer letsencrypt-prod`, Route53 DNS-01 for
   `magelssen.io`. The AWS credentials (`cert-manager/cert-manager-iam-creds`) were
   created manually and are not in Git.
@@ -87,10 +88,12 @@ one and includes every subdirectory, so a new directory with its own
   `kubectl top`
 
 ### Apps (`apps/`)
+
 Each has an `httproute.yaml` attached to the `https` listener of Gateway
 `envoy-gateway-system/main`, on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
 home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`). rest-server (restic) uses `restic.magelssen.io`. Grafana's HTTPRoute comes from the
 kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hole record.
+
 - **podinfo**: runs in the cluster
 - **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
   Service, reached on `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
@@ -150,7 +153,8 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   `httproute.yaml`, `backend.yaml`, `kustomization.yaml`).
 - Run `kubectl kustomize <dir>` on every directory you change before saying you are
   done. For `clusters/homelab`, `infrastructure` and `apps`, build with a generated root
-  `kustomization.yaml` in a scratch copy, since Flux generates it.
+  `kustomization.yaml` in a scratch copy, since Flux generates it. Also run the
+  `kubernetes` check from `docs/github.md` (flux-schema), which a pull request must pass.
 - All Kustomizations have `prune: true`. A Kustomization that points to a path that
   exists but has wrong or incomplete content deletes resources from the cluster.
   - Never move files and change paths in the same step. Use copy, switch path, verify,
@@ -164,10 +168,12 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
 ## Troubleshooting
 
 Start with:
+
 ```sh
 flux get all -A
 kubectl get events -A --sort-by=.lastTimestamp
 ```
+
 Without the `flux` CLI: `kubectl get kustomizations,gitrepositories,helmreleases,helmrepositories -A`.
 
 Then `kubectl describe` the failing resource, and `flux logs` or

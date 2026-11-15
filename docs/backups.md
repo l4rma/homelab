@@ -42,9 +42,11 @@ Each laptop has two passwords. Keep both in the password manager:
 
 1. Pick a user name, for example `<user>-<hostname>`, and create the login hash (needs
    `apache2-utils`). It asks for the login password:
+
    ```sh
    htpasswd -nB <user>-<hostname>
    ```
+
 2. Add the printed line to the SSM parameter `/homelab/restic/htpasswd`, one line per laptop.
    The Secret refreshes within an hour (to hurry it, annotate the ExternalSecret:
    `kubectl annotate externalsecret -n restic rest-server-htpasswd force-sync=$(date +%s) --overwrite`),
@@ -52,16 +54,20 @@ Each laptop has two passwords. Keep both in the password manager:
 3. On the laptop, install restic (`sudo apt install restic`, or see the
    [install guide](https://restic.readthedocs.io/en/stable/020_installation.html)), and put the
    settings in a file only you can read, for example `~/.config/restic/env`:
+
    ```sh
    export RESTIC_REPOSITORY="rest:https://<user>-<hostname>:<login-password>@restic.magelssen.io/<user>-<hostname>/"
    export RESTIC_PASSWORD_FILE="$HOME/.config/restic/password"   # the repository password
    ```
+
 4. Create the repository and take the first backup:
+
    ```sh
    . ~/.config/restic/env
    restic init
    restic backup ~ --exclude-caches --exclude ~/Downloads --exclude ~/.cache
    ```
+
 5. Schedule it with a systemd user timer (or cron) that runs the same `restic backup` command,
    for example every hour. For a desktop app instead of the command line,
    [Backrest](https://github.com/garethgeorge/backrest) is a web UI for restic that can use the
@@ -76,6 +82,7 @@ restic restore latest --target /tmp/restore          # or a snapshot ID instead 
 restic restore latest --target /tmp/restore --include /home/<user>/Documents/file.txt
 restic mount /mnt/restic                             # browse all snapshots as folders
 ```
+
 A new or reinstalled laptop needs only the two passwords and the repository URL.
 
 ## Not backed up on purpose

@@ -20,7 +20,7 @@ inherits that policy. Dark Souls names at the top level, plain names below.
 | `Catacombs` | Backup target only | (is the backup) |
 | `ix-apps` | TrueNAS system dataset | Do not touch |
 
-```
+```text
 Firelink
 ├── AnorLondo
 │   ├── immich            Immich originals, profile/ and backups/ (DB dumps)

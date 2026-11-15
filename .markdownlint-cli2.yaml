@@ -1,0 +1,10 @@
+# https://github.com/DavidAnson/markdownlint-cli2#markdownlint-cli2yaml
+config:
+  # Tables and links are long; prose is wrapped by hand
+  MD013: false
+  # The repo writes table separators as |---|---|
+  MD060: false
+  # The pull request template starts with a level 2 heading on purpose
+  MD041: false
+ignores:
+  - tmp/**

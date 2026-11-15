@@ -1,0 +1,41 @@
+name: lint
+
+# Checks every pull request. Both jobs are required in the ruleset on main
+# (.github/rulesets/main.json), so no path filters: a required check must always run.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+      - name: Run all hooks
+        run: pipx run pre-commit==4.7.0 run --all-files --show-diff-on-failure --color always
+
+  kubernetes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Builds every kustomize directory and validates each resource against the
+      # Kubernetes, Flux and ecosystem (CRD) schemas. https://github.com/fluxcd/flux-schema
+      - name: Validate manifests
+        uses: docker://ghcr.io/fluxcd/flux-schema:v0.17.0@sha256:67de85955e82f98de6e5de8273b9ac6b8e03e83210340666dd78cf61d23db0ef
+        with:
+          args: validate ./kubernetes --schema-location default --schema-location ecosystem

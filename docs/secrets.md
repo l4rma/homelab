@@ -5,7 +5,7 @@ Secrets live in **AWS SSM Parameter Store** (region `eu-west-1`) and
 [external-secrets](https://external-secrets.io/) copies them into the cluster as
 normal Kubernetes Secrets.
 
-```
+```text
 AWS SSM /homelab/<namespace>/<name>   (SecureString)
         │  read by the IAM user homelab-external-secrets
         ▼
@@ -33,7 +33,7 @@ Same pattern as cert-manager's Route53 key. Later this moves to Terraform.
 
 1. Store the value in AWS (it never touches the repo):
 
-   ```
+   ```sh
    aws ssm put-parameter --region eu-west-1 --type SecureString \
      --name /homelab/<namespace>/<name> --value '<value>'
    ```
@@ -58,6 +58,7 @@ Same pattern as cert-manager's Route53 key. Later this moves to Terraform.
          remoteRef:
            key: /homelab/<namespace>/db-password
    ```
+
 3. Check `kubectl -n <namespace> get externalsecret`: `STATUS` should be
    `SecretSynced`.
 
