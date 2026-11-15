@@ -1,5 +1,8 @@
 # homelab
 
+[![lint](https://github.com/l4rma/homelab/actions/workflows/lint.yml/badge.svg)](https://github.com/l4rma/homelab/actions/workflows/lint.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/l4rma/homelab/badge)](https://scorecard.dev/viewer/?uri=github.com/l4rma/homelab)
+
 My homelab, as code. A bare-metal Kubernetes cluster managed with GitOps, a Proxmox
 host for everything that is not in Kubernetes yet, and a NAS for storage and backups.
 Later also Terraform, Ansible, Crossplane and AWS.
