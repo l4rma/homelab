@@ -1,0 +1,12 @@
+# Posts a commit status on GitHub for each commit Flux applies: a green check when the
+# Kustomization applied it, a red cross when it failed.
+# https://fluxcd.io/flux/components/notification/providers/#git-commit-status-updates
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Provider
+metadata:
+  name: github-status
+spec:
+  type: github
+  address: https://github.com/l4rma/homelab
+  secretRef:
+    name: github-app
