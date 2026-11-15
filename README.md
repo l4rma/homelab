@@ -70,8 +70,8 @@ The network is split into VLANs by purpose:
 | [`terraform/`](terraform/) | Proxmox and AWS as code. Not started. |
 | [`ansible/`](ansible/) | Node and NAS configuration. Not started. |
 | [`scripts/`](scripts/) | Helper scripts run locally, such as generating the read-only kubeconfig for Claude. |
-| [`docs/`](docs/) | Documentation, including [what runs at which version](docs/versions.md). |
-| [`.github/`](.github/) | Workflows, issue forms, the pull request template, labels, code owners and the ruleset for `main`. See [docs/github.md](docs/github.md). |
+| [`docs/`](docs/) | Documentation, including [dependency updates with Renovate](docs/dependencies.md) and [versions outside Git](docs/versions.md). |
+| [`.github/`](.github/) | Workflows, issue forms, the pull request template, labels, code owners, the Renovate configuration and the ruleset for `main`. See [docs/github.md](docs/github.md). |
 | `CLAUDE.md` files | Instructions for Claude Code, at the root and per directory. |
 
 ## GitOps flow
