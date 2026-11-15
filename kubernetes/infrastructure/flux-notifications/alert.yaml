@@ -1,0 +1,17 @@
+# Sends the events of all Kustomizations (flux-system, infrastructure, apps) to GitHub.
+# Each gets its own status on the commit, named kustomization/<name>/<id>.
+apiVersion: notification.toolkit.fluxcd.io/v1beta3
+kind: Alert
+metadata:
+  name: github-status
+spec:
+  providerRef:
+    name: github-status
+  eventSeverity: info
+  eventSources:
+    - kind: Kustomization
+      name: "*"
+  # apps waits for infrastructure after each commit. That event is info, so it would show as a
+  # green "Dependencies do not meet ready condition" until the real result replaces it.
+  exclusionList:
+    - "^Dependencies do not meet ready condition"

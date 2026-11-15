@@ -72,6 +72,10 @@ one and includes every subdirectory, so a new directory with its own
   (`external-secrets/aws-ssm-credentials`) was created manually and is not in Git. How to
   add a secret: `docs/secrets.md`
 - **claude-readonly**: the read-only ServiceAccount and RBAC for Claude Code
+- **flux-notifications** (in `flux-system`): a `github` Provider and an Alert for all
+  Kustomizations, so each commit on `main` gets a GitHub commit status per Kustomization
+  (applied or failed). Logs in as the GitHub App `larma-homelab-flux` (commit statuses only); its
+  private key is in SSM (`/homelab/flux-system/github-app-private-key`)
 - **local-path-provisioner** v0.0.37: upstream manifest in the repo, patched to `Retain`
   and a pinned busybox. Volumes under `/opt/local-path-provisioner` on each node
 - **intel-gpu-plugin** v0.37.1: upstream DaemonSet in the repo, on the amd64 nodes only.

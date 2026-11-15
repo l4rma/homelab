@@ -109,6 +109,32 @@ with malicious code in March 2026
 checks on the manifests are planned with Kyverno (phase 15), which can run the same
 policies in CI and in the cluster.
 
+## Deployment status
+
+The checks above run before a merge. After the merge, Flux posts a commit status on each
+commit on `main`, one per Kustomization (`kustomization/flux-system/...`,
+`kustomization/infrastructure/...`, `kustomization/apps/...`): green when Flux applied the
+commit, red when it failed. So the commit list on GitHub shows what actually runs in the
+cluster. It is set up in `kubernetes/infrastructure/flux-notifications/`
+([Flux docs](https://fluxcd.io/flux/components/notification/providers/#git-commit-status-updates)).
+
+Green means the Kustomization applied without errors. It does not wait for the pods to be
+healthy, because the Kustomizations do not use `wait` or health checks.
+
+Flux logs in as a GitHub App made for this, `larma-homelab-flux`, instead of a personal token: it
+can only write commit statuses on this repository, does not expire, and shows up as its own
+bot. To make it again:
+
+1. Settings → Developer settings → GitHub Apps → New GitHub App. Name `larma-homelab-flux`,
+   homepage `https://github.com/l4rma/homelab`, Webhook off. Repository permissions:
+   Commit statuses "Read and write" (nothing else). "Only on this account".
+2. Note the App ID, and generate a private key (a `.pem` file is downloaded).
+3. Install App → Only select repositories → `homelab`. The installation ID is the number at
+   the end of the URL.
+4. Store the key in SSM, then delete the file:
+   `aws ssm put-parameter --region eu-west-1 --type SecureString --name /homelab/flux-system/github-app-private-key --value file://<file>.pem`
+5. Put the two IDs in `kubernetes/infrastructure/flux-notifications/externalsecret.yaml`.
+
 ## Settings (by hand)
 
 | Where | Setting |
@@ -118,4 +144,4 @@ policies in CI and in the cluster.
 | Actions → General | "Require actions to be pinned to a full-length commit SHA" on |
 | About (on the repo page) | Description, no topics |
 | Advanced Security | Private vulnerability reporting, dependency graph, Dependabot alerts, secret scanning and push protection on. CodeQL default setup. Dependabot security updates off: Renovate reads the alerts and opens those pull requests |
-| GitHub Apps | [Mend Renovate](https://github.com/apps/renovate), only for this repository ([dependencies.md](dependencies.md)) |
+| GitHub Apps | [Mend Renovate](https://github.com/apps/renovate), only for this repository ([dependencies.md](dependencies.md)). `larma-homelab-flux`, own app, commit statuses only ([Deployment status](#deployment-status)) |
