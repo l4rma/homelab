@@ -17,7 +17,7 @@ static NFS PersistentVolumes itself, on whichever node the pod lands. Without it
 stays in `Init` or `ContainerCreating` with `mount failed: exit status 32 ... bad option;
 ... you might need a /sbin/mount.<type> helper program`.
 
-```
+```sh
 sudo apt-get update && sudo apt-get install -y nfs-common
 ```
 
@@ -63,7 +63,7 @@ With kubeadm the ConfigMap is the source of truth. `kubeadm upgrade` rewrites ea
 1. `kubectl -n kube-system edit cm kubelet-config` (back it up first with `get -o yaml`).
 2. On each node, one at a time, workers first and `lenovo1` last:
 
-   ```
+   ```sh
    sudo cp /var/lib/kubelet/config.yaml /var/lib/kubelet/config.yaml.bak-<date>
    sudo kubeadm upgrade node phase kubelet-config
    sudo diff /var/lib/kubelet/config.yaml.bak-<date> /var/lib/kubelet/config.yaml
@@ -85,7 +85,7 @@ taint was removed so it can run workloads. Without it, only `lenovo2` would be l
 amd64 and iGPU workloads (Immich, Jellyfin). The kubelet reservations above are what make
 sharing the node with etcd safe.
 
-```
+```sh
 kubectl taint nodes lenovo1 node-role.kubernetes.io/control-plane:NoSchedule-
 ```
 

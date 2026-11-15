@@ -95,7 +95,7 @@ spec:
               memory: 1536Mi
             limits:
               memory: 3Gi
-              gpu.intel.com/i915: 1
+              gpu.intel.com/i915: "1"
           volumeMounts:
             - name: library
               mountPath: /data

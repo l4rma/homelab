@@ -22,12 +22,12 @@ the file under Settings → Rules → Rulesets.)
 | Changes only through a pull request | Every change is reviewed and recorded, also when made by the owner |
 | Squash merge only, linear history | One commit per pull request, named after the PR title. A rollback is one `git revert` |
 | Conversations resolved before merge | Review comments are answered, not forgotten |
+| Checks `pre-commit` and `kubernetes` must pass | Nothing broken or invalid reaches `main`, where Flux applies it (see Checks) |
 | No bypass | The rules apply to everyone, including admins |
 
 Approvals are set to 0, because GitHub does not let anyone approve their own pull request
 and this is a one-person repository. They go up to 1, with code owner review, once Claude
 opens pull requests from its own account ([docs/claude-agent.md](claude-agent.md)).
-Required status checks are added together with the checks themselves.
 
 Docs: [About rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets),
 [available rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).
@@ -78,12 +78,39 @@ recommends, because a tag can be moved to other code.
 |---|---|
 | `labels.yml` | Syncs labels from `.github/labels.yml` (dry run on pull requests) |
 | `pr-labeler.yml` | Adds `area/*` labels to pull requests. Uses `pull_request`, not `pull_request_target`, so code from forks never runs with write access |
+| `lint.yml` | The required checks: `pre-commit` and `kubernetes` (below) |
+
+## Checks
+
+Two required checks run on every pull request (`lint.yml`). Run them locally before pushing:
+
+| Check | What | Locally |
+|---|---|---|
+| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, gitleaks | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
+| `kubernetes` | [flux-schema](https://github.com/fluxcd/flux-schema) builds every kustomize directory under `kubernetes/` and validates each resource against the Kubernetes, Flux and CRD schemas (Gateway API, Envoy Gateway, cert-manager, External Secrets, CloudNativePG ...). Catches wrong fields and types before Flux does | See below |
+
+```sh
+docker run --rm -v "$PWD":/repo:ro -w /repo ghcr.io/fluxcd/flux-schema:v0.17.0 \
+  validate ./kubernetes --schema-location default --schema-location ecosystem
+```
+
+The values inside a `HelmRelease` are not checked against the chart: helm-controller does
+that when it installs. flux-schema is in preview; the version is pinned and updated by
+Renovate.
+
+Why these tools: pre-commit runs the same hooks on a laptop and in CI, so a pull request
+fails for the same reasons it would fail locally, and every hook is pinned to a commit.
+Not used: Trivy for configuration scanning. Its GitHub Action had 76 of 77 tags replaced
+with malicious code in March 2026
+([CVE-2026-33634](https://www.aquasec.com/blog/trivy-supply-chain-attack/)), and policy
+checks on the manifests are planned with Kyverno (phase 15), which can run the same
+policies in CI and in the cluster.
 
 ## Settings (by hand)
 
 | Where | Setting |
 |---|---|
-| General → Pull Requests | Only "Allow squash merging", default message "Pull request title and description"; "Always suggest updating pull request branches"; "Allow auto-merge"; "Automatically delete head branches" |
+| General → Pull Requests | Only "Allow squash merging", default message "Pull request title"; "Always suggest updating pull request branches"; "Allow auto-merge"; "Automatically delete head branches" |
 | General → Features | Wiki off, Issues on, Projects on |
-| About (on the repo page) | Description and topics |
+| About (on the repo page) | Description, no topics |
 | Advanced Security | Private vulnerability reporting, dependency graph, Dependabot alerts, secret scanning and push protection on. CodeQL default setup. Dependabot security updates off: Renovate will open those pull requests |
