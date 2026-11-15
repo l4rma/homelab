@@ -117,4 +117,5 @@ policies in CI and in the cluster.
 | General → Features | Wiki off, Issues on, Projects on |
 | Actions → General | "Require actions to be pinned to a full-length commit SHA" on |
 | About (on the repo page) | Description, no topics |
-| Advanced Security | Private vulnerability reporting, dependency graph, Dependabot alerts, secret scanning and push protection on. CodeQL default setup. Dependabot security updates off: Renovate will open those pull requests |
+| Advanced Security | Private vulnerability reporting, dependency graph, Dependabot alerts, secret scanning and push protection on. CodeQL default setup. Dependabot security updates off: Renovate reads the alerts and opens those pull requests |
+| GitHub Apps | [Mend Renovate](https://github.com/apps/renovate), only for this repository ([dependencies.md](dependencies.md)) |

@@ -51,5 +51,7 @@ architecture.
 - No secrets in plain text, anywhere. The repo is public. kubeconfigs, tokens, age
   keys, Terraform state and `.tfvars` files must never be committed.
 - Follow the existing conventions in each directory.
-- When a PR changes a version, update `docs/versions.md` in the same PR.
+- Versions pinned in Git are updated by Renovate (`docs/dependencies.md`). When a PR changes
+  a version Renovate cannot see (hosts, Kubernetes itself, services outside Kubernetes),
+  update `docs/versions.md` in the same PR.
 - If something is unclear or looks risky, ask instead of guessing.

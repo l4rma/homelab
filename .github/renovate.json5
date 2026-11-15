@@ -1,0 +1,123 @@
+// Renovate: opens pull requests when a dependency in this repository has a new version.
+// Runs as the Mend Renovate GitHub App. How it works and why: docs/dependencies.md
+// Options: https://docs.renovatebot.com/configuration-options/
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['config:recommended'],
+  timezone: 'Europe/Oslo',
+  // Pull requests are opened on Monday morning, ready for the week. The Dependency Dashboard
+  // issue lists everything. The window is long because the hosted app runs about every 4 hours.
+  schedule: ['* 0-9 * * 1'],
+  dependencyDashboard: true,
+  labels: ['dependencies'],
+  // Never merges by itself: main is what Flux rolls out to the cluster.
+  automerge: false,
+  // Wait 14 days after a release. Most broken or hijacked releases are found and pulled
+  // within days. Releases without a timestamp (some registries) are not held back.
+  minimumReleaseAge: '14 days',
+  minimumReleaseAgeBehaviour: 'timestamp-optional',
+  // A major update is only opened when ticked in the Dependency Dashboard: it needs
+  // reading and often a backup first.
+  major: {
+    dependencyDashboardApproval: true,
+  },
+  // The repository's own files. Flux (HelmReleases, HelmRepositories, gotk-components) and
+  // plain Kubernetes manifests (image:) under kubernetes/.
+  flux: {
+    managerFilePatterns: ['/^kubernetes/.+\\.ya?ml$/'],
+  },
+  kubernetes: {
+    managerFilePatterns: ['/^kubernetes/.+\\.ya?ml$/'],
+  },
+  // Off by default in Renovate. The revs are SHAs with a `# frozen: vX.Y.Z` comment.
+  'pre-commit': {
+    enabled: true,
+  },
+  customManagers: [
+    {
+      // CloudNativePG's Cluster has imageName, not image
+      customType: 'regex',
+      managerFilePatterns: ['/^kubernetes/.+\\.ya?ml$/'],
+      matchStrings: ['imageName: (?<depName>[^:\\s]+):(?<currentValue>\\S+)'],
+      datasourceTemplate: 'docker',
+    },
+    {
+      // pre-commit itself, in the lint workflow
+      customType: 'regex',
+      managerFilePatterns: ['/^\\.github/workflows/.+\\.ya?ml$/'],
+      matchStrings: ['pipx run pre-commit==(?<currentValue>\\S+)'],
+      depNameTemplate: 'pre-commit',
+      datasourceTemplate: 'pypi',
+    },
+    {
+      // The flux-schema command in the docs, kept on the same version as lint.yml
+      customType: 'regex',
+      managerFilePatterns: ['/^docs/.+\\.md$/'],
+      matchStrings: ['(?<depName>ghcr\\.io/fluxcd/flux-schema):(?<currentValue>v[\\d.]+)'],
+      datasourceTemplate: 'docker',
+    },
+  ],
+  packageRules: [
+    {
+      // Flux's own controllers are updated as one, by the flux manager (it regenerates
+      // gotk-components.yaml), not image by image.
+      matchManagers: ['kubernetes'],
+      matchFileNames: ['kubernetes/clusters/homelab/flux-system/gotk-components.yaml'],
+      enabled: false,
+    },
+    {
+      // Server and machine learning must run the same version
+      matchPackageNames: ['ghcr.io/immich-app/**'],
+      groupName: 'Immich',
+    },
+    {
+      // CI only, nothing in the cluster changes: one pull request for all of them
+      matchManagers: ['github-actions', 'pre-commit'],
+      matchUpdateTypes: ['minor', 'patch', 'digest'],
+      groupName: 'CI tools',
+    },
+    {
+      // In lint.yml and in docs/github.md. After the rule above, so both end up in this group.
+      matchPackageNames: ['ghcr.io/fluxcd/flux-schema'],
+      groupName: 'flux-schema',
+    },
+    {
+      // linuxserver.io tags: <app version>-ls<build>. The default Docker versioning sees
+      // "-ls324" as a variant that must stay the same, and would never update.
+      matchPackageNames: [
+        'lscr.io/linuxserver/radarr',
+        'lscr.io/linuxserver/sonarr',
+        'lscr.io/linuxserver/prowlarr',
+      ],
+      versioning: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-ls(?<revision>\\d+)$',
+    },
+    {
+      // 5.3.0_v2.1.2-ls485: qBittorrent, libtorrent, linuxserver build
+      matchPackageNames: ['lscr.io/linuxserver/qbittorrent'],
+      versioning: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)_v\\d+\\.\\d+\\.\\d+-ls(?<build>\\d+)$',
+    },
+    {
+      // 10.11.6ubu2404-ls22: Jellyfin, Ubuntu base, linuxserver build
+      matchPackageNames: ['lscr.io/linuxserver/jellyfin'],
+      versioning: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?<compatibility>ubu\\d+)-ls(?<build>\\d+)$',
+    },
+    {
+      // 18.6-1.1.1: PostgreSQL major.minor, then VectorChord. A PostgreSQL major (18 to 19)
+      // needs a dump and restore, so it is a major update here.
+      matchPackageNames: ['ghcr.io/tensorchord/cloudnative-vectorchord'],
+      versioning: 'regex:^(?<major>\\d+)\\.(?<minor>\\d+)-(?<patch>\\d+)\\.(?<build>\\d+)\\.(?<revision>\\d+)$',
+    },
+    {
+      // Stateful, with no simple way back: labelled so the pull request is read carefully
+      // and a backup or snapshot is taken first (see docs/versions.md).
+      matchPackageNames: [
+        'ghcr.io/immich-app/**',
+        'ghcr.io/tensorchord/cloudnative-vectorchord',
+        'cloudnative-pg',
+        'lscr.io/linuxserver/jellyfin',
+        'ghcr.io/home-assistant/home-assistant',
+      ],
+      addLabels: ['manual-step'],
+    },
+  ],
+}

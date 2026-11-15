@@ -1,22 +1,25 @@
 # Versions
 
-What runs in the homelab, what is newest upstream, and when each version last changed.
-Everything is pinned and nothing updates by itself, so this list is how updates get noticed.
+What Renovate cannot see: the hosts, Kubernetes itself, and the services outside
+Kubernetes. Everything pinned in Git (Helm charts, images, Flux, actions, pre-commit hooks)
+is watched by Renovate, and its Dependency Dashboard issue lists what is behind. See
+[dependencies.md](dependencies.md).
 
 **Last check: 2026-10-31.** Next check: first weekend of each month.
 
 ## Monthly check
 
-1. Compare the running versions with the sources below, and update the tables and the
+1. Compare the running versions below with the sources, and update the tables and the
    **Last check** date, also when nothing changed.
 2. Read the release notes before updating anything that is behind, and move newly found
    problems to [Needs attention](#needs-attention).
-3. Update one thing per PR, and add a line to the [update log](#update-log) in the same PR.
+3. Look through the Dependency Dashboard for updates that wait for approval (majors).
+4. Update one thing per PR, and add a line to the [update log](#update-log) in the same PR.
 
-Claude can do steps 1 and 2 with its read-only access, except for the versions marked
+Claude can do steps 1 to 3 with its read-only access, except for the versions marked
 "check by hand" below.
 
-Rules for updating:
+Rules for updating, also for Renovate's pull requests:
 
 - Security fixes and end-of-life versions come first.
 - Back up or snapshot anything stateful first. Jellyfin has no downgrade path.
@@ -69,54 +72,11 @@ Not in Git. kubeadm, the node packages and upstream manifests installed by hand 
 | containerd | 2.2.1 | 2.4.2 | Unknown |
 | Flannel | v0.27.4 | v0.28.10 | Unknown |
 
-## Cluster infrastructure
-
-Chart versions are in each `helmrelease.yaml`, under `kubernetes/infrastructure/`. "Last
-changed" is when Git first shows this version, so it can be when the component was added.
-
-| Component | Running | Newest found | Last changed | Where to check |
-|---|---|---|---|---|
-| Flux | v2.7.5 | v2.10.0 | 2026-01-18 | [fluxcd/flux2](https://github.com/fluxcd/flux2/releases) |
-| cert-manager (chart) | v1.19.2 | v1.21.3 | 2026-01-21 | [cert-manager](https://github.com/cert-manager/cert-manager/releases) |
-| external-secrets (chart) | 1.3.1 | 2.14.0 | 2026-01-25 | [external-secrets](https://github.com/external-secrets/external-secrets/releases) |
-| MetalLB (chart) | 0.15.3 | 0.16.1 | 2026-01-28 | [metallb](https://github.com/metallb/metallb/releases) |
-| Envoy Gateway (chart) | v1.9.3 | v1.9.3 | 2026-10-29 | [envoyproxy/gateway](https://github.com/envoyproxy/gateway/releases) |
-| CloudNativePG (chart / operator) | 0.29.1 / 1.30.1 | 0.29.1 / 1.30.1 | 2026-10-29 | [cloudnative-pg/charts](https://github.com/cloudnative-pg/charts/releases) |
-| kube-prometheus-stack (chart) | 92.14.1 | 92.17.0 | 2026-10-29 | [helm-charts](https://github.com/prometheus-community/helm-charts/releases) |
-| metrics-server (chart / app) | 3.14.0 / 0.9.0 | 3.14.0 / 0.9.1 | 2026-10-29 | [metrics-server](https://github.com/kubernetes-sigs/metrics-server/releases) |
-| local-path-provisioner | v0.0.37 | v0.0.37 | 2026-10-29 | [local-path-provisioner](https://github.com/rancher/local-path-provisioner/releases) |
-| Intel GPU plugin | 0.37.1 | 0.37.1 | 2026-10-29 | [intel-device-plugins](https://github.com/intel/intel-device-plugins-for-kubernetes/releases) |
-
-kube-prometheus-stack decides the versions of Prometheus, Grafana, Alertmanager and the
-exporters, so they are not listed one by one.
-
-## Apps
-
-Image tags are in the Deployments under `kubernetes/apps/`.
-
-| App | Running | Newest found | Last changed | Where to check |
-|---|---|---|---|---|
-| Jellyfin | 10.11.6 (`10.11.6ubu2404-ls22`) | 12.4 | 2026-10-30 (moved, same version) | [jellyfin](https://github.com/jellyfin/jellyfin/releases) |
-| qBittorrent | 5.3.0 (`5.3.0_v2.1.2-ls485`) | 5.3.0 | 2026-10-30 | [qBittorrent](https://github.com/qbittorrent/qBittorrent/releases) |
-| gluetun | Digest `2733bb22`, built 2026-09-26 | v3.41.3 | 2026-10-30 | [gluetun](https://github.com/qdm12/gluetun/releases) |
-| Radarr | 6.4.4.10685 (`-ls324`) | 6.4.4.10685 | 2026-10-30 | [Radarr](https://github.com/Radarr/Radarr/releases) |
-| Sonarr | 4.0.20.3014 (`-ls1`) | 4.0.20.3014 | 2026-10-30 | [Sonarr](https://github.com/Sonarr/Sonarr/releases) |
-| Prowlarr | 2.7.0.5723 (`-ls166`) | 2.7.0.5723 | 2026-10-30 | [Prowlarr](https://github.com/Prowlarr/Prowlarr/releases) |
-| restic rest-server | 0.14.0 | 0.14.0 | 2026-11-04 | [rest-server](https://github.com/restic/rest-server/releases) |
-| Audiobookshelf | 2.37.2 | 2.37.2 | 2026-11-02 | [audiobookshelf](https://github.com/advplyr/audiobookshelf/releases) |
-| Homarr | v2.10.1 | v2.10.1 | 2026-10-31 | [homarr](https://github.com/homarr-labs/homarr/releases) |
-| Home Assistant | 2026.10.4 | 2026.10.4 | 2026-10-28 | [home-assistant](https://github.com/home-assistant/core/releases) |
-| Uptime Kuma | 2.5.8 | 2.5.9 | 2026-10-28 | [uptime-kuma](https://github.com/louislam/uptime-kuma/releases) |
-| Immich (server, ML) | v3.3.5 | v3.3.5 | 2026-10-29 | [immich](https://github.com/immich-app/immich/releases) |
-| Immich Postgres (VectorChord image) | 18.6-1.1.1 | VectorChord 1.1.1 | 2026-10-29 | [VectorChord](https://github.com/tensorchord/VectorChord/releases) |
-| Valkey (Immich) | 9.1.3 | 9.1.3 | 2026-10-29 | [valkey](https://github.com/valkey-io/valkey/releases) |
-| podinfo | 6.4.0 | 6.17.0 | 2026-01-18 | [podinfo](https://github.com/stefanprodan/podinfo/releases) |
-
 ## Update log
 
-Real updates only, newest first. Adding a component or moving it without changing its
-version does not count. Git history has the details, and starts on 2026-01-18. Updates made
-by hand outside Git are only here when they were written down somewhere.
+Updates of the things on this page, newest first. Updates made by Renovate are in Git: the
+merged pull requests with the `dependencies` label. Updates made by hand outside Git are only
+here when they were written down somewhere.
 
 | Date | Component | From | To | Source |
 |---|---|---|---|---|
