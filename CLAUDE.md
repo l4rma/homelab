@@ -54,4 +54,6 @@ architecture.
 - Versions pinned in Git are updated by Renovate (`docs/dependencies.md`). When a PR changes
   a version Renovate cannot see (hosts, Kubernetes itself, services outside Kubernetes),
   update `docs/versions.md` in the same PR.
+- When a PR adds a technology, replaces one, or makes a choice between real alternatives,
+  write a decision record in `docs/decisions/` in the same PR (see its README).
 - If something is unclear or looks risky, ask instead of guessing.

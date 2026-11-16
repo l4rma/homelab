@@ -44,16 +44,19 @@ The network is split into VLANs by purpose:
 
 ## Technology choices
 
+The larger choices, with the options that were rejected, are written down as decision
+records in [docs/decisions/](docs/decisions/).
+
 | Technology | Why |
 |---|---|
-| Proxmox VE | Runs the NAS and the services that are not in Kubernetes yet, separate from the cluster. <!-- TODO: why Proxmox --> |
-| Bare-metal nodes | Keeps the NAS, the hypervisor and the cluster on separate machines, so one can be rebuilt without touching the others. |
+| Proxmox VE | Runs the NAS and the services that are not in Kubernetes yet, separate from the cluster. A full hypervisor with LXCs, backups and an API, with TrueNAS in a VM ([ADR 0002](docs/decisions/0002-truenas-as-a-vm-on-proxmox.md)). |
+| Bare-metal nodes | Keeps the NAS, the hypervisor and the cluster on separate machines, so one can be rebuilt without touching the others ([ADR 0001](docs/decisions/0001-bare-metal-kubernetes-nodes.md)). |
 | kubeadm | Upstream Kubernetes with no abstractions on top, which is good practice for the Kubernetes certifications. The cluster started on v1.33 and has been upgraded to v1.36 by hand. |
 | Flannel | Simple CNI that just works. The trade-off is no NetworkPolicy support, which I may revisit. |
-| Flux | Pull-based GitOps: the cluster pulls from Git, so nothing outside needs access to the cluster. No GUI, which forces me to understand Kubernetes properly. It is also what I use at work. |
-| MetalLB + Envoy Gateway | LoadBalancer IPs on bare metal, and the Gateway API (the successor to Ingress) for routing. Replaced ingress-nginx, which was retired upstream. |
+| Flux | Pull-based GitOps: the cluster pulls from Git, so nothing outside needs access to the cluster. No GUI, which forces me to understand Kubernetes properly. It is also what I use at work ([ADR 0003](docs/decisions/0003-flux-for-gitops.md)). |
+| MetalLB + Envoy Gateway | LoadBalancer IPs on bare metal, and the Gateway API (the successor to Ingress) for routing. Replaced ingress-nginx, which was retired upstream ([ADR 0004](docs/decisions/0004-ingress-nginx.md), [ADR 0006](docs/decisions/0006-envoy-gateway.md)). |
 | cert-manager + Route53 | Real Let's Encrypt certificates through DNS-01, which works without exposing the cluster to the internet. |
-| External Secrets + AWS SSM | The repo is public, so no secret is stored in Git, not even encrypted. Secrets live in SSM Parameter Store (free tier) and are copied into the cluster. See [docs/secrets.md](docs/secrets.md). |
+| External Secrets + AWS SSM | The repo is public, so no secret is stored in Git, not even encrypted. Secrets live in SSM Parameter Store (free tier) and are copied into the cluster. See [docs/secrets.md](docs/secrets.md) and [ADR 0005](docs/decisions/0005-external-secrets-with-aws-ssm.md). |
 | kube-prometheus-stack | Prometheus, Grafana and Alertmanager in one chart, with dashboards for the cluster out of the box. Also the data for sizing resource requests. |
 | local-path + NFS | Databases on the node's own disk, files on the NAS over NFS. Databases on NFS are slow and corrupt easily. The reasoning: [docs/storage.md](docs/storage.md). |
 | CloudNativePG | Postgres as a Kubernetes operator: one small cluster per app, with failover and backups to S3 later. |
@@ -70,7 +73,7 @@ The network is split into VLANs by purpose:
 | [`terraform/`](terraform/) | Proxmox and AWS as code. Not started. |
 | [`ansible/`](ansible/) | Node and NAS configuration. Not started. |
 | [`scripts/`](scripts/) | Helper scripts run locally, such as generating the read-only kubeconfig for Claude. |
-| [`docs/`](docs/) | Documentation, including [dependency updates with Renovate](docs/dependencies.md) and [versions outside Git](docs/versions.md). |
+| [`docs/`](docs/) | Documentation, including [decision records](docs/decisions/), [dependency updates with Renovate](docs/dependencies.md) and [versions outside Git](docs/versions.md). |
 | [`.github/`](.github/) | Workflows, issue forms, the pull request template, labels, code owners, the Renovate configuration and the ruleset for `main`. See [docs/github.md](docs/github.md). |
 | `CLAUDE.md` files | Instructions for Claude Code, at the root and per directory. |
 
@@ -120,6 +123,8 @@ setup in Git.
 
 Details: [docs/claude-agent.md](docs/claude-agent.md).
 
-## License
+## License and contributions
 
-[MIT](LICENSE). To report a security problem, see [SECURITY.md](SECURITY.md).
+[MIT](LICENSE): copy whatever is useful. This is a personal lab, so pull requests from others
+are not accepted, but issues and questions are welcome. To report a security problem, see
+[SECURITY.md](SECURITY.md).
