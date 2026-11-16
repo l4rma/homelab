@@ -186,3 +186,8 @@ Then `kubectl describe` the failing resource, and `flux logs` or
 Expected noise: right after a new commit, `apps` can show `Ready=False` with
 `DependencyNotReady` ("dependency 'flux-system/infrastructure' revision is not up to
 date") until `infrastructure` has applied the same revision. It retries after 30s.
+
+Both Kustomizations use `wait: true` (timeout 10m): they are Ready only when everything they
+apply is healthy. A `Ready=False` with "health check failed" names the object that is not
+ready; describe that object. While `infrastructure` is not Ready, `apps` does not apply new
+commits, so a stuck infrastructure component blocks app changes.

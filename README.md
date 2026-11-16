@@ -86,7 +86,8 @@ records in [docs/decisions/](docs/decisions/).
    defines the other Kustomizations.
 5. `infrastructure` applies `kubernetes/infrastructure` (gateway, certificates,
    load balancing, secrets operator). `apps` applies `kubernetes/apps` once
-   `infrastructure` is ready.
+   `infrastructure` is applied and healthy. Both wait until what they applied is running
+   (`wait: true`), and report a failure after 10 minutes.
 6. Flux uses server-side apply and prunes resources that were removed from Git.
    Rolling back is a `git revert`.
 
