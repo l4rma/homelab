@@ -118,8 +118,16 @@ commit, red when it failed. So the commit list on GitHub shows what actually run
 cluster. It is set up in `kubernetes/infrastructure/flux-notifications/`
 ([Flux docs](https://fluxcd.io/flux/components/notification/providers/#git-commit-status-updates)).
 
-Green means the Kustomization applied without errors. It does not wait for the pods to be
-healthy, because the Kustomizations do not use `wait` or health checks.
+For `infrastructure` and `apps`, green means the commit was applied **and** everything they
+manage is healthy: Deployments and StatefulSets rolled out, HelmReleases installed, PVCs bound,
+and custom resources (ExternalSecrets, Certificates, the Postgres cluster) Ready. Both use
+`wait: true` with a 10 minute timeout, so a broken rollout turns red with the name of the
+object that is not ready. `flux-system` only applies the other two Kustomizations, without
+waiting.
+
+The cost: one unhealthy object turns its whole Kustomization red, and while `infrastructure`
+is not healthy, `apps` does not apply new commits. Smaller Kustomizations, one per app, would
+limit that.
 
 Flux logs in as a GitHub App made for this, `larma-homelab-flux`, instead of a personal token: it
 can only write commit statuses on this repository, does not expire, and shows up as its own

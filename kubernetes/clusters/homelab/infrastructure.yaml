@@ -5,6 +5,12 @@ metadata:
   namespace: flux-system
 spec:
   interval: 60m
+  # Ready only when everything applied is healthy (rolled out, Ready condition True), so the
+  # commit status means "running", and apps waits for working controllers, not just applied ones
+  wait: true
+  timeout: 10m
+  # A failed health check is retried after 2m instead of the 60m interval
+  retryInterval: 2m
   path: ./kubernetes/infrastructure
   prune: true
   sourceRef:

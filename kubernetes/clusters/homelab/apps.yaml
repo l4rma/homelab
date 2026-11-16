@@ -5,6 +5,9 @@ metadata:
   namespace: flux-system
 spec:
   interval: 5m
+  # Ready only when every app is rolled out and healthy, see infrastructure.yaml
+  wait: true
+  timeout: 10m
   dependsOn:
     - name: infrastructure
   path: ./kubernetes/apps # This tells Flux where the apps live relative to the repo root
