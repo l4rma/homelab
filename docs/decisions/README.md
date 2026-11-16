@@ -16,6 +16,7 @@ table says *what* is used; these files say *why*, and what was rejected. The for
 | [0007](0007-restic-for-laptop-backups.md) | restic for laptop backups, not Kopia | Accepted |
 | [0008](0008-renovate-for-dependency-updates.md) | Renovate for dependency updates | Accepted |
 | [0009](0009-github-app-for-flux.md) | A GitHub App for Flux's commit statuses | Accepted |
+| [0010](0010-no-bot-account-for-claude.md) | No bot account or auto-approval for Claude's pull requests | Accepted |
 
 0001 to 0006 were written down after the fact, in November 2026.
 
