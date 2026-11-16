@@ -26,8 +26,10 @@ the file under Settings → Rules → Rulesets.)
 | No bypass | The rules apply to everyone, including admins |
 
 Approvals are set to 0, because GitHub does not let anyone approve their own pull request
-and this is a one-person repository. They go up to 1, with code owner review, once Claude
-opens pull requests from its own account ([docs/claude-agent.md](claude-agent.md)).
+and this is a one-person repository. Claude writes changes, and I review, commit and merge
+them, so Claude gets no account of its own and no bot approves pull requests
+([ADR 0010](decisions/0010-no-bot-account-for-claude.md)). That is why Scorecard's
+Code-Review check is low.
 
 Docs: [About rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets),
 [available rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets).

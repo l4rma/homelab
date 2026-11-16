@@ -45,10 +45,10 @@ $EDITOR ~/.config/homelab-mcp/github.env   # GITHUB_PERSONAL_ACCESS_TOKEN=github
 Lockdown mode is on, so content from users without push access to the repo is
 hidden from Claude. This limits prompt injection through issues and comments.
 
-Claude may later get permission to create branches and pull requests, but never to
-merge them. A token cannot tell "create a PR" apart from "merge it", so that needs a
-ruleset on `main` (require a PR and an approval, no bypass) first. Rulesets need
-GitHub Pro on private repos and are free on public ones.
+Claude stays read-only on GitHub: it does not push or open pull requests, and gets no
+account of its own ([ADR 0010](decisions/0010-no-bot-account-for-claude.md)). If it ever
+works without a human at the keyboard, it gets a GitHub App that can open pull requests
+but never merge them.
 
 ### Proxmox
 

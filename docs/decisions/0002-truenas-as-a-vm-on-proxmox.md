@@ -16,7 +16,7 @@ NAS.
 
 - **TrueNAS on the bare machine, running VMs and apps itself**: TrueNAS sees the disks
   directly. But VMs and apps are not what TrueNAS is built for, and they have
-  changed a lot between releases. Tryed out TrueNAS on the bare machine, but had
+  changed a lot between releases. Tried out TrueNAS on the bare machine, but had
   problems with a lot of the apps (vms).
 - **Proxmox only, with ZFS and NFS/SMB set up by hand**: one layer less, but no NAS interface
   for shares, users, snapshot tasks, replication and disk health. All of it by hand on the
