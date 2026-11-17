@@ -88,7 +88,8 @@ spec:
             periodSeconds: 30
             failureThreshold: 5
           # Peaked at 1.5Gi on the first test upload (thumbnails, metadata, video). A big
-          # import runs several jobs in parallel, so leave room. No CPU limit.
+          # import runs several jobs in parallel, so leave room. Measured in November 2026:
+          # 1.5Gi 95% of the time, at most 2.7Gi. No CPU limit.
           resources:
             requests:
               cpu: 100m

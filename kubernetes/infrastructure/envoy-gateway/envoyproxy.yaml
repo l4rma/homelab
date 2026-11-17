@@ -15,9 +15,10 @@ spec:
           metallb.io/loadBalancerIPs: 192.168.30.200
       envoyDeployment:
         container:
+          # Measured in November 2026: under 45Mi, also during Immich uploads.
           resources:
             requests:
               cpu: 50m
-              memory: 128Mi
+              memory: 64Mi
             limits:
               memory: 512Mi
