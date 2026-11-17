@@ -131,6 +131,18 @@ The cost: one unhealthy object turns its whole Kustomization red, and while `inf
 is not healthy, `apps` does not apply new commits. Smaller Kustomizations, one per app, would
 limit that.
 
+What a failed rollout looks like (tested in #120 with an image tag that does not exist):
+
+- **While Flux waits, the Kustomization posts no status.** Flux sends no "pending", so for up
+  to 10 minutes a commit can show only green statuses although `apps` is not done. Green is
+  final only when all three statuses are there.
+- **Red comes after about 10 minutes**, usually from Kubernetes, not from Flux's timeout: a
+  Deployment that makes no progress is marked failed after its `progressDeadlineSeconds`
+  (default 600), and Flux stops waiting at once ("failed early due to stalled resources:
+  [Deployment/podinfo/podinfo status: 'Failed']").
+- **The old version keeps running.** A rolling update only removes the old pods when the new
+  ones are ready, so a bad image does not take an app down. Roll back by reverting the commit.
+
 Flux logs in as a GitHub App made for this, `larma-homelab-flux`, instead of a personal token: it
 can only write commit statuses on this repository, does not expire, and shows up as its own
 bot. To make it again:

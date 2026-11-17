@@ -13,8 +13,7 @@ spec:
     spec:
       containers:
       - name: podinfod
-        # TEST (#120): this tag does not exist, to see a failed health check. Revert after the test.
-        image: ghcr.io/stefanprodan/podinfo:6.4.0-does-not-exist
+        image: ghcr.io/stefanprodan/podinfo:6.4.0
         ports:
         - name: http
           containerPort: 9898
