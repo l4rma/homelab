@@ -61,12 +61,14 @@ spec:
             periodSeconds: 30
             failureThreshold: 5
           # Models are loaded on demand and unloaded after 5 minutes idle. With smart search,
-          # faces and OCR loaded at once it peaked at 2.9Gi, so request that much: the
-          # scheduler then keeps room for it on the node.
+          # faces and OCR loaded at once (the first import) it peaked at 2.9Gi. Since then: under
+          # 800Mi 95% of the time, at most 907Mi (November 2026). The request covers normal use
+          # and the limit leaves room for a big import. If the node runs short during one, this
+          # pod is the one restarted, and Immich retries the jobs. No CPU limit.
           resources:
             requests:
               cpu: 100m
-              memory: 3Gi
+              memory: 1Gi
             limits:
               memory: 4Gi
           volumeMounts:

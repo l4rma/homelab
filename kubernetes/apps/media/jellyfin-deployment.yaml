@@ -68,7 +68,8 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 5
-          # 430Mi idle in the old LXC. Sized from one sample: review after a week. No CPU limit.
+          # Measured in November 2026: its own memory (RSS) at most 502Mi. The working set reaches
+          # 1.9Gi, but the rest is page cache, which the kernel frees at the limit. No CPU limit.
           resources:
             requests:
               cpu: 100m

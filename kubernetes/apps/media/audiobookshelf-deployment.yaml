@@ -51,11 +51,12 @@ spec:
               port: http
             periodSeconds: 30
             failureThreshold: 5
-          # Estimated, not measured here: review after a week. No CPU limit.
+          # Measured in November 2026: under 100Mi 95% of the time, at most 139Mi, with a small
+          # library. The limit leaves room for scanning a larger one. No CPU limit.
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 128Mi
             limits:
               memory: 512Mi
           volumeMounts:
