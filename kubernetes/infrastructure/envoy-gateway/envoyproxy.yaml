@@ -14,6 +14,17 @@ spec:
         annotations:
           metallb.io/loadBalancerIPs: 192.168.30.200
       envoyDeployment:
+        pod:
+          # MetalLB does not announce from nodes labelled exclude-from-external-load-balancers
+          # (kubeadm sets it on the control plane, lenovo1). With externalTrafficPolicy Local only
+          # a node running Envoy may answer, so Envoy on lenovo1 means 192.168.30.200 is down.
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: node.kubernetes.io/exclude-from-external-load-balancers
+                        operator: DoesNotExist
         container:
           # Measured in November 2026: under 45Mi, also during Immich uploads.
           resources:
