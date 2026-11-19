@@ -57,7 +57,7 @@ records in [docs/decisions/](docs/decisions/).
 | MetalLB + Envoy Gateway | LoadBalancer IPs on bare metal, and the Gateway API (the successor to Ingress) for routing. Replaced ingress-nginx, which was retired upstream ([ADR 0004](docs/decisions/0004-ingress-nginx.md), [ADR 0006](docs/decisions/0006-envoy-gateway.md)). |
 | cert-manager + Route53 | Real Let's Encrypt certificates through DNS-01, which works without exposing the cluster to the internet. |
 | External Secrets + AWS SSM | The repo is public, so no secret is stored in Git, not even encrypted. Secrets live in SSM Parameter Store (free tier) and are copied into the cluster. See [docs/secrets.md](docs/secrets.md) and [ADR 0005](docs/decisions/0005-external-secrets-with-aws-ssm.md). |
-| kube-prometheus-stack | Prometheus, Grafana and Alertmanager in one chart, with dashboards for the cluster out of the box. Also the data for sizing resource requests. |
+| kube-prometheus-stack | Prometheus, Grafana and Alertmanager in one chart, with dashboards for the cluster out of the box. Also the data for sizing resource requests. Alertmanager sends alerts to Telegram and Gmail. Uptime Kuma moves to an LXC on Proxmox (planned), outside the cluster, so it sees the services as a user does ([ADR 0011](docs/decisions/0011-alerting-with-alertmanager-and-telegram.md)). |
 | local-path + NFS | Databases on the node's own disk, files on the NAS over NFS. Databases on NFS are slow and corrupt easily. The reasoning: [docs/storage.md](docs/storage.md). |
 | CloudNativePG | Postgres as a Kubernetes operator: one small cluster per app, with failover and backups to S3 later. |
 | gluetun | VPN as a sidecar for qBittorrent only. Its firewall is the kill switch, and the rest of the media stack stays outside the VPN. |
