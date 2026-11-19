@@ -25,7 +25,7 @@ same entry point and TLS as everything else until they are moved into Kubernetes
 | Lenovo ThinkCentre M720q | Kubernetes control plane, also runs workloads (`lenovo1`) | 6 cores, 8 GB RAM, ~100 GB disk. Node settings: [docs/kubernetes-nodes.md](docs/kubernetes-nodes.md) |
 | Lenovo ThinkCentre M720q | Kubernetes worker (`lenovo2`) | 6 cores, 8 GB RAM, ~200 GB disk |
 | Raspberry Pi 5 | Kubernetes worker (`pi5`, arm64) | 4 cores, 8 GB RAM, ~480 GB disk |
-| Proxmox VE host | Hypervisor for TrueNAS and other services | TBD <!-- TODO: model, CPU, RAM, disks --> |
+| Proxmox VE host (`pve`) | Hypervisor for TrueNAS and other services | MSI B250M BAZOOKA (MS-7A70), Intel Core i5-7400 (4 cores), 40 GB DDR4-2133 (2× 16 GB + 2× 4 GB), 1 GbE (Realtek RTL8111), GeForce GTX 1060 3GB. Disks: 240 GB SATA SSD (Proxmox), 1 TB NVMe (unused), 3× 4 TB Seagate IronWolf (passed to TrueNAS) |
 | TrueNAS SCALE (VM) | NAS: NFS/SMB, storage, backups | Pool `Firelink`, 3 disks in RAIDZ1, ~7.2 TiB usable. Layout: [docs/storage.md](docs/storage.md) |
 | Network | TP-Link Omada | TBD <!-- TODO: router, switches, access points --> |
 
