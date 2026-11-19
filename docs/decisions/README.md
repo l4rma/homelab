@@ -17,7 +17,7 @@ table says *what* is used; these files say *why*, and what was rejected. The for
 | [0008](0008-renovate-for-dependency-updates.md) | Renovate for dependency updates | Accepted |
 | [0009](0009-github-app-for-flux.md) | A GitHub App for Flux's commit statuses | Accepted |
 | [0010](0010-no-bot-account-for-claude.md) | No bot account or auto-approval for Claude's pull requests | Accepted |
-| [0011](0011-pihole-stays-in-an-lxc.md) | Pi-hole stays in an LXC on Proxmox, not in Kubernetes | Accepted |
+| [0012](0012-pihole-stays-in-an-lxc.md) | Pi-hole stays in an LXC on Proxmox, not in Kubernetes | Accepted |
 
 0001 to 0006 were written down after the fact, in November 2026.
 

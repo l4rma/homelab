@@ -13,7 +13,7 @@ architecture.
   The old docker LXC (102) is no longer in use and is being retired.
 - **AWS**: Route53 hosts `magelssen.io`, used by cert-manager for DNS-01.
 - **Goal**: move the services on Proxmox into Kubernetes (except Pi-hole, see
-  `docs/decisions/0011-pihole-stays-in-an-lxc.md`), and manage Proxmox and AWS as code.
+  `docs/decisions/0012-pihole-stays-in-an-lxc.md`), and manage Proxmox and AWS as code.
 
 ## Repository layout
 
