@@ -47,6 +47,9 @@ Rules for updating, also for Renovate's pull requests:
 | Ubuntu on `lenovo1` | 24.04.3 | Check by hand | Unknown | `kubectl get nodes -o wide`, `apt` on the node |
 | Kernel on `lenovo1`, `lenovo2` | 6.8.0-138-generic | Check by hand | Unknown | `kubectl get nodes -o wide` |
 | Kernel on `pi5` | 6.8.0-1061-raspi | Check by hand | Unknown | `kubectl get nodes -o wide` |
+| Router ER7206 (v2.0) firmware | 2.2.3 | Check by hand | Unknown | Omada controller, Devices |
+| Switch SG2210MP (v4.20) firmware | 4.20.20 | Check by hand | Unknown | Omada controller, Devices |
+| Access point EAP653 (v1.0) firmware | 1.3.7 | Check by hand | Unknown | Omada controller, Devices |
 
 ## Outside Kubernetes
 
