@@ -29,7 +29,7 @@ Firelink
 ├── BlightTown
 │   ├── home-assistant
 │   ├── immich            Immich thumbs/ and encoded-video/ (can be regenerated)
-│   └── uptime-kuma
+│   └── uptime-kuma       Old Uptime Kuma data, unused since the move to LXC 101; delete in phase 14
 ├── SensFortress          template/iso, template/cache, images/
 ├── UndeadParish
 │   └── omada
@@ -112,7 +112,7 @@ unchanged snapshot only costs a few KB of metadata.
   child dataset as an empty, root-owned folder. Every app dataset needs its own share.
 - **Kubernetes PVs are static, and `spec.nfs.path` cannot be changed.** Keep the
   dataset at the path the PV points to.
-- **Do not put SQLite on NFS** (Uptime Kuma, the *arr apps, Jellyfin, Audiobookshelf). Use local disk
+- **Do not put SQLite on NFS** (the *arr apps, Jellyfin, Audiobookshelf, Homarr). Use local disk
   in the cluster instead.
 - **Media stays one dataset.** Radarr and Sonarr hardlink from `downloads/` to
   `movies/` and `series/`, and hardlinks do not work across datasets or across

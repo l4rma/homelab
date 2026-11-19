@@ -59,8 +59,8 @@ Claude cannot read versions inside the LXCs, so these need a check by hand.
 |---|---|---|---|---|
 | Omada controller | `5.15_1.2.12` | Chart 1.4.19 | Unknown | TrueNAS app |
 | Pi-hole | Check by hand | 6.5 | Unknown | LXC 104 |
-| Plex | Check by hand | Check by hand | Unknown | LXC 101 |
 | Tailscale | Check by hand | Check by hand | Unknown | LXC 103 |
+| Uptime Kuma | 2.5.8 | 2.5.12 | 2026-11-19 | LXC 101, upgrade steps in [uptime-kuma.md](uptime-kuma.md) |
 | GitHub runner | Check by hand | Check by hand | Unknown | LXC 105 (stopped) |
 
 ## Kubernetes core
