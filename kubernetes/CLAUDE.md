@@ -99,8 +99,6 @@ home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen
 kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hole record.
 
 - **podinfo**: runs in the cluster
-- **uptime-kuma**: runs in the cluster. Static NFS PV on `BlightTown/uptime-kuma`, ClusterIP
-  Service, reached on `uptime-kuma.magelssen.io`, image pinned, `Recreate` (SQLite).
 - **home-assistant**: runs in the cluster. hostNetwork + privileged, pinned to pi5,
   `Recreate`, image pinned, `TZ=Europe/Oslo`. NFS PV on `BlightTown/home-assistant`,
   ClusterIP Service, reached on `ha.magelssen.io` (needs `http.trusted_proxies` in HA's
@@ -142,10 +140,12 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   Pruning cannot run from the laptops in append-only mode. Laptop setup: `docs/backups.md`.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,
   `SECRET_ENCRYPTION_KEY` from SSM. Boards are set up in its UI, not in Git.
-- **omada, pihole, proxmox, truenas**:
+- **omada, pihole, proxmox, truenas, uptime-kuma**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:
   - `192.168.20.20`: pihole
+  - `192.168.20.10:3001`: uptime-kuma, an LXC on Proxmox, so it monitors the services from
+    outside the cluster (ADR 0011). Also reachable on that address when the cluster is down.
   - `192.168.10.4:30077` (TrueNAS app): omada (HTTPS backend, `insecureSkipVerify`)
   - `192.168.10.3:8006`: proxmox web UI and API (HTTPS backend, `insecureSkipVerify`)
   - `192.168.10.4:443`: truenas web UI and API (HTTPS backend, `insecureSkipVerify`)
