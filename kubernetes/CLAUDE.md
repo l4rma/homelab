@@ -140,6 +140,8 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   Pruning cannot run from the laptops in append-only mode. Laptop setup: `docs/backups.md`.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,
   `SECRET_ENCRYPTION_KEY` from SSM. Boards are set up in its UI, not in Git.
+- Every directory here must be listed in `docs/services.md` (checked by
+  `scripts/check-services.py` in pre-commit). Add the row in the same PR as the app.
 - **omada, pihole, proxmox, truenas, uptime-kuma**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
   and an HTTPRoute:

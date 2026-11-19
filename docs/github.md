@@ -91,7 +91,7 @@ Two required checks run on every pull request (`lint.yml`). Run them locally bef
 
 | Check | What | Locally |
 |---|---|---|
-| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, [zizmor](https://docs.zizmor.sh/) (security audit of the workflows: template injection, permissions, credentials, unpinned actions), gitleaks | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
+| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, [zizmor](https://docs.zizmor.sh/) (security audit of the workflows: template injection, permissions, credentials, unpinned actions), gitleaks, and `scripts/check-services.py` (every app in `kubernetes/apps/` is listed in [services.md](services.md)) | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
 | `kubernetes` | [flux-schema](https://github.com/fluxcd/flux-schema) builds every kustomize directory under `kubernetes/` and validates each resource against the Kubernetes, Flux and CRD schemas (Gateway API, Envoy Gateway, cert-manager, External Secrets, CloudNativePG ...). Catches wrong fields and types before Flux does | See below |
 
 ```sh

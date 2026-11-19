@@ -96,7 +96,7 @@ records in [docs/decisions/](docs/decisions/).
 | [`terraform/`](terraform/) | Proxmox and AWS as code. Not started. |
 | [`ansible/`](ansible/) | Node and NAS configuration. Not started. |
 | [`scripts/`](scripts/) | Helper scripts run locally, such as generating the read-only kubeconfig for Claude. |
-| [`docs/`](docs/) | Documentation, including [decision records](docs/decisions/), [dependency updates with Renovate](docs/dependencies.md) and [versions outside Git](docs/versions.md). |
+| [`docs/`](docs/) | Documentation, including [every service and where it runs](docs/services.md), [decision records](docs/decisions/), [dependency updates with Renovate](docs/dependencies.md) and [versions outside Git](docs/versions.md). |
 | [`.github/`](.github/) | Workflows, issue forms, the pull request template, labels, code owners, the Renovate configuration and the ruleset for `main`. See [docs/github.md](docs/github.md). |
 | `CLAUDE.md` files | Instructions for Claude Code, at the root and per directory. |
 

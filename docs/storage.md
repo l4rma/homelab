@@ -32,7 +32,7 @@ Firelink
 │   └── uptime-kuma       Old Uptime Kuma data, unused since the move to LXC 101; delete in phase 14
 ├── SensFortress          template/iso, template/cache, images/
 ├── UndeadParish
-│   └── omada
+│   └── omada             Omada data (planned; today still in Catacombs/data)
 └── Catacombs
     └── backups
         ├── restic        Laptop backups (restic repositories, one per user, encrypted), see docs/backups.md
@@ -46,7 +46,7 @@ Firelink
 |---|---|---|
 | Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich`, `/mnt/Firelink/DukesArchives`, `/mnt/Firelink/Catacombs/backups/restic` |
 | Proxmox storage `SensFortress` | SMB (CIFS), mounted by Proxmox at `/mnt/pve/SensFortress` | `SensFortress` |
-| Plex (LXC 101) and the docker LXC (102, being retired) | SMB, `/etc/fstab` on pve at `/mnt/dukesarchives`, bind-mounted into the LXCs | `DukesArchives` |
+| Nothing (was Plex and the docker LXC, both removed 2026-11-19) | SMB, `/etc/fstab` on pve at `/mnt/dukesarchives`. Unused: remove the fstab line and unmount | `DukesArchives` |
 | Personal devices | SMB | `AnorLondo` |
 | Omada (TrueNAS app) | host path | `Catacombs/data` (moving to `UndeadParish/omada`) |
 
