@@ -1,0 +1,12 @@
+# Uptime Kuma runs in an LXC on Proxmox, outside the cluster, so it sees the services
+# like a browser on the LAN and keeps running when the cluster does not (ADR 0011).
+# Plain HTTP on the LAN; Envoy terminates TLS.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backend
+metadata:
+  name: uptime-kuma
+spec:
+  endpoints:
+    - ip:
+        address: 192.168.20.10
+        port: 3001

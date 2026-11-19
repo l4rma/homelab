@@ -11,5 +11,6 @@ spec:
     - uptime-kuma.magelssen.io
   rules:
     - backendRefs:
-        - name: uptime-kuma-svc
-          port: 3001
+        - group: gateway.envoyproxy.io
+          kind: Backend
+          name: uptime-kuma
