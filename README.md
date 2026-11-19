@@ -16,7 +16,9 @@ about it on my blog at [magelssen.io/blog](https://magelssen.io/blog/k8s-part0/)
 All services are reached at `<name>.magelssen.io` through Envoy Gateway (Gateway API)
 in the cluster, with a Let's Encrypt wildcard certificate. Services that still run on
 Proxmox are exposed through the cluster with an Envoy Gateway `Backend`, so they get the
-same entry point and TLS as everything else until they are moved into Kubernetes.
+same entry point and TLS as everything else. Services needed to run or fix the cluster
+(DNS, monitoring, the network controller, remote access) stay outside it on purpose
+([ADR 0014](docs/decisions/0014-infrastructure-services-stay-outside-kubernetes.md)).
 
 ## Hardware
 

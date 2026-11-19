@@ -19,6 +19,7 @@ table says *what* is used; these files say *why*, and what was rejected. The for
 | [0010](0010-no-bot-account-for-claude.md) | No bot account or auto-approval for Claude's pull requests | Accepted |
 | [0011](0011-alerting-with-alertmanager-and-telegram.md) | Alerts from Alertmanager to Telegram, and Uptime Kuma moved to Proxmox | Accepted |
 | [0012](0012-pihole-stays-in-an-lxc.md) | Pi-hole stays in an LXC on Proxmox, not in Kubernetes | Accepted |
+| [0014](0014-infrastructure-services-stay-outside-kubernetes.md) | Services needed to run or fix the cluster stay outside Kubernetes | Accepted |
 
 0001 to 0006 were written down after the fact, in November 2026.
 
