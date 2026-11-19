@@ -9,8 +9,8 @@ architecture.
 - **Kubernetes**: bare-metal kubeadm cluster with three nodes (two Lenovo ThinkCentre
   M720q and a Raspberry Pi 5), managed by Flux from `kubernetes/`.
 - **Proxmox VE**: runs TrueNAS SCALE in a VM (NFS/SMB, storage, backups, Omada
-  controller app) and LXCs for services not in Kubernetes (Pi-hole, Plex, Tailscale).
-  The old docker LXC (102) is no longer in use and is being retired.
+  controller app) and LXCs for services not in Kubernetes (Pi-hole, Tailscale, and
+  Uptime Kuma, see `docs/uptime-kuma.md`).
 - **AWS**: Route53 hosts `magelssen.io`, used by cert-manager for DNS-01.
 - **Goal**: move the services on Proxmox into Kubernetes, except those needed to run or
   fix the cluster (DNS, monitoring, the network controller, remote access; see
