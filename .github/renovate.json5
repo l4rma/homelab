@@ -1,5 +1,5 @@
 // Renovate: opens pull requests when a dependency in this repository has a new version.
-// Runs as the Mend Renovate GitHub App. How it works and why: docs/dependencies.md
+// Runs as the Mend Renovate GitHub App. How it works and why: docs/operations/dependencies.md
 // Options: https://docs.renovatebot.com/configuration-options/
 {
   $schema: 'https://docs.renovatebot.com/renovate-schema.json',
@@ -56,6 +56,15 @@
       matchStrings: ['(?<depName>ghcr\\.io/fluxcd/flux-schema):(?<currentValue>v[\\d.]+)'],
       datasourceTemplate: 'docker',
     },
+    {
+      // Hugo, in the docs workflow
+      customType: 'regex',
+      managerFilePatterns: ['/^\\.github/workflows/.+\\.ya?ml$/'],
+      matchStrings: ['HUGO_VERSION: (?<currentValue>\\S+)'],
+      depNameTemplate: 'gohugoio/hugo',
+      datasourceTemplate: 'github-releases',
+      extractVersionTemplate: '^v(?<version>.+)$',
+    },
   ],
   packageRules: [
     {
@@ -77,7 +86,7 @@
       groupName: 'CI tools',
     },
     {
-      // In lint.yml and in docs/github.md. After the rule above, so both end up in this group.
+      // In lint.yml and in docs/development/github.md. After the rule above, so both end up in this group.
       matchPackageNames: ['ghcr.io/fluxcd/flux-schema'],
       groupName: 'flux-schema',
     },
@@ -109,7 +118,7 @@
     },
     {
       // Stateful, with no simple way back: labelled so the pull request is read carefully
-      // and a backup or snapshot is taken first (see docs/versions.md).
+      // and a backup or snapshot is taken first (see docs/operations/versions.md).
       matchPackageNames: [
         'ghcr.io/immich-app/**',
         'ghcr.io/tensorchord/cloudnative-vectorchord',

@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2025-03-16 (written down 2026-11-16)
+date: 2025-03-16
 ---
 
 # TrueNAS as a VM on Proxmox
@@ -44,4 +44,4 @@ and could move to another machine.
 
 ## More information
 
-[docs/storage.md](../storage.md), [README: Hardware](../../README.md#hardware).
+[docs/architecture/storage.md](../architecture/storage.md), [Hardware](../architecture/hardware.md).

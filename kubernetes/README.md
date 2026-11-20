@@ -16,10 +16,10 @@ directory is synced to the cluster from the `main` branch.
 - MetalLB in L2 mode for LoadBalancer services
 - Envoy Gateway (Gateway API) on `192.168.30.200` for all HTTP(S) traffic
 - Storage: NFS from TrueNAS for files, `local-path` (the node's own disk) for databases.
-  See [docs/storage.md](../docs/storage.md)
+  See [docs/architecture/storage.md](../docs/architecture/storage.md)
 
 The cluster mixes amd64 and arm64, so all images must be multi-arch. Node settings
-(kubelet reservations, taints): [docs/kubernetes-nodes.md](../docs/kubernetes-nodes.md).
+(kubelet reservations, taints): [docs/cluster/nodes.md](../docs/cluster/nodes.md).
 
 ## Directories
 

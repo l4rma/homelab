@@ -54,9 +54,9 @@ repos:
 
   - repo: local
     hooks:
-      # docs/services.md must list every app in kubernetes/apps/
+      # docs/services/README.md must list every app in kubernetes/apps/
       - id: check-services
-        name: docs/services.md lists every app
+        name: docs/services/README.md lists every app
         entry: python3 scripts/check-services.py
         language: system
         pass_filenames: false

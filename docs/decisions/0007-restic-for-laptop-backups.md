@@ -38,4 +38,4 @@ same tool can be used later for the offsite copies.
 
 ## More information
 
-[docs/backups.md](../backups.md), [rest-server](https://github.com/restic/rest-server).
+[docs/operations/backups.md](../operations/backups.md), [rest-server](https://github.com/restic/rest-server).

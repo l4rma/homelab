@@ -14,6 +14,11 @@ overwriting files, not against losing the pool.
 | `BlightTown` (recursive), `UndeadParish` (recursive), `Catacombs` (recursive) | Daily | 14 days |
 | `DukesArchives` | Weekly (Sunday) | 2 weeks |
 
+"Allow taking empty snapshots" is on for every task. Each snapshot expires when its time is
+up, whether or not a newer one exists: without it, a dataset that does not change for longer
+than the retention ends up with no snapshot at all. An unchanged snapshot only costs a few KB
+of metadata.
+
 To get a file back, browse `.zfs/snapshot/<name>/` in the dataset, or roll back the dataset
 in the TrueNAS UI (rollback throws away everything newer than the snapshot).
 

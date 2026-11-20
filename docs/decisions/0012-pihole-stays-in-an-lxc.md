@@ -43,7 +43,7 @@ is an exception to the goal of moving services into Kubernetes.
   cluster.
 - Bad: Pi-hole is not managed by Flux. Until Terraform and Ansible cover Proxmox, the LXC
   and its records are managed by hand, and its version is tracked in
-  [versions.md](../versions.md).
+  [versions.md](../operations/versions.md).
 - Bad: the Proxmox host is a single point of failure for DNS. A second Pi-hole (for
   example in the cluster, kept in sync) can be added later as secondary DNS if this
   becomes a problem.

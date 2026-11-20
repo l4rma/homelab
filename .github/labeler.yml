@@ -13,17 +13,17 @@ area/kubernetes:
   - changed-files:
       - any-glob-to-any-file:
           - kubernetes/clusters/**
-          - docs/kubernetes-nodes.md
+          - docs/cluster/nodes.md
 
 area/storage:
   - changed-files:
-      - any-glob-to-any-file: docs/storage.md
+      - any-glob-to-any-file: docs/architecture/storage.md
 
 area/backups:
   - changed-files:
       - any-glob-to-any-file:
           - kubernetes/apps/restic/**
-          - docs/backups.md
+          - docs/operations/backups.md
 
 area/terraform:
   - changed-files:
@@ -37,7 +37,7 @@ area/github:
   - changed-files:
       - any-glob-to-any-file:
           - .github/**
-          - docs/github.md
+          - docs/development/github.md
 
 area/claude:
   - changed-files:
@@ -47,7 +47,7 @@ area/claude:
           - .mcp.json
           - scripts/mcp/**
           - "**/CLAUDE.md"
-          - docs/claude-agent.md
+          - docs/development/claude-agent.md
 
 type/docs:
   - changed-files:

@@ -8,7 +8,7 @@ date: 2026-11-15
 ## Context
 
 Versions are pinned everywhere: Helm charts, images, Flux itself, GitHub Actions (by SHA) and
-pre-commit hooks. They were checked by hand once a month against `docs/versions.md`, which
+pre-commit hooks. They were checked by hand once a month against `docs/operations/versions.md`, which
 was slow and easy to forget. A tool should notice new versions and open pull requests.
 
 ## Options
@@ -33,8 +33,8 @@ in the repository and needs nothing running in the homelab.
 - Bad: a third-party app with write access to the repository. It is installed on this
   repository only, and every pull request still needs a human to merge it.
 - Bad: what is not in Git (Proxmox, TrueNAS, kubeadm, the node OS) is still checked by hand in
-  `docs/versions.md`.
+  `docs/operations/versions.md`.
 
 ## More information
 
-[docs/dependencies.md](../dependencies.md), with the full comparison.
+[docs/operations/dependencies.md](../operations/dependencies.md), with the full comparison.

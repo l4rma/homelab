@@ -1,6 +1,6 @@
 ---
 status: superseded by [0006](0006-envoy-gateway.md)
-date: 2026-01-19 (written down 2026-11-16)
+date: 2026-01-19
 ---
 
 # ingress-nginx for traffic into the cluster

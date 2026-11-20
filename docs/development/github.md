@@ -5,7 +5,7 @@ they can be checked and set again by hand.
 
 ## Ruleset on `main`
 
-Defined in [`.github/rulesets/main.json`](../.github/rulesets/main.json). GitHub does not
+Defined in [`.github/rulesets/main.json`](../../.github/rulesets/main.json). GitHub does not
 read the file by itself. Apply a change with:
 
 ```sh
@@ -28,7 +28,7 @@ the file under Settings → Rules → Rulesets.)
 Approvals are set to 0, because GitHub does not let anyone approve their own pull request
 and this is a one-person repository. Claude writes changes, and I review, commit and merge
 them, so Claude gets no account of its own and no bot approves pull requests
-([ADR 0010](decisions/0010-no-bot-account-for-claude.md)). That is why Scorecard's
+([ADR 0010](../decisions/0010-no-bot-account-for-claude.md)). That is why Scorecard's
 Code-Review check is low.
 
 Docs: [About rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets),
@@ -36,21 +36,21 @@ Docs: [About rulesets](https://docs.github.com/en/repositories/configuring-branc
 
 ## Code owners
 
-[`.github/CODEOWNERS`](../.github/CODEOWNERS): the owner is asked to review every pull
+[`.github/CODEOWNERS`](../../.github/CODEOWNERS): the owner is asked to review every pull
 request.
 
 ## Issues and pull requests
 
-- **Issue forms** in [`.github/ISSUE_TEMPLATE/`](../.github/ISSUE_TEMPLATE/): bug, feature or
+- **Issue forms** in [`.github/ISSUE_TEMPLATE/`](../../.github/ISSUE_TEMPLATE/): bug, feature or
   change, maintenance, and incident (a blameless write-up after an outage). Blank issues are
-  off. Security problems go to private reporting instead ([SECURITY.md](../SECURITY.md)).
-- **Pull request template** ([`.github/pull_request_template.md`](../.github/pull_request_template.md)):
+  off. Security problems go to private reporting instead ([SECURITY.md](../../SECURITY.md)).
+- **Pull request template** ([`.github/pull_request_template.md`](../../.github/pull_request_template.md)):
   what and why, how it was verified, manual steps, rollback.
-- **Labels** are defined in [`.github/labels.yml`](../.github/labels.yml) and synced by a
+- **Labels** are defined in [`.github/labels.yml`](../../.github/labels.yml) and synced by a
   workflow after each merge. Labels not in the file are deleted. `type/*` says what kind of
   work, `area/*` which part of the homelab, `manual-step` that something is done by hand
   outside Git. Pull requests get `area/*` labels from the paths they change
-  ([`.github/labeler.yml`](../.github/labeler.yml)).
+  ([`.github/labeler.yml`](../../.github/labeler.yml)).
 - **Epics:** each phase or larger goal is an issue labelled `type/epic`, with the steps as
   [sub-issues](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues).
 
@@ -70,7 +70,7 @@ as Backlog, and closed or merged items move to Done.
 
 ## Workflows
 
-All in [`.github/workflows/`](../.github/workflows/). Every workflow starts with
+All in [`.github/workflows/`](../../.github/workflows/). Every workflow starts with
 `permissions: {}` and each job asks only for what it needs. Actions are pinned to a full
 commit SHA with the version in a comment, as GitHub's
 [secure use reference](https://docs.github.com/en/actions/reference/security/secure-use)
@@ -80,6 +80,7 @@ not run.
 
 | Workflow | What it does |
 |---|---|
+| `docs.yml` | Builds the docs website with Hugo on pull requests that change `docs/` or `hugo/`, and publishes it to GitHub Pages from `main` ([hugo/README.md](../../hugo/README.md), [ADR 0015](../decisions/0015-hugo-for-the-docs-website.md)) |
 | `labels.yml` | Syncs labels from `.github/labels.yml` (dry run on pull requests) |
 | `pr-labeler.yml` | Adds `area/*` labels to pull requests. Uses `pull_request`, not `pull_request_target`, so code from forks never runs with write access |
 | `lint.yml` | The required checks: `pre-commit` and `kubernetes` (below) |
@@ -91,7 +92,7 @@ Two required checks run on every pull request (`lint.yml`). Run them locally bef
 
 | Check | What | Locally |
 |---|---|---|
-| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, [zizmor](https://docs.zizmor.sh/) (security audit of the workflows: template injection, permissions, credentials, unpinned actions), gitleaks, and `scripts/check-services.py` (every app in `kubernetes/apps/` is listed in [services.md](services.md)) | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
+| `pre-commit` | The hooks in [`.pre-commit-config.yaml`](../../.pre-commit-config.yaml): whitespace and end of file, YAML/JSON syntax, private keys, yamllint ([`.yamllint.yaml`](../../.yamllint.yaml)), markdownlint ([`.markdownlint-cli2.yaml`](../../.markdownlint-cli2.yaml)), shellcheck, ruff, actionlint, [zizmor](https://docs.zizmor.sh/) (security audit of the workflows: template injection, permissions, credentials, unpinned actions), gitleaks, and `scripts/check-services.py` (every app in `kubernetes/apps/` is listed in [services.md](../services/README.md)) | `uvx pre-commit run --all-files`, or `uvx pre-commit install` once to run them on every commit |
 | `kubernetes` | [flux-schema](https://github.com/fluxcd/flux-schema) builds every kustomize directory under `kubernetes/` and validates each resource against the Kubernetes, Flux and CRD schemas (Gateway API, Envoy Gateway, cert-manager, External Secrets, CloudNativePG ...). Catches wrong fields and types before Flux does | See below |
 
 ```sh
@@ -166,4 +167,4 @@ bot. To make it again:
 | Actions → General | "Require actions to be pinned to a full-length commit SHA" on |
 | About (on the repo page) | Description, no topics |
 | Advanced Security | Private vulnerability reporting, dependency graph, Dependabot alerts, secret scanning and push protection on. CodeQL default setup. Dependabot security updates off: Renovate reads the alerts and opens those pull requests |
-| GitHub Apps | [Mend Renovate](https://github.com/apps/renovate), only for this repository ([dependencies.md](dependencies.md)). `larma-homelab-flux`, own app, commit statuses only ([Deployment status](#deployment-status)) |
+| GitHub Apps | [Mend Renovate](https://github.com/apps/renovate), only for this repository ([dependencies.md](../operations/dependencies.md)). `larma-homelab-flux`, own app, commit statuses only ([Deployment status](#deployment-status)) |

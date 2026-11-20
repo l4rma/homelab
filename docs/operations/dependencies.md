@@ -2,7 +2,7 @@
 
 [Renovate](https://docs.renovatebot.com/) watches every version pinned in this repository and
 opens a pull request when a newer one is out. The configuration is
-[`.github/renovate.json5`](../.github/renovate.json5). It runs as the
+[`.github/renovate.json5`](../../.github/renovate.json5). It runs as the
 [Mend Renovate GitHub App](https://github.com/apps/renovate) (free, hosted by Mend), and
 nothing runs in the homelab.
 
@@ -14,8 +14,9 @@ nothing runs in the homelab.
 | `kubernetes/clusters/homelab/flux-system/gotk-components.yaml` | Flux itself. The pull request regenerates the whole file, like `flux install --export` | `flux` |
 | `kubernetes/**` | Container images (`image:`) in Deployments, DaemonSets and upstream manifests | `kubernetes` |
 | `kubernetes/apps/immich/postgres-cluster.yaml` | The CloudNativePG image (`imageName:`) | regex |
-| `.github/workflows/` | Actions (the SHA and the version comment together), the flux-schema image, the pre-commit version | `github-actions`, regex |
+| `.github/workflows/` | Actions (the SHA and the version comment together), the flux-schema image, the pre-commit version, Hugo (`HUGO_VERSION`) | `github-actions`, regex |
 | `.pre-commit-config.yaml` | Hook revisions (`rev: <sha> # frozen: vX.Y.Z`) | `pre-commit` |
+| `hugo/go.mod` | The docs website's theme (hugo-book), a Hugo module | `gomod` |
 
 Not in Git, so not seen by Renovate: Proxmox, TrueNAS, the node OS, Kubernetes itself
 (kubeadm), containerd, Flannel and everything in the LXCs. Those stay in
@@ -57,12 +58,4 @@ Not in Git, so not seen by Renovate: Proxmox, TrueNAS, the node OS, Kubernetes i
 A pull request that is not wanted yet: close it, and Renovate will not open it again for that
 version. Put a note on why in the pull request.
 
-## Why Renovate
-
-| Option | Why not, or why |
-|---|---|
-| **Renovate** (chosen) | Understands Flux (HelmReleases, gotk-components), Kubernetes manifests, actions pinned to SHAs and pre-commit hooks. Grouping, schedules, minimum release age and the dashboard are built in. Used widely in GitOps repositories |
-| Dependabot | Built into GitHub and needs no app, but has no Flux support: chart versions in HelmReleases and the Flux components are not updated. Kubernetes images need one entry per directory. Still on for security alerts, which Renovate reads |
-| Flux image automation | Runs in the cluster and commits new image tags to Git by itself. Only images, no charts, actions or hooks, and it needs a deploy key with write access. Fits continuous delivery of own images better than third-party updates |
-| Updatecli | Flexible, but every dependency needs its own hand-written rule |
-| By hand (`versions.md`) | What was done until now: a monthly check. Slow, easy to forget, and a newer version is only noticed when someone looks |
+Why Renovate, and what else was considered: [ADR 0008](../decisions/0008-renovate-for-dependency-updates.md).

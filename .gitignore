@@ -20,6 +20,11 @@ crash.*.log
 .terraformrc
 terraform.rc
 
+# Hugo build output
+hugo/public/
+hugo/resources/_gen/
+.hugo_build.lock
+
 # Ansible
 ansible/*.retry
 .vault_pass*

@@ -46,6 +46,6 @@ then it should be a GitHub App, like [0009](0009-github-app-for-flux.md).
 
 ## More information
 
-[docs/github.md](../github.md#ruleset-on-main), [docs/claude-agent.md](../claude-agent.md),
+[docs/development/github.md](../development/github.md#ruleset-on-main), [docs/development/claude-agent.md](../development/claude-agent.md),
 [Scorecard Code-Review check](https://github.com/ossf/scorecard/blob/main/docs/checks.md#code-review).
 Issue #70 was closed as not planned.

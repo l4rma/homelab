@@ -59,7 +59,8 @@ def main() -> int:
         return 2
     if not ENV_FILE.is_file():
         print(
-            f"ERROR: {ENV_FILE} not found. See docs/claude-agent.md.", file=sys.stderr
+            f"ERROR: {ENV_FILE} not found. See docs/development/claude-agent.md.",
+            file=sys.stderr,
         )
         return 1
 

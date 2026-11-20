@@ -33,11 +33,11 @@ my account, and shows up as its own bot. Flux supports App logins directly.
   change code.
 - Good: the private key does not expire, and Flux gets short-lived tokens from it.
 - Bad: more setup steps than a token. They are written down in
-  [github.md](../github.md#deployment-status).
+  [github.md](../development/github.md#deployment-status).
 - Bad: the private key is long-lived, so it must stay in SSM only. It can be rotated in the
   App settings.
 
 ## More information
 
-[docs/github.md: Deployment status](../github.md#deployment-status),
+[docs/development/github.md: Deployment status](../development/github.md#deployment-status),
 [Flux GitHub provider](https://fluxcd.io/flux/components/notification/providers/#github).
