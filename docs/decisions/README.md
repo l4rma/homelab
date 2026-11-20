@@ -21,6 +21,7 @@ table says *what* is used; these files say *why*, and what was rejected. The for
 | [0012](0012-pihole-stays-in-an-lxc.md) | Pi-hole stays in an LXC on Proxmox, not in Kubernetes | Accepted |
 | [0013](0013-uptime-kuma-without-docker.md) | Uptime Kuma installed with Node.js in its LXC, not in Docker | Accepted |
 | [0014](0014-infrastructure-services-stay-outside-kubernetes.md) | Services needed to run or fix the cluster stay outside Kubernetes | Accepted |
+| [0015](0015-hugo-for-the-docs-website.md) | A Hugo website built from docs/, published to GitHub Pages | Accepted |
 
 0001 to 0006 were written down after the fact, in November 2026.
 
@@ -36,7 +37,7 @@ as the change.
 
 1. Copy [template.md](template.md) to `NNNN-short-title.md` with the next number.
 2. Keep it short. The options and their reasons matter most.
-3. Add it to the table above, and link it from the README's technology table if it is there.
+3. Add it to the table above, and link it from the [technology choices](../architecture/technology.md) if it is there.
 
 An accepted ADR is not rewritten. When a decision changes, write a new ADR and set the old
 one's status to `superseded by [NNNN](NNNN-...md)`.

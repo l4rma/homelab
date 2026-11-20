@@ -2,9 +2,9 @@
 
 Uptime Kuma runs in LXC 101 on Proxmox, outside the cluster, so it checks the services the
 way a browser on the LAN does and keeps running when the cluster is down
-([ADR 0011](decisions/0011-alerting-with-alertmanager-and-telegram.md)). It is installed
+([ADR 0011](../decisions/0011-alerting-with-alertmanager-and-telegram.md)). It is installed
 from source with Node.js, not Docker
-([ADR 0013](decisions/0013-uptime-kuma-without-docker.md)).
+([ADR 0013](../decisions/0013-uptime-kuma-without-docker.md)).
 
 The LXC is set up by hand until Terraform and Ansible cover Proxmox (#104). These are the
 steps that were used, so it can be rebuilt.
@@ -18,7 +18,7 @@ steps that were used, so it can be rebuilt.
 | Data | `/var/lib/uptime-kuma` (`DATA_DIR`), SQLite, owned by the `uptime-kuma` user, mode 700 |
 | Service | `uptime-kuma.service` (systemd), port 3001, plain HTTP |
 | URL | `https://uptime-kuma.magelssen.io` through Envoy (`kubernetes/apps/uptime-kuma/`), or `http://192.168.20.10:3001` when the cluster is down |
-| Version | In [versions.md](versions.md). Renovate cannot see it |
+| Version | In [versions.md](../operations/versions.md). Renovate cannot see it |
 
 ## Create the LXC
 
@@ -129,7 +129,7 @@ npm run download-dist
 systemctl start uptime-kuma
 ```
 
-Update [versions.md](versions.md) in the same PR as any doc change, or on its own.
+Update [versions.md](../operations/versions.md) in the same PR as any doc change, or on its own.
 
 ## Monitors
 

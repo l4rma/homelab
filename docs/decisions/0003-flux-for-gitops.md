@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2026-01-18 (written down 2026-11-16)
+date: 2026-01-18
 ---
 
 # Flux for GitOps, not Argo CD
@@ -37,4 +37,4 @@ manifests, which is the point of the lab, and because Flux is what I use at work
 
 ## More information
 
-[README: GitOps flow](../../README.md#gitops-flow), [Flux docs](https://fluxcd.io/flux/).
+[GitOps flow](../cluster/README.md#gitops-flow), [Flux docs](https://fluxcd.io/flux/).

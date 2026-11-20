@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2026-10-29 (written down 2026-11-16)
+date: 2026-10-29
 ---
 
 # Envoy Gateway (Gateway API) instead of ingress-nginx
@@ -47,6 +47,6 @@ verification for the self-signed ones.
 
 ## More information
 
-[README: Architecture](../../README.md#architecture),
+[Architecture](../architecture/README.md),
 [Ingress NGINX retirement](https://kubernetes.io/blog/2025/11/11/ingress-nginx-retirement/),
 [Envoy Gateway docs](https://gateway.envoyproxy.io/docs/).

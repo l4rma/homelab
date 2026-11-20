@@ -1,0 +1,8 @@
+{{- /*
+  Overrides hugo-book's edit link. The theme takes the path relative to hugo/, but the
+  content comes from docs/ and README.md, outside it. The link is built here instead of
+  from the BookEditLink template: the theme caches that template's output under one key,
+  so every page got the same link.
+*/ -}}
+{{- $path := partial "homelab/repo-path.html" . -}}
+{{- return printf "%s/edit/%s/%s" site.Params.repoURL site.Params.repoBranch $path -}}

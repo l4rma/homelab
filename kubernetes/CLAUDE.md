@@ -17,7 +17,7 @@ notification controllers; no image automation).
 Use multi-arch images, since pi5 is arm64. Every workload has resource requests (request
 about the observed peak, memory limit about 2x, no CPU limits), so the scheduler spreads
 them by allocatable. Kubelet reservations and the removed taint on lenovo1 are set by hand,
-see `docs/kubernetes-nodes.md`. The iGPU (`gpu.intel.com/i915`) exists only on the Lenovos.
+see `docs/cluster/nodes.md`. The iGPU (`gpu.intel.com/i915`) exists only on the Lenovos.
 
 Storage: static NFS PersistentVolumes from TrueNAS for files and app configs, and the
 `local-path` StorageClass (node-local disk, `Retain`, not the default) for databases.
@@ -70,7 +70,7 @@ one and includes every subdirectory, so a new directory with its own
 - **external-secrets** 1.3.1: `ClusterSecretStore aws-ssm` (AWS SSM Parameter Store,
   `eu-west-1`, paths `/homelab/<namespace>/<name>`). The IAM key
   (`external-secrets/aws-ssm-credentials`) was created manually and is not in Git. How to
-  add a secret: `docs/secrets.md`
+  add a secret: `docs/cluster/secrets.md`
 - **claude-readonly**: the read-only ServiceAccount and RBAC for Claude Code
 - **flux-notifications** (in `flux-system`): a `github` Provider and an Alert for all
   Kustomizations, so each commit on `main` gets a GitHub commit status per Kustomization
@@ -137,10 +137,10 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   `--append-only` (laptops cannot delete or change backups) and `--private-repos` (each user
   only reaches `/<user>/`). Repositories on NFS (`Catacombs/backups/restic`). Users come from
   an htpasswd file in SSM (`/homelab/restic/htpasswd`), which rest-server reloads on change.
-  Pruning cannot run from the laptops in append-only mode. Laptop setup: `docs/backups.md`.
+  Pruning cannot run from the laptops in append-only mode. Laptop setup: `docs/operations/backups.md`.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,
   `SECRET_ENCRYPTION_KEY` from SSM. Boards are set up in its UI, not in Git.
-- Every directory here must be listed in `docs/services.md` (checked by
+- Every directory here must be listed in `docs/services/README.md` (checked by
   `scripts/check-services.py` in pre-commit). Add the row in the same PR as the app.
 - **omada, pihole, proxmox, truenas, uptime-kuma**:
   run *outside* the cluster. The repo only has an Envoy Gateway `Backend` (IP and port)
@@ -160,7 +160,7 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
 - Run `kubectl kustomize <dir>` on every directory you change before saying you are
   done. For `clusters/homelab`, `infrastructure` and `apps`, build with a generated root
   `kustomization.yaml` in a scratch copy, since Flux generates it. Also run the
-  `kubernetes` check from `docs/github.md` (flux-schema), which a pull request must pass.
+  `kubernetes` check from `docs/development/github.md` (flux-schema), which a pull request must pass.
 - All Kustomizations have `prune: true`. A Kustomization that points to a path that
   exists but has wrong or incomplete content deletes resources from the cluster.
   - Never move files and change paths in the same step. Use copy, switch path, verify,

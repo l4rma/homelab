@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2025 (written down 2026-11-16)
+date: 2025
 ---
 
 # Kubernetes on bare-metal nodes, not VMs
@@ -42,4 +42,4 @@ real disks, a real iGPU and two CPU architectures.
 
 ## More information
 
-[docs/kubernetes-nodes.md](../kubernetes-nodes.md), [README: Hardware](../../README.md#hardware).
+[docs/cluster/nodes.md](../cluster/nodes.md), [Hardware](../architecture/hardware.md).

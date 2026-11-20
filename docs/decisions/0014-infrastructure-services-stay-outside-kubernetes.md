@@ -63,7 +63,7 @@ Omada stays a TrueNAS app as it is today. Its data moves from `Catacombs/data` t
 - Good: a new service is placed with one question: is it needed to run or fix the cluster?
 - Bad: these services are not managed by Flux. Until Terraform and Ansible cover Proxmox
   (#104) they are set up by hand, documented in `docs/`, and their versions are tracked in
-  [versions.md](../versions.md).
+  [versions.md](../operations/versions.md).
 - Bad: they depend on the single Proxmox host, like TrueNAS already does.
 - Issue #102 (Omada controller in Kubernetes) is closed as not planned.
 

@@ -34,7 +34,6 @@ Rules for updating, also for Renovate's pull requests:
 |---|---|---|
 | Proxmox VE 8.4 | Past end of life (Proxmox EOL 2026-08, Debian 12 EOL 2026-07) | Plan the upgrade to 9, using Proxmox's `pve8to9` checklist. TrueNAS runs on this host, so plan for the downtime |
 | Kubernetes 1.36.1 | 5 patch releases behind | Update to 1.36.6, and then consider 1.37 |
-| Jellyfin 10.11.6 | Newest is 12.4, and there is no downgrade path | Pinned on purpose for the move. Upgrade in its own PR after a config backup |
 | Omada controller | TrueNAS reports an app update (chart 1.2.12 to 1.4.19) | Read the notes, and back up the controller first |
 
 ## Host and platform
@@ -60,7 +59,7 @@ Claude cannot read versions inside the LXCs, so these need a check by hand.
 | Omada controller | `5.15_1.2.12` | Chart 1.4.19 | Unknown | TrueNAS app |
 | Pi-hole | Check by hand | 6.5 | Unknown | LXC 104 |
 | Tailscale | Check by hand | Check by hand | Unknown | LXC 103 |
-| Uptime Kuma | 2.5.8 | 2.5.12 | 2026-11-19 | LXC 101, upgrade steps in [uptime-kuma.md](uptime-kuma.md) |
+| Uptime Kuma | 2.5.8 | 2.5.12 | 2026-11-19 | LXC 101, upgrade steps in [uptime-kuma.md](../services/uptime-kuma.md) |
 
 ## Kubernetes core
 

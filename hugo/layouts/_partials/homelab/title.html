@@ -1,0 +1,28 @@
+{{- /*
+  The title of a page, for themes to use in menus, breadcrumbs and <title>.
+
+  The docs have no title in front matter: each file starts with `# Title`, as GitHub
+  shows it. So the title is the front matter title if there is one, else the first
+  level-1 heading, else the file name.
+  https://gohugo.io/methods/page/fragments/
+
+  Usage: {{ partial "homelab/title.html" . }}
+*/ -}}
+{{- $title := .Title -}}
+{{- if and (not $title) .File -}}
+  {{- with .Fragments.Headings -}}
+    {{- with index . 0 -}}
+      {{- if eq .Level 1 -}}
+        {{- /* The heading text is HTML (&rsquo; and the like): make it plain text. */ -}}
+        {{- $title = .Title | plainify | htmlUnescape -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if not $title -}}
+    {{- $title = .File.ContentBaseName | humanize -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $title -}}
+  {{- $title = site.Title -}}
+{{- end -}}
+{{- return $title -}}

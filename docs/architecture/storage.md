@@ -35,7 +35,7 @@ Firelink
 │   └── omada             Omada data (planned; today still in Catacombs/data)
 └── Catacombs
     └── backups
-        ├── restic        Laptop backups (restic repositories, one per user, encrypted), see docs/backups.md
+        ├── restic        Laptop backups (restic repositories, one per user, encrypted), see docs/operations/backups.md
         ├── k8s           Copies of Kubernetes app data (planned)
         └── truenas       TrueNAS config exports (root only)
 ```
@@ -96,15 +96,8 @@ parts, and Ceph is too heavy for 8 GB nodes.
 
 ## Snapshots
 
-| Dataset | Schedule | Kept | Notes |
-|---|---|---|---|
-| `AnorLondo` (recursive) | Daily at 00:00 | 30 days | Empty snapshots allowed |
-
-Snapshots protect against deleting or overwriting by mistake, not against losing the
-pool. Real backups come with the backup plan. "Allow taking empty snapshots" is on
-because each snapshot expires after 30 days whether or not a newer one exists: without
-it, a dataset that does not change for 30 days ends up with no snapshot at all. An
-unchanged snapshot only costs a few KB of metadata.
+Every dataset has periodic ZFS snapshots. The schedules, and how to restore from them, are in
+[backups](../operations/backups.md#zfs-snapshots-truenas).
 
 ## Things to know
 

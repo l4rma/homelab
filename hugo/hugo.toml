@@ -1,0 +1,125 @@
+# Hugo site for the docs. Content is the repository's own Markdown, mounted from outside
+# this directory, so docs/ stays plain Markdown that reads the same on GitHub, for Claude
+# and on the website. Why Hugo and why mounts: docs/decisions/0015-hugo-for-the-docs-website.md
+# All settings: https://gohugo.io/configuration/all/
+baseURL = 'https://docs.magelssen.io/'
+title = 'homelab'
+locale = 'en'
+enableRobotsTXT = true
+
+# Taxonomies are not used. Keep the site to the docs.
+disableKinds = ['taxonomy', 'term']
+
+[params]
+# Links to files outside the site (manifests, workflows, READMEs in other directories)
+# go to the file on GitHub. Used by layouts/_markup/render-link.html.
+repoURL = 'https://github.com/l4rma/homelab'
+repoBranch = 'main'
+
+# hugo-book. All options: https://github.com/alex-shpak/hugo-book#configuration
+# Light or dark, following the browser.
+BookTheme = 'auto'
+BookToC = true
+BookBreadcrumbs = true
+# The menu is every page and section, as the files are laid out in docs/.
+BookSection = '/'
+BookSearch = true
+# Turns on "Edit this page" in each page's footer. The link itself is built from
+# repoURL in layouts/_partials/docs/links/edit.html, with the file's path in the repository.
+BookEditLink = 'on'
+# No "Last modified" (BookLastChangeLink): Hugo has no Git info for content mounted from
+# outside hugo/.
+# Off: our own link render hook (layouts/_markup/render-link.html) replaces the theme's,
+# and these two features depend on the theme's.
+BookPortableLinks = false
+BookPageLinks = false
+BookComments = false
+BookServiceWorker = false
+
+[frontmatter]
+# The docs are not a blog: the `date` in an ADR's front matter is when it was decided, not
+# when it was published. Without this, Hugo sorts pages newest first by it, and hides a
+# page whose date is in the future. With no date, pages are sorted by file name, so the
+# ADRs are in number order. (:filename only takes a date from a YYYY-MM-DD- file name.)
+date = [':filename']
+publishDate = [':filename']
+
+[markup.goldmark.parser]
+# The same heading IDs as GitHub, so #anchors in links work in both places.
+autoHeadingIDType = 'github'
+
+# Mounts instead of contentDir: mounts can map single files, so each README.md becomes
+# the index page of its directory (Hugo only treats _index.md as one).
+# https://gohugo.io/configuration/module/#mounts
+[[module.mounts]]
+source = '../docs'
+target = 'content'
+# READMEs are mounted below. The ADR template is for copying, not reading; links to it
+# go to GitHub.
+files = ['! README.md', '! **/README.md', '! decisions/template.md']
+
+# A new section directory in docs/ with a README.md needs a mount here.
+[[module.mounts]]
+source = '../docs/README.md'
+target = 'content/_index.md'
+
+[[module.mounts]]
+source = '../docs/architecture/README.md'
+target = 'content/architecture/_index.md'
+
+[[module.mounts]]
+source = '../docs/cluster/README.md'
+target = 'content/cluster/_index.md'
+
+[[module.mounts]]
+source = '../docs/services/README.md'
+target = 'content/services/_index.md'
+
+[[module.mounts]]
+source = '../docs/operations/README.md'
+target = 'content/operations/_index.md'
+
+[[module.mounts]]
+source = '../docs/development/README.md'
+target = 'content/development/_index.md'
+
+[[module.mounts]]
+source = '../docs/decisions/README.md'
+target = 'content/decisions/_index.md'
+
+# The order of the sections in the menu. Pages within a section are in file name order.
+# Set here, so docs/ needs no Hugo front matter. https://gohugo.io/configuration/cascade/
+[[cascade]]
+weight = 1
+[cascade.target]
+path = '/architecture'
+
+[[cascade]]
+weight = 2
+[cascade.target]
+path = '/cluster'
+
+[[cascade]]
+weight = 3
+[cascade.target]
+path = '/services'
+
+[[cascade]]
+weight = 4
+[cascade.target]
+path = '/operations'
+
+[[cascade]]
+weight = 5
+[cascade.target]
+path = '/development'
+
+[[cascade]]
+weight = 6
+[cascade.target]
+path = '/decisions'
+
+# The theme, as a Hugo module. The version is pinned in go.mod and updated by Renovate.
+# https://github.com/alex-shpak/hugo-book
+[[module.imports]]
+path = 'github.com/alex-shpak/hugo-book'

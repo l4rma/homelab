@@ -86,13 +86,13 @@ What checks from the user's side, and watches the watcher:
   Prometheus (MetalLB) and from Uptime Kuma.
 - Good: free, and nothing outside the homelab watches it.
 - Good: Uptime Kuma's SQLite database moves off NFS and onto the LXC's local disk
-  ([docs/storage.md](../storage.md) says SQLite does not belong on NFS).
+  ([docs/architecture/storage.md](../architecture/storage.md) says SQLite does not belong on NFS).
 - Bad: if the internet connection or the Proxmox host is down, nothing can send an alert. I accept
   that, because nothing else works then either.
 - Bad: delivery depends on Telegram and Google. A Telegram outage means only the Gmail warnings
   arrive.
 - Bad: Uptime Kuma leaves GitOps. The LXC is made by hand until Proxmox is managed with Terraform
-  (#104), its version is tracked in `docs/versions.md`, and its setup is written down in `docs/`.
+  (#104), its version is tracked in `docs/operations/versions.md`, and its setup is written down in `docs/`.
   Its monitors live in its own database, as they do today.
 - Bad: the chart's default rules include some that are noisy on a kubeadm cluster. Each one is
   turned off in Git, with the reason next to it.

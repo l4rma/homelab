@@ -5,7 +5,7 @@ linked directories and docs; this page is the overview.
 
 Services needed to run or fix the cluster (DNS, monitoring, the network controller,
 remote access) run outside Kubernetes on purpose
-([ADR 0014](decisions/0014-infrastructure-services-stay-outside-kubernetes.md)).
+([ADR 0014](../decisions/0014-infrastructure-services-stay-outside-kubernetes.md)).
 Everything else runs in the cluster. All addresses are under `magelssen.io` and go through
 the Envoy Gateway at `192.168.30.200`, also for services outside the cluster.
 
@@ -36,11 +36,11 @@ route to them: an Envoy Gateway `Backend` and an HTTPRoute.
 
 | Service | What it is for | Runs on | Address | Data | In Git |
 |---|---|---|---|---|---|
-| Pi-hole | DNS for the house, and the local records for `*.magelssen.io` ([ADR 0012](decisions/0012-pihole-stays-in-an-lxc.md)) | LXC 104 | `pihole.` | LXC disk | Route only: `kubernetes/apps/pihole` |
-| Uptime Kuma | Checks the services from outside the cluster ([docs/uptime-kuma.md](uptime-kuma.md)) | LXC 101 | `uptime-kuma.`, or `192.168.20.10:3001` when the cluster is down | LXC disk | Route only: `kubernetes/apps/uptime-kuma` |
+| Pi-hole | DNS for the house, and the local records for `*.magelssen.io` ([ADR 0012](../decisions/0012-pihole-stays-in-an-lxc.md)) | LXC 104 | `pihole.` | LXC disk | Route only: `kubernetes/apps/pihole` |
+| Uptime Kuma | Checks the services from outside the cluster ([docs/services/uptime-kuma.md](uptime-kuma.md)) | LXC 101 | `uptime-kuma.`, or `192.168.20.10:3001` when the cluster is down | LXC disk | Route only: `kubernetes/apps/uptime-kuma` |
 | Tailscale | Remote access to the LAN from outside | LXC 103 | None | LXC disk | Nothing |
 | Omada controller | Manages the router, the switch and the access point | TrueNAS app | `omada.` | `Catacombs/data` (moving to `UndeadParish/omada`) | Route only: `kubernetes/apps/omada` |
-| TrueNAS SCALE | NAS: NFS and SMB shares, snapshots, the pool `Firelink` ([docs/storage.md](storage.md)) | VM 100 | `truenas.` | Pool `Firelink` | Route only: `kubernetes/apps/truenas` |
+| TrueNAS SCALE | NAS: NFS and SMB shares, snapshots, the pool `Firelink` ([docs/architecture/storage.md](../architecture/storage.md)) | VM 100 | `truenas.` | Pool `Firelink` | Route only: `kubernetes/apps/truenas` |
 | Proxmox VE | Hypervisor for TrueNAS and the LXCs | `pve` (bare metal) | `proxmox.` | `local`, `local-lvm` | Route only: `kubernetes/apps/proxmox` |
 
 ## Proxmox guests
@@ -59,6 +59,6 @@ Every VM and LXC on `pve`, so nothing there is unexplained.
 
 The cluster add-ons that the services above use (Flux, Envoy Gateway, MetalLB,
 cert-manager, External Secrets, CloudNativePG, local-path, the Intel GPU plugin and others)
-are listed in [kubernetes/README.md](../kubernetes/README.md). Why each was chosen is in the
-[README's technology table](../README.md#technology-choices) and the
-[decision records](decisions/).
+are listed in [kubernetes/README.md](../../kubernetes/README.md). Why each was chosen is in the
+[technology choices](../architecture/technology.md) and the
+[decision records](../decisions/).

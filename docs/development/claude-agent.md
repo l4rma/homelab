@@ -3,6 +3,31 @@
 Claude Code has **read-only** access to the homelab. All changes go through Git and
 are rolled out by Flux (or by a human), never by Claude directly.
 
+## How access is limited
+
+Claude can inspect the cluster and propose changes, but it cannot change anything by
+itself:
+
+- Read-only ServiceAccount: `claude-readonly` is bound to the built-in `view`
+  ClusterRole plus a small extra ClusterRole for nodes, persistent volumes, CRDs,
+  Flux, Prometheus Operator and Gateway API resources, and may run PromQL queries
+  through the Prometheus Service. It has no access to secrets. The RBAC is managed by Flux like
+  everything else, in [`kubernetes/infrastructure/claude-readonly`](../../kubernetes/infrastructure/claude-readonly/).
+- Separate kubeconfig: a [script](../../scripts/create-claude-kubeconfig.sh) builds a
+  kubeconfig from the ServiceAccount token. Claude Code uses it through a gitignored
+  local settings file. The admin kubeconfig is denied.
+- Client-side guardrails: [`.claude/settings.json`](../../.claude/settings.json) allows
+  read commands and denies `kubectl apply/delete/edit/patch/exec` and
+  `flux reconcile/suspend`.
+- Changes through Git: Claude works on a branch. A human reviews, commits and merges,
+  and Flux rolls out the change.
+
+Why it is set up this way: the RBAC is enforced by the API server, so even if a
+client-side rule is bypassed, the agent still cannot change the cluster or read
+secrets. Every change goes through review and is recorded in Git history, the same
+as for a human operator. The repo is public, so no credentials are ever part of the
+setup in Git.
+
 ## MCP servers
 
 `.mcp.json` registers three MCP servers. Each one is started by a wrapper script in
@@ -46,7 +71,7 @@ Lockdown mode is on, so content from users without push access to the repo is
 hidden from Claude. This limits prompt injection through issues and comments.
 
 Claude stays read-only on GitHub: it does not push or open pull requests, and gets no
-account of its own ([ADR 0010](decisions/0010-no-bot-account-for-claude.md)). If it ever
+account of its own ([ADR 0010](../decisions/0010-no-bot-account-for-claude.md)). If it ever
 works without a human at the keyboard, it gets a GitHub App that can open pull requests
 but never merge them.
 

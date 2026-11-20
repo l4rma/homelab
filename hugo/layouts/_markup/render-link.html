@@ -1,0 +1,52 @@
+{{- /*
+  Link render hook: makes the links in docs/ work on the website as they do on GitHub.
+  https://gohugo.io/render-hooks/links/
+
+  The docs link to other Markdown files with paths relative to the file, as GitHub expects
+  (../cluster/nodes.md, decisions/0011-...md#options, ../../kubernetes/README.md). For each such link:
+
+  1. Work out the target's path in the repository, from the file that has the link.
+  2. If the target is a page on this site (a file in docs/), link to the page.
+  3. Otherwise link to the file on GitHub (manifests, workflows, other READMEs, the ADR
+     template). Hugo cannot see files outside its mounts, so it cannot check that the
+     file exists.
+
+  Remote links (https://...), mailto: and #fragments are left as they are.
+*/ -}}
+{{- $dest := .Destination -}}
+{{- $url := urls.Parse .Destination -}}
+{{- if and (not $url.IsAbs) (not (hasPrefix .Destination "#")) $url.Path -}}
+  {{- $source := partial "homelab/repo-path.html" .PageInner -}}
+  {{- $target := "" -}}
+  {{- if hasPrefix $url.Path "/" -}}
+    {{- $target = path.Clean (strings.TrimPrefix "/" $url.Path) -}}
+  {{- else -}}
+    {{- $target = path.Clean (path.Join (path.Dir $source) $url.Path) -}}
+  {{- end -}}
+
+  {{- /* Repository path -> logical path on the site. README.md is its directory's index. */ -}}
+  {{- $logical := "" -}}
+  {{- if hasPrefix $target "docs/" -}}
+    {{- $logical = print "/" (strings.TrimPrefix "docs/" $target) -}}
+    {{- if eq (path.Base $logical) "README.md" -}}
+      {{- $logical = path.Dir $logical -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- $page := "" -}}
+  {{- with $logical -}}
+    {{- $page = site.GetPage . -}}
+  {{- end -}}
+
+  {{- if $page -}}
+    {{- $dest = $page.RelPermalink -}}
+  {{- else -}}
+    {{- $dest = printf "%s/blob/%s/%s" site.Params.repoURL site.Params.repoBranch $target -}}
+  {{- end -}}
+
+  {{- with $url.Fragment -}}
+    {{- $dest = print $dest "#" . -}}
+  {{- end -}}
+{{- end -}}
+<a href="{{ $dest | safeURL }}"{{ with .Title }} title="{{ . }}"{{ end }}>{{ .Text }}</a>
+{{- /* chomp trailing newline */ -}}

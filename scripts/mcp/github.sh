@@ -9,7 +9,7 @@ IMAGE="ghcr.io/github/github-mcp-server:v2.0.3"
 ENV_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/homelab-mcp/github.env"
 
 if [[ ! -r "$ENV_FILE" ]]; then
-  echo "ERROR: $ENV_FILE not found. See docs/claude-agent.md." >&2
+  echo "ERROR: $ENV_FILE not found. See docs/development/claude-agent.md." >&2
   exit 1
 fi
 set -a

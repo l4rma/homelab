@@ -1,0 +1,9 @@
+{{- /*
+  The path of a page's source file in the repository, e.g. docs/architecture/storage.md or README.md.
+  Content is mounted from outside hugo/, so the path is taken from the repository root,
+  the parent of this hugo/ directory.
+
+  Usage: {{ partial "homelab/repo-path.html" . }} with a page as context
+*/ -}}
+{{- $root := path.Dir hugo.WorkingDir -}}
+{{- return strings.TrimPrefix (print $root "/") .File.Filename -}}

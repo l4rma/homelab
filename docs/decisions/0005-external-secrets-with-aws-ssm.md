@@ -1,6 +1,6 @@
 ---
 status: accepted
-date: 2026-10-29 (written down 2026-11-16)
+date: 2026-10-29
 ---
 
 # Secrets in AWS SSM through External Secrets
@@ -34,7 +34,7 @@ encrypted, and SSM is free at this size. AWS is already used for Route53.
 - Good: nothing secret in the public repository, and a value is changed in one place.
 - Good: rebuilding the cluster needs one AWS key, and every Secret comes back.
 - Bad: that one key (and cert-manager's Route53 key) is made by hand. Until Terraform does it,
-  it is documented in [secrets.md](../secrets.md).
+  it is documented in [secrets.md](../cluster/secrets.md).
 - Bad: depends on AWS and the internet. If AWS cannot be reached, existing Secrets stay, but
   new or changed ones are not synced.
 - Bad: reading SecureStrings is free up to 20 000 KMS requests a month, enough for about 25
@@ -42,4 +42,4 @@ encrypted, and SSM is free at this size. AWS is already used for Route53.
 
 ## More information
 
-[docs/secrets.md](../secrets.md).
+[docs/cluster/secrets.md](../cluster/secrets.md).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checks that docs/services.md lists every app in kubernetes/apps/.
+"""Checks that docs/services/README.md lists every app in kubernetes/apps/.
 
 Fails when a directory in kubernetes/apps/ is not named on the page, or when the
 page names a kubernetes/apps/ or kubernetes/infrastructure/ directory that does not
@@ -10,7 +10,7 @@ import re
 import sys
 from pathlib import Path
 
-PAGE = Path("docs/services.md")
+PAGE = Path("docs/services/README.md")
 APPS = Path("kubernetes/apps")
 REFERENCE = re.compile(r"`(kubernetes/(?:apps|infrastructure)/[a-z0-9-]+)`")
 

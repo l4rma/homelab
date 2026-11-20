@@ -1,8 +1,8 @@
 # homelab
 
 Monorepo for the whole homelab: Kubernetes (GitOps with Flux), and later Terraform,
-Ansible, Crossplane and AWS. The repository is **public**. See `README.md` for the
-architecture.
+Ansible, Crossplane and AWS. The repository is **public**. The docs are in `docs/` (start at
+`docs/README.md`), also published at <https://docs.magelssen.io/>.
 
 ## The homelab in short
 
@@ -10,7 +10,7 @@ architecture.
   M720q and a Raspberry Pi 5), managed by Flux from `kubernetes/`.
 - **Proxmox VE**: runs TrueNAS SCALE in a VM (NFS/SMB, storage, backups, Omada
   controller app) and LXCs for services not in Kubernetes (Pi-hole, Tailscale, and
-  Uptime Kuma, see `docs/uptime-kuma.md`).
+  Uptime Kuma, see `docs/services/uptime-kuma.md`).
 - **AWS**: Route53 hosts `magelssen.io`, used by cert-manager for DNS-01.
 - **Goal**: move the services on Proxmox into Kubernetes, except those needed to run or
   fix the cluster (DNS, monitoring, the network controller, remote access; see
@@ -24,8 +24,9 @@ architecture.
 | `kubernetes/` | Flux entrypoint, infrastructure and apps | `kubernetes/CLAUDE.md` |
 | `terraform/` | Proxmox and AWS as code (no code yet) | `terraform/CLAUDE.md` |
 | `ansible/` | Node and NAS configuration (no code yet) | `ansible/README.md` |
+| `hugo/` | Docs website, built from `docs/` | `hugo/README.md` |
 | `scripts/` | Helper scripts run locally | |
-| `docs/` | Documentation | |
+| `docs/` | Documentation, in sections (architecture, cluster, services, operations, development, decisions) | `docs/README.md` |
 | `tmp/` | Local scratch notes, gitignored | |
 
 ## Rules for Claude
@@ -34,7 +35,7 @@ architecture.
   `claude/claude-readonly` ServiceAccount (details in `kubernetes/CLAUDE.md`). You
   cannot read secrets.
 - Read-only MCP servers for Kubernetes, GitHub and Proxmox are set up in `.mcp.json`
-  (see `docs/claude-agent.md`). Use them to read the real state instead of relying
+  (see `docs/development/claude-agent.md`). Use them to read the real state instead of relying
   on hand-written docs.
 - For how-to and reference questions, use the official docs as the main source,
   and prefer the page for the version that runs here:
@@ -45,17 +46,17 @@ architecture.
   Terraform runs started by a human) roll out what is merged to `main`.
 - Create a new branch for every change. Explain what you change and why.
 - Work is tracked in GitHub issues (epics with sub-issues) and on the project board, see
-  `docs/github.md`. Pull requests follow `.github/pull_request_template.md`, link their
+  `docs/development/github.md`. Pull requests follow `.github/pull_request_template.md`, link their
   issue, and have a short title: it becomes the commit message on `main`.
 - Run `uvx pre-commit run --all-files` before handing over a change. It is what the
-  required `pre-commit` check runs (see `docs/github.md`).
+  required `pre-commit` check runs (see `docs/development/github.md`).
 - Do not commit, push or merge unless asked.
 - No secrets in plain text, anywhere. The repo is public. kubeconfigs, tokens, age
   keys, Terraform state and `.tfvars` files must never be committed.
 - Follow the existing conventions in each directory.
-- Versions pinned in Git are updated by Renovate (`docs/dependencies.md`). When a PR changes
+- Versions pinned in Git are updated by Renovate (`docs/operations/dependencies.md`). When a PR changes
   a version Renovate cannot see (hosts, Kubernetes itself, services outside Kubernetes),
-  update `docs/versions.md` in the same PR.
+  update `docs/operations/versions.md` in the same PR.
 - When a PR adds a technology, replaces one, or makes a choice between real alternatives,
   write a decision record in `docs/decisions/` in the same PR (see its README).
 - If something is unclear or looks risky, ask instead of guessing.

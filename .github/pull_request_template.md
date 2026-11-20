@@ -17,5 +17,5 @@
 ## Checklist
 
 - [ ] No secrets in the diff
-- [ ] Image and chart versions pinned, and `docs/versions.md` updated if a version changed
+- [ ] Image and chart versions pinned, and `docs/operations/versions.md` updated if a version changed
 - [ ] Docs updated (README, `docs/`, `CLAUDE.md`)
