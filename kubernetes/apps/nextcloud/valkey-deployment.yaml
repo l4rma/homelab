@@ -1,0 +1,53 @@
+# Nextcloud's file locking and distributed cache. Nothing is saved to disk: locks and cache
+# entries are only valid while Nextcloud runs, and are rebuilt after a restart.
+# No password, like Immich's Valkey: Flannel has no NetworkPolicy, and the data is not secret.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud-valkey
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nextcloud-valkey
+  template:
+    metadata:
+      labels:
+        app: nextcloud-valkey
+    spec:
+      # Next to Nextcloud: every request takes and releases file locks here.
+      nodeSelector:
+        kubernetes.io/hostname: lenovo2
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        runAsNonRoot: true
+      containers:
+        - name: valkey
+          image: docker.io/valkey/valkey:9.1.3
+          args: ["--save", "", "--appendonly", "no"]
+          ports:
+            - name: valkey
+              containerPort: 6379
+          readinessProbe:
+            exec:
+              command: ["valkey-cli", "ping"]
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: valkey
+            periodSeconds: 30
+          # No maxmemory: evicting keys could drop a file lock. Nextcloud sets a TTL on its
+          # cache entries and locks, so it stays small.
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 256Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          emptyDir: {}

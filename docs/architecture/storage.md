@@ -24,7 +24,7 @@ inherits that policy. Dark Souls names at the top level, plain names below.
 Firelink
 ├── AnorLondo
 │   ├── immich            Immich originals, profile/ and backups/ (DB dumps)
-│   └── nextcloud         Nextcloud user files (planned)
+│   └── nextcloud         Nextcloud user files, owned by www-data (33:33), mode 770, no SMB
 ├── DukesArchives         movies/ series/ audiobooks/ downloads/  (folders, not datasets)
 ├── BlightTown
 │   ├── home-assistant
@@ -44,7 +44,7 @@ Firelink
 
 | Consumer | How | Path |
 |---|---|---|
-| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich`, `/mnt/Firelink/DukesArchives`, `/mnt/Firelink/Catacombs/backups/restic` |
+| Kubernetes (static PVs) | NFS, one share per app dataset, only `192.168.30.0/24` | `/mnt/Firelink/BlightTown/<app>`, `/mnt/Firelink/AnorLondo/immich`, `/mnt/Firelink/AnorLondo/nextcloud`, `/mnt/Firelink/DukesArchives`, `/mnt/Firelink/Catacombs/backups/restic` |
 | Proxmox storage `SensFortress` | SMB (CIFS), mounted by Proxmox at `/mnt/pve/SensFortress` | `SensFortress` |
 | Nothing (was Plex and the docker LXC, both removed 2026-11-19) | SMB, `/etc/fstab` on pve at `/mnt/dukesarchives`. Unused: remove the fstab line and unmount | `DukesArchives` |
 | Personal devices | SMB | `AnorLondo` |
@@ -89,6 +89,13 @@ files can be 10–20% of the library and do not need the offsite backup. Immich 
 UID/GID 3000 (`larma` on TrueNAS), which owns both datasets, so the originals can also
 be read over SMB with the same account. NFS maps root to `nobody`, so running as root
 would not work.
+
+Nextcloud keeps its user files in `AnorLondo/nextcloud`, and its app folder (`/var/www/html`)
+and Postgres on `local-path` on lenovo2
+([ADR 0016](../decisions/0016-nextcloud-in-kubernetes.md)). It runs as `www-data`
+(UID/GID 33), not 3000, and refuses a data directory that others can read, so the dataset is
+owned by 33:33 with mode 770. It is not shared over SMB: Nextcloud keeps its own index of
+the files and does not see changes made behind its back.
 
 Rejected: iSCSI from TrueNAS (democratic-csi) and replicated storage (Longhorn,
 Rook-Ceph). Both would let a stateful pod move between nodes, but add a lot of moving

@@ -117,6 +117,10 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   decoding, transcode policy "Required", thumbnail and metadata job concurrency 2 (the
   defaults, 3 and 5, pushed the server close to its memory limit during the first import),
   and daily database dumps kept for 14 days.
+- **nextcloud**: being set up (#89, ADR 0016). NFS PV on `AnorLondo/nextcloud` (the data
+  directory, owned by www-data 33:33, mode 770), CloudNativePG `Cluster` `nextcloud-db`
+  (1 instance, Postgres 18, `local-path` on lenovo2) and Valkey without persistence (file
+  locking and cache), both on lenovo2 next to Nextcloud. The HelmRelease comes in #91.
 - **media**: the media stack, moved here from the Portainer LXC. NFS PV for all of
   `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
   an init container that waits for `/config/.restored`, and the media writable (subtitles) at its old
