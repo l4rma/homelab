@@ -1,0 +1,28 @@
+# Nextcloud's database: one Postgres instance. Nextcloud 35 supports Postgres 14-18 and
+# recommends 18. Holds the file index, shares, versions' metadata and app data (calendars,
+# contacts), so it needs its own backup: it is on local disk, outside ZFS snapshots.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: nextcloud-db
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.6-standard-trixie
+  bootstrap:
+    initdb:
+      database: nextcloud
+      owner: nextcloud
+  storage:
+    storageClass: local-path
+    size: 5Gi
+  # Same node as Nextcloud: its app volume is on local-path there, and it makes many small
+  # queries per request.
+  affinity:
+    nodeSelector:
+      kubernetes.io/hostname: lenovo2
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 512Mi

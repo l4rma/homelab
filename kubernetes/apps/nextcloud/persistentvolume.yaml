@@ -1,0 +1,21 @@
+# Static NFS volume on TrueNAS. spec.nfs is immutable: changing it means a new PV.
+# Nextcloud's data directory: the user files. Owned by www-data (33:33), mode 770, the user
+# Nextcloud runs as. Irreplaceable: snapshotted daily (AnorLondo task) and later backed up
+# offsite. Not shared over SMB: files changed outside Nextcloud do not show up in it.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nextcloud-data-pv
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+    storage: 1Ti
+  claimRef:
+    name: nextcloud-data-pvc
+    namespace: nextcloud
+  nfs:
+    path: /mnt/Firelink/AnorLondo/nextcloud
+    server: 192.168.10.4
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""

@@ -22,6 +22,7 @@ table says *what* is used; these files say *why*, and what was rejected. The for
 | [0013](0013-uptime-kuma-without-docker.md) | Uptime Kuma installed with Node.js in its LXC, not in Docker | Accepted |
 | [0014](0014-infrastructure-services-stay-outside-kubernetes.md) | Services needed to run or fix the cluster stay outside Kubernetes | Accepted |
 | [0015](0015-hugo-for-the-docs-website.md) | A Hugo website built from docs/, published to GitHub Pages | Accepted |
+| [0016](0016-nextcloud-in-kubernetes.md) | Nextcloud in Kubernetes with the Helm chart, user files on NFS | Accepted |
 
 0001 to 0006 were written down after the fact, in November 2026.
 
