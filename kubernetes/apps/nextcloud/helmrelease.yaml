@@ -1,0 +1,157 @@
+# Nextcloud: the official image (Apache) and the community chart, without the chart's
+# bundled Postgres and Redis (ADR 0016). User files on NFS (AnorLondo/nextcloud), the app
+# folder and Postgres on local-path on lenovo2.
+#
+# The image tag is pinned on its own, not taken from the chart: a chart minor release can
+# bring a new Nextcloud major, and Nextcloud can only go up one major at a time.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nextcloud
+spec:
+  interval: 1h
+  # The first start copies the code and installs Nextcloud before Apache starts.
+  timeout: 10m
+  chart:
+    spec:
+      chart: nextcloud
+      version: "9.4.1"
+      sourceRef:
+        kind: HelmRepository
+        name: nextcloud
+  values:
+    image:
+      repository: library/nextcloud
+      flavor: apache
+      # renovate: datasource=docker depName=docker.io/library/nextcloud
+      tag: 35.0.2-apache
+
+    nextcloud:
+      host: nextcloud.magelssen.io
+      # The Gateway's hostname, and pod IPs (10.244.x.x) so Prometheus can scrape /metrics
+      # with the pod IP as Host. Nextcloud ignores the port when it compares.
+      trustedDomains:
+        - nextcloud.magelssen.io
+        - 10.244.*
+      existingSecret:
+        enabled: true
+        secretName: nextcloud-admin
+        usernameKey: nextcloud-username
+        passwordKey: nextcloud-password
+      # Behind Envoy, which terminates TLS. Envoy runs in the pod network.
+      extraEnv:
+        - name: TRUSTED_PROXIES
+          value: 10.244.0.0/16
+        - name: OVERWRITEPROTOCOL
+          value: https
+        - name: OVERWRITECLIURL
+          value: https://nextcloud.magelssen.io
+      # Nextcloud's own OpenMetrics endpoint (/metrics): Prometheus scrapes from the pod network.
+      openmetrics:
+        allowedClients:
+          - 127.0.0.1
+          - 10.244.0.0/16
+      # Setting any config here also mounts the chart's defaultConfigs (reverse proxy,
+      # Redis, APCu, metrics), which read the environment variables above.
+      configs:
+        homelab.config.php: |-
+          <?php
+          $CONFIG = array (
+            'default_phone_region' => 'NO',
+            // Heavy background jobs run between 01:00 and 05:00 UTC.
+            'maintenance_window_start' => 1,
+          );
+      # The data folder is the subfolder `data` of the NFS volume (the chart always uses a
+      # subPath). The kubelet creates subPaths as root, and NFS maps root to nobody, which
+      # cannot write in the dataset (33:33, mode 770). So create it as www-data first.
+      extraInitContainers:
+        - name: create-data-dir
+          image: docker.io/library/busybox:1.37.0
+          command: ["sh", "-c", "mkdir -p /nfs/data && chmod 770 /nfs/data"]
+          securityContext:
+            runAsUser: 33
+            runAsGroup: 33
+            runAsNonRoot: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
+          volumeMounts:
+            - name: nextcloud-data
+              mountPath: /nfs
+
+    # Background jobs every 5 minutes, from a cron sidecar in the same pod.
+    cronjob:
+      enabled: true
+      type: sidecar
+      sidecar:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 64Mi
+          limits:
+            memory: 768Mi
+
+    internalDatabase:
+      enabled: false
+    externalDatabase:
+      enabled: true
+      type: postgresql
+      host: nextcloud-db-rw
+      database: nextcloud
+      # Created by CloudNativePG for the `nextcloud` owner.
+      existingSecret:
+        enabled: true
+        secretName: nextcloud-db-app
+        usernameKey: username
+        passwordKey: password
+    externalRedis:
+      enabled: true
+      host: nextcloud-valkey
+      port: "6379"
+    # Valkey has no password. Without this, the chart's defaults for its bundled Redis
+    # (off) still put a password variable into REDIS_URL.
+    redis:
+      auth:
+        enabled: false
+
+    persistence:
+      enabled: true
+      existingClaim: nextcloud-app-pvc
+      nextcloudData:
+        enabled: true
+        existingClaim: nextcloud-data-pvc
+
+    httpRoute:
+      enabled: true
+      parentRefs:
+        - name: main
+          namespace: envoy-gateway-system
+          sectionName: https
+      hostnames:
+        - nextcloud.magelssen.io
+
+    prometheus:
+      serviceMonitor:
+        enabled: true
+
+    # The first start (copy the code, install) runs before Apache answers.
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      failureThreshold: 30
+
+    # Next to its Postgres and Valkey, where its local-path volume is.
+    nodeSelector:
+      kubernetes.io/hostname: lenovo2
+
+    # A first guess, to be sized from Prometheus after a couple of weeks.
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        memory: 1536Mi

@@ -23,7 +23,7 @@ The rows for things outside Kubernetes are kept up to date by hand.
 | qBittorrent | Downloads, through NordVPN (gluetun sidecar) | `qbittorrent.` | Config on `local-path`, files in `DukesArchives/downloads` | `kubernetes/apps/media` |
 | Audiobookshelf | Audiobooks | `audiobooks.` | Config on `local-path`, books in `DukesArchives/audiobooks` | `kubernetes/apps/media` |
 | Immich | Photos and videos from the phones | `immich.` | `AnorLondo/immich`, `BlightTown/immich`, Postgres (CloudNativePG) on `local-path` | `kubernetes/apps/immich` |
-| Nextcloud | Notes and files, replacing Google Drive and Dropbox ([ADR 0016](../decisions/0016-nextcloud-in-kubernetes.md)). Being set up (#89): only the storage, Postgres and Valkey so far | `nextcloud.` | `AnorLondo/nextcloud`, Postgres (CloudNativePG) on `local-path` | `kubernetes/apps/nextcloud` |
+| Nextcloud | Notes and files, replacing Google Drive and Dropbox ([docs/services/nextcloud.md](nextcloud.md)) | `nextcloud.` | `AnorLondo/nextcloud`, app folder and Postgres (CloudNativePG) on `local-path` | `kubernetes/apps/nextcloud` |
 | Home Assistant | Smart home | `ha.` | `BlightTown/home-assistant` | `kubernetes/apps/home-assistant` |
 | Homarr | Start page with links to everything | `dashboard.` | SQLite on `local-path` | `kubernetes/apps/homarr` |
 | restic rest-server | Backups of the laptops | `restic.` | `Catacombs/backups/restic` | `kubernetes/apps/restic` |

@@ -13,7 +13,8 @@ nothing runs in the homelab.
 | `kubernetes/**/helmrelease.yaml` | Helm chart versions, looked up in the matching HelmRepository | `flux` |
 | `kubernetes/clusters/homelab/flux-system/gotk-components.yaml` | Flux itself. The pull request regenerates the whole file, like `flux install --export` | `flux` |
 | `kubernetes/**` | Container images (`image:`) in Deployments, DaemonSets and upstream manifests | `kubernetes` |
-| `kubernetes/apps/immich/postgres-cluster.yaml` | The CloudNativePG image (`imageName:`) | regex |
+| `kubernetes/apps/*/postgres-cluster.yaml` | The CloudNativePG images (`imageName:`) | regex |
+| `kubernetes/**` | An image tag in a HelmRelease's values, marked with a `# renovate: datasource=docker depName=<image>` comment on the line above (Nextcloud) | regex |
 | `.github/workflows/` | Actions (the SHA and the version comment together), the flux-schema image, the pre-commit version, Hugo (`HUGO_VERSION`) | `github-actions`, regex |
 | `.pre-commit-config.yaml` | Hook revisions (`rev: <sha> # frozen: vX.Y.Z`) | `pre-commit` |
 | `hugo/go.mod` | The docs website's theme (hugo-book), a Hugo module | `gomod` |
@@ -39,8 +40,8 @@ Not in Git, so not seen by Renovate: Proxmox, TrueNAS, the node OS, Kubernetes i
 - **Grouped:** Immich server and machine learning (they must match), all CI tools (actions
   and pre-commit hooks, minor and patch), and flux-schema in the workflow and the docs.
 - **Labels:** `dependencies` on every pull request, `area/*` from the path labeler, and
-  `manual-step` on stateful apps (Immich, its Postgres, CloudNativePG, Jellyfin, Home
-  Assistant): back up or snapshot before merging.
+  `manual-step` on stateful apps (Immich, Nextcloud, their Postgres, CloudNativePG,
+  Jellyfin, Home Assistant): back up or snapshot before merging.
 - **No automerge.** Merging to `main` deploys to the cluster, so a human merges every update.
 
 ## Reviewing a Renovate pull request

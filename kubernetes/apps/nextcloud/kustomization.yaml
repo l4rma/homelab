@@ -9,3 +9,6 @@ resources:
   - postgres-podmonitor.yaml
   - valkey-deployment.yaml
   - valkey-service.yaml
+  - externalsecret.yaml
+  - helmrepository.yaml
+  - helmrelease.yaml
