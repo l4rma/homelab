@@ -10,3 +10,17 @@ spec:
       storage: 1Ti
   storageClassName: ""
   volumeName: nextcloud-data-pv
+---
+# The app folder (/var/www/html: code, config.php, apps, themes). On the node's disk, not
+# NFS: PHP reads thousands of small files per request. Pins Nextcloud to lenovo2.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: local-path

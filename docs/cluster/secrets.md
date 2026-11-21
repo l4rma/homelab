@@ -38,7 +38,10 @@ Same pattern as cert-manager's Route53 key. Later this moves to Terraform.
      --name /homelab/<namespace>/<name> --value '<value>'
    ```
 
-   To change it later, add `--overwrite`.
+   To change it later, add `--overwrite`. The value ends up in the shell history and, while
+   the command runs, in the process list. To avoid that, create it in the AWS Console instead:
+   **Systems Manager → Parameter Store → Create parameter**, tier Standard, type
+   **SecureString** (KMS key `alias/aws/ssm`), and paste the value.
 2. Add an `externalsecret.yaml` to the app's folder:
 
    ```yaml

@@ -96,7 +96,7 @@ one and includes every subdirectory, so a new directory with its own
 Each has an `httproute.yaml` attached to the `https` listener of Gateway
 `envoy-gateway-system/main`, on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
 home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`). rest-server (restic) uses `restic.magelssen.io`. Grafana's HTTPRoute comes from the
-kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hole record.
+kube-prometheus-stack values, and Nextcloud's from its chart (with the `.well-known` CalDAV/CardDAV redirects). Adding an app needs only an HTTPRoute and a Pi-hole record.
 
 - **podinfo**: runs in the cluster
 - **home-assistant**: runs in the cluster. hostNetwork + privileged, pinned to pi5,
@@ -117,10 +117,17 @@ kube-prometheus-stack values. Adding an app needs only an HTTPRoute and a Pi-hol
   decoding, transcode policy "Required", thumbnail and metadata job concurrency 2 (the
   defaults, 3 and 5, pushed the server close to its memory limit during the first import),
   and daily database dumps kept for 14 days.
-- **nextcloud**: being set up (#89, ADR 0016). NFS PV on `AnorLondo/nextcloud` (the data
-  directory, owned by www-data 33:33, mode 770), CloudNativePG `Cluster` `nextcloud-db`
-  (1 instance, Postgres 18, `local-path` on lenovo2) and Valkey without persistence (file
-  locking and cache), both on lenovo2 next to Nextcloud. The HelmRelease comes in #91.
+- **nextcloud**: on `nextcloud.magelssen.io` (ADR 0016, `docs/services/nextcloud.md`).
+  HelmRelease of the community chart (HelmRepository in the app's namespace), with the
+  image tag pinned on its own (`# renovate:` comment), Apache, pinned to lenovo2. App folder
+  (`/var/www/html`) on the `local-path` PVC `nextcloud-app-pvc`. NFS PV on
+  `AnorLondo/nextcloud` (owned by www-data 33:33, mode 770): the chart mounts its subfolder
+  `data/`, which the init container `create-data-dir` creates as UID 33 (NFS maps root to
+  nobody). CloudNativePG `Cluster` `nextcloud-db` (1 instance, Postgres 18, `local-path` on
+  lenovo2, credentials from the CNPG Secret `nextcloud-db-app`), Valkey without persistence
+  or password (file locking and cache). Cron as a sidecar. Admin password from SSM, used on
+  the first start only. Trusted proxies and the OpenMetrics clients are the pod network
+  `10.244.0.0/16`; `10.244.*` is a trusted domain so Prometheus can scrape `/metrics`.
 - **media**: the media stack, moved here from the Portainer LXC. NFS PV for all of
   `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
   an init container that waits for `/config/.restored`, and the media writable (subtitles) at its old

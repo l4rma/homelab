@@ -94,3 +94,10 @@ A new or reinstalled laptop needs only the two passwords and the repository URL.
 
 - Proxmox VMs and LXCs (decided 2026-11-04). They are small and can be rebuilt.
 - `DukesArchives` beyond the weekly snapshot: media can be downloaded again.
+
+## Not backed up yet
+
+- **Nextcloud's database** (`nextcloud-db`, on `local-path` on lenovo2): the file index,
+  shares and app data. The user files are in `AnorLondo/nextcloud` and are snapshotted, but
+  the database is outside ZFS. A `pg_dump` to the NAS comes in phase 14
+  ([nextcloud.md](../services/nextcloud.md#backups-and-restore)).
