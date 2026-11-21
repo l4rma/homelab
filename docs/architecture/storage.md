@@ -24,7 +24,7 @@ inherits that policy. Dark Souls names at the top level, plain names below.
 Firelink
 ├── AnorLondo
 │   ├── immich            Immich originals, profile/ and backups/ (DB dumps)
-│   └── nextcloud         Nextcloud user files, owned by www-data (33:33), mode 770, no SMB
+│   └── nextcloud         Nextcloud user files, owned by www-data (33:33), mode 770, no access over SMB
 ├── DukesArchives         movies/ series/ audiobooks/ downloads/  (folders, not datasets)
 ├── BlightTown
 │   ├── home-assistant
@@ -94,8 +94,9 @@ Nextcloud keeps its user files in `AnorLondo/nextcloud`, and its app folder (`/v
 and Postgres on `local-path` on lenovo2
 ([ADR 0016](../decisions/0016-nextcloud-in-kubernetes.md)). It runs as `www-data`
 (UID/GID 33), not 3000, and refuses a data directory that others can read, so the dataset is
-owned by 33:33 with mode 770. It is not shared over SMB: Nextcloud keeps its own index of
-the files and does not see changes made behind its back.
+owned by 33:33 with mode 770. It shows up in the `AnorLondo` SMB share, but `larma` cannot
+open it, on purpose: Nextcloud keeps its own index of the files and does not see changes
+made behind its back.
 
 Rejected: iSCSI from TrueNAS (democratic-csi) and replicated storage (Longhorn,
 Rook-Ceph). Both would let a stateful pod move between nodes, but add a lot of moving
