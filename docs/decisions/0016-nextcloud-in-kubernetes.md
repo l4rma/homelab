@@ -55,10 +55,11 @@ Immich ([storage](../architecture/storage.md)): files on the NAS, databases on t
 - **Valkey** is required, not optional. Nextcloud's transactional file locking goes through
   it, so nothing relies on NFS locks. It is also the cache.
 - **Nextcloud runs as `www-data` (UID 33)**, so the dataset is owned by 33:33 with mode 770.
-  Nextcloud refuses a data directory that other users can read. The dataset is **not** shared
-  over SMB: Nextcloud keeps its own index of the files, and files changed behind its back do
-  not show up until `occ files:scan`. Devices reach the files through the Nextcloud clients
-  or WebDAV.
+  Nextcloud refuses a data directory that other users can read. The dataset gets no SMB
+  share of its own. It shows up as a folder in the `AnorLondo` SMB share, but `larma` has no
+  access to it, which is on purpose: Nextcloud keeps its own index of the files, and files
+  changed behind its back do not show up until `occ files:scan`. Devices reach the files
+  through the Nextcloud clients or WebDAV.
 - **Nextcloud and its Postgres run on the same node** (lenovo2). The app's `local-path`
   volume pins it to one node anyway, and Nextcloud makes many small queries per request.
 
