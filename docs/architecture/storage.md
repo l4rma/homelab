@@ -94,7 +94,8 @@ Nextcloud keeps its user files in `AnorLondo/nextcloud`, and its app folder (`/v
 and Postgres on `local-path` on lenovo2
 ([ADR 0016](../decisions/0016-nextcloud-in-kubernetes.md)). It runs as `www-data`
 (UID/GID 33), not 3000, and refuses a data directory that others can read, so the dataset is
-owned by 33:33 with mode 770. It shows up in the `AnorLondo` SMB share, but `larma` cannot
+owned by 33:33 with mode 770. Its NFS share maps root to `www-data` (Maproot User and Group),
+because the kubelet opens the dataset as root to set up the chart's subPath `data`. It shows up in the `AnorLondo` SMB share, but `larma` cannot
 open it, on purpose: Nextcloud keeps its own index of the files and does not see changes
 made behind its back.
 

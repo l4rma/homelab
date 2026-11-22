@@ -122,8 +122,8 @@ kube-prometheus-stack values, and Nextcloud's from its chart (with the `.well-kn
   image tag pinned on its own (`# renovate:` comment), Apache, pinned to lenovo2. App folder
   (`/var/www/html`) on the `local-path` PVC `nextcloud-app-pvc`. NFS PV on
   `AnorLondo/nextcloud` (owned by www-data 33:33, mode 770): the chart mounts its subfolder
-  `data/`, which the init container `create-data-dir` creates as UID 33 (NFS maps root to
-  nobody). CloudNativePG `Cluster` `nextcloud-db` (1 instance, Postgres 18, `local-path` on
+  `data/`, and the share maps root to www-data (maproot), so the kubelet can set up that
+  subPath. CloudNativePG `Cluster` `nextcloud-db` (1 instance, Postgres 18, `local-path` on
   lenovo2, credentials from the CNPG Secret `nextcloud-db-app`), Valkey without persistence
   or password (file locking and cache). Cron as a sidecar. Admin password from SSM, used on
   the first start only. Trusted proxies and the OpenMetrics clients are the pod network

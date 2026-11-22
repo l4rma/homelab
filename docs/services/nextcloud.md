@@ -97,8 +97,12 @@ copy it into the user's folder, and run `occ files:scan <user>`.
   not see changes made behind its back until `occ files:scan`. The folder shows up in the
   `AnorLondo` SMB share, but `larma` cannot open it, on purpose.
 - **The chart always mounts the data folder as a subPath `data`** of the NFS volume. The
-  kubelet creates subPaths as root, and NFS maps root to `nobody`, which cannot write in the
-  dataset. An init container (`create-data-dir`, running as 33) creates `data/` first.
+  kubelet sets up subPaths as root, and needs to read the dataset's top folder to do it. So
+  the NFS share for `AnorLondo/nextcloud` has **Maproot User and Group `www-data`**: root on
+  the nodes becomes 33:33 there, and the top folder can stay 770. Without it, root becomes
+  `nobody`, and the pod hangs in `CreateContainerConfigError` ("failed to prepare subPath").
+  This gives root on a node no more than it had: the share uses `sec=sys`, where root can
+  already act as any UID.
 - **Trusted domains** are `nextcloud.magelssen.io` and `10.244.*` (pod IPs), so Prometheus can
   scrape `/metrics` with the pod IP as the host. Envoy's pods (`10.244.0.0/16`) are trusted
   proxies.
