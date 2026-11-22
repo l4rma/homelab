@@ -61,26 +61,6 @@ spec:
             // Heavy background jobs run between 01:00 and 05:00 UTC.
             'maintenance_window_start' => 1,
           );
-      # The data folder is the subfolder `data` of the NFS volume (the chart always uses a
-      # subPath). The kubelet creates subPaths as root, and NFS maps root to nobody, which
-      # cannot write in the dataset (33:33, mode 770). So create it as www-data first.
-      extraInitContainers:
-        - name: create-data-dir
-          image: docker.io/library/busybox:1.37.0
-          command: ["sh", "-c", "mkdir -p /nfs/data && chmod 770 /nfs/data"]
-          securityContext:
-            runAsUser: 33
-            runAsGroup: 33
-            runAsNonRoot: true
-          resources:
-            requests:
-              cpu: 10m
-              memory: 16Mi
-            limits:
-              memory: 64Mi
-          volumeMounts:
-            - name: nextcloud-data
-              mountPath: /nfs
 
     # Background jobs every 5 minutes, from a cron sidecar in the same pod.
     cronjob:

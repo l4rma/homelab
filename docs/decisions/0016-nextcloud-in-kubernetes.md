@@ -55,7 +55,10 @@ Immich ([storage](../architecture/storage.md)): files on the NAS, databases on t
 - **Valkey** is required, not optional. Nextcloud's transactional file locking goes through
   it, so nothing relies on NFS locks. It is also the cache.
 - **Nextcloud runs as `www-data` (UID 33)**, so the dataset is owned by 33:33 with mode 770.
-  Nextcloud refuses a data directory that other users can read. The dataset gets no SMB
+  Nextcloud refuses a data directory that other users can read. The chart mounts the
+  subfolder `data/` as a subPath, which the kubelet sets up as root, so the NFS share maps
+  root to `www-data` (maproot) instead of `nobody`. It weakens nothing: with `sec=sys`, root
+  on a node can already act as any UID. The dataset gets no SMB
   share of its own. It shows up as a folder in the `AnorLondo` SMB share, but `larma` has no
   access to it, which is on purpose: Nextcloud keeps its own index of the files, and files
   changed behind its back do not show up until `occ files:scan`. Devices reach the files
