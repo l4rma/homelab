@@ -7,6 +7,53 @@ is watched by Renovate, and its Dependency Dashboard issue lists what is behind.
 
 **Last check: 2026-10-31.** Next check: first weekend of each month.
 
+## Renovate
+
+Renovate updates everything that is pinned in Git. It opens pull requests on Monday mornings
+for versions that have been out for 14 days, and never merges by itself. The full behaviour
+is in [dependencies.md](dependencies.md).
+
+- **Logs and settings:** [developer.mend.io](https://developer.mend.io/), under
+  `l4rma/homelab`.
+- **What it covers:** Helm charts and images under `kubernetes/`, Flux itself, GitHub
+  Actions, pre-commit hooks, Hugo and the docs theme.
+- **What it needs to take over a version:** the exact version written in a file it reads,
+  in one of the forms below. A floating tag such as `latest` is never updated. When adding
+  an app, check that its versions show up in the Dependency Dashboard.
+
+  ```yaml
+  # Kubernetes manifest: the image tag
+  image: ghcr.io/immich-app/immich-server:v3.3.5
+
+  # HelmRelease: the chart version, under chart.spec
+  chart: cert-manager
+  version: v1.19.2
+
+  # CloudNativePG Cluster: the Postgres image
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.6-1.1.1
+
+  # A tag in HelmRelease values: a comment on the line above tells Renovate what it is
+  # renovate: datasource=docker depName=docker.io/library/nextcloud
+  tag: 35.0.2-apache
+
+  # GitHub Actions: the commit SHA, with the version as a comment after it
+  uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+  # pre-commit hooks: the same, with "frozen:" in the comment
+  rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
+  ```
+
+  For actions and hooks, the SHA is what is actually used: a tag can be moved to other
+  code, a commit cannot. The comment is for people and for Renovate, which updates the SHA
+  and the comment together. Never change one without the other.
+- **What is still manual:**
+  - read the release notes in each pull request, and merge it
+  - back up before merging `manual-step` pull requests (stateful apps)
+  - tick majors in the Dependency Dashboard to get a pull request for them
+  - watch Flux roll the update out
+  - update everything else on this page by hand: the hosts, Kubernetes itself and the
+    services outside Kubernetes
+
 ## Monthly check
 
 1. Compare the running versions below with the sources, and update the tables and the
