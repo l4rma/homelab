@@ -93,10 +93,15 @@ A new or reinstalled laptop needs only the two passwords and the repository URL.
 ## Not backed up on purpose
 
 - Proxmox VMs and LXCs (decided 2026-11-04). They are small and can be rebuilt.
-- `DukesArchives` beyond the weekly snapshot: media can be downloaded again.
+- `DukesArchives` beyond the weekly snapshot, for now: 4 TiB does not fit twice on the pool.
+  The media is wanted, so revisit it with offsite backups (phase 16).
 
 ## Not backed up yet
 
+- **Actual Budget** (`/data` on `local-path` on pi5): the server password and the budgets.
+  Every device that has a budget open keeps a full copy and syncs it back, and a budget can
+  be exported in the UI (Settings, Export data). A copy to the NAS comes with the other
+  `local-path` data in phase 14.
 - **Nextcloud's database** (`nextcloud-db`, on `local-path` on lenovo2): the file index,
   shares and app data. The user files are in `AnorLondo/nextcloud` and are snapshotted, but
   the database is outside ZFS. A `pg_dump` to the NAS comes in phase 14
