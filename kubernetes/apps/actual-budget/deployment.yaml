@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actual-budget
+spec:
+  replicas: 1
+  # Never two instances on the same data (SQLite).
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: actual-budget
+  template:
+    metadata:
+      labels:
+        app: actual-budget
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: pi5
+      # The image creates the user actual (1001), which owns /data, but runs as root.
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        runAsNonRoot: true
+      containers:
+        - name: actual-budget
+          image: docker.io/actualbudget/actual-server:26.11.0
+          env:
+            - name: TZ
+              value: Europe/Oslo
+          # The server sets the COOP/COEP headers that the web app needs (SharedArrayBuffer)
+          # itself, and trusts the pod network (10.0.0.0/8) as a proxy by default.
+          ports:
+            - name: http
+              containerPort: 5006
+          # /health needs no login.
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          # A first guess. Review after about two weeks of Prometheus data, like #74.
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: actual-budget-data-pvc

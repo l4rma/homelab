@@ -26,6 +26,7 @@ The rows for things outside Kubernetes are kept up to date by hand.
 | Nextcloud | Notes and files, replacing Google Drive and Dropbox ([docs/services/nextcloud.md](nextcloud.md)) | `nextcloud.` | `AnorLondo/nextcloud`, app folder and Postgres (CloudNativePG) on `local-path` | `kubernetes/apps/nextcloud` |
 | Home Assistant | Smart home | `ha.` | `BlightTown/home-assistant` | `kubernetes/apps/home-assistant` |
 | Homarr | Start page with links to everything | `dashboard.` | SQLite on `local-path` | `kubernetes/apps/homarr` |
+| Actual Budget | Household budget | `budget.` | `local-path` (SQLite and budget files) | `kubernetes/apps/actual-budget` |
 | restic rest-server | Backups of the laptops | `restic.` | `Catacombs/backups/restic` | `kubernetes/apps/restic` |
 | Grafana, Prometheus, Alertmanager | Metrics, dashboards, and alerts to Telegram and Gmail | `grafana.` | `local-path` | `kubernetes/infrastructure/kube-prometheus-stack` |
 | podinfo | Small test app for the Gateway and Flux | `podinfo.` | None | `kubernetes/apps/podinfo` |

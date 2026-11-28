@@ -95,7 +95,7 @@ one and includes every subdirectory, so a new directory with its own
 
 Each has an `httproute.yaml` attached to the `https` listener of Gateway
 `envoy-gateway-system/main`, on `<name>.magelssen.io` (homarr uses `dashboard.magelssen.io`,
-home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`). rest-server (restic) uses `restic.magelssen.io`. Grafana's HTTPRoute comes from the
+home-assistant uses `ha.magelssen.io`, audiobookshelf uses `audiobooks.magelssen.io`, actual-budget uses `budget.magelssen.io`). rest-server (restic) uses `restic.magelssen.io`. Grafana's HTTPRoute comes from the
 kube-prometheus-stack values, and Nextcloud's from its chart (with the `.well-known` CalDAV/CardDAV redirects). Adding an app needs only an HTTPRoute and a Pi-hole record.
 
 - **podinfo**: runs in the cluster
@@ -149,6 +149,12 @@ kube-prometheus-stack values, and Nextcloud's from its chart (with the `.well-kn
   only reaches `/<user>/`). Repositories on NFS (`Catacombs/backups/restic`). Users come from
   an htpasswd file in SSM (`/homelab/restic/htpasswd`), which rest-server reloads on change.
   Pruning cannot run from the laptops in append-only mode. Laptop setup: `docs/operations/backups.md`.
+- **actual-budget**: Actual Budget's sync server on pi5, on `budget.magelssen.io`, as
+  UID/GID 1001 (the image's `actual` user; the image itself would run as root). `/data` on
+  `local-path`. The server sets the COOP/COEP headers the web app needs and trusts the pod
+  network as a proxy by default, so the HTTPRoute needs nothing special. The server password
+  is set in the UI by the first visitor, so open it right after the first deploy. Budgets live
+  on the server and as a full copy on every device that uses them.
 - **homarr**: runs in the cluster on pi5, on `dashboard.magelssen.io`. SQLite on `local-path`,
   `SECRET_ENCRYPTION_KEY` from SSM. Boards are set up in its UI, not in Git.
 - Every directory here must be listed in `docs/services/README.md` (checked by
