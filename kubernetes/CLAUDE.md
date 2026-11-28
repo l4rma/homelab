@@ -128,8 +128,8 @@ kube-prometheus-stack values, and Nextcloud's from its chart (with the `.well-kn
   or password (file locking and cache). Cron as a sidecar. Admin password from SSM, used on
   the first start only. Trusted proxies and the OpenMetrics clients are the pod network
   `10.244.0.0/16`; `10.244.*` is a trusted domain so Prometheus can scrape `/metrics`.
-- **media**: the media stack, moved here from the Portainer LXC. NFS PV for all of
-  `DukesArchives`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
+- **media**: the media stack, moved here from the old docker LXC (102, removed in November
+  2026). NFS PV for all of `DukesArchives`; Jellyfin sees only `movies/` and `series/`. **jellyfin** runs on lenovo2 with Quick Sync, config on `local-path` with
   an init container that waits for `/config/.restored`, and the media writable (subtitles) at its old
   paths (`/data/movies`, `/data/tvshows`), because item IDs come from the paths.
   **qbittorrent** runs on pi5 with gluetun as a native sidecar (NordVPN, credentials from SSM).

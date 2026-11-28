@@ -13,11 +13,11 @@ inherits that policy. Dark Souls names at the top level, plain names below.
 | Dataset | Contents | Backup policy |
 |---|---|---|
 | `AnorLondo` | Personal files: photos (Immich), documents (Nextcloud), SMB share | Highest, offsite. Irreplaceable. |
-| `DukesArchives` | Media library: `movies/`, `series/`, `audiobooks/`, `downloads/` | Low. Can be downloaded again. |
+| `DukesArchives` | Media library: `movies/`, `series/`, `audiobooks/`, and qBittorrent's `downloads/` | Low: snapshots only, no copy elsewhere yet. Revisit with offsite backups. |
 | `BlightTown` | Kubernetes app data over NFS, one child dataset per app | Medium |
 | `SensFortress` | The only Proxmox storage (ISOs, LXC templates, VM disks) | Low |
 | `UndeadParish` | Data for TrueNAS apps (Omada) | Medium |
-| `Catacombs` | Backup target only | (is the backup) |
+| `Catacombs` | Backup target. Also, until it moves, Omada's live data in `Catacombs/data` | (is the backup) |
 | `ix-apps` | TrueNAS system dataset | Do not touch |
 
 ```text
@@ -26,17 +26,20 @@ Firelink
 │   ├── immich            Immich originals, profile/ and backups/ (DB dumps)
 │   └── nextcloud         Nextcloud user files, owned by www-data (33:33), mode 770, no access over SMB
 ├── DukesArchives         movies/ series/ audiobooks/ downloads/  (folders, not datasets)
+│                         Jellyfin reads movies/ and series/ only; downloads/ is qBittorrent's
 ├── BlightTown
 │   ├── home-assistant
 │   ├── immich            Immich thumbs/ and encoded-video/ (can be regenerated)
 │   └── uptime-kuma       Old Uptime Kuma data, unused since the move to LXC 101; delete in phase 14
 ├── SensFortress          template/iso, template/cache, images/
 ├── UndeadParish
-│   └── omada             Omada data (planned; today still in Catacombs/data)
+│   └── omada             Omada data (dataset exists but is empty; the app still uses Catacombs/data)
 └── Catacombs
+    ├── data              Omada's live data (TrueNAS app host path), until it moves to UndeadParish/omada
     └── backups
         ├── restic        Laptop backups (restic repositories, one per user, encrypted), see docs/operations/backups.md
         ├── k8s           Copies of Kubernetes app data (planned)
+        ├── proxmox       Old vzdump target, unused since vzdump was dropped (NFS share still on)
         └── truenas       TrueNAS config exports (root only)
 ```
 
@@ -119,6 +122,12 @@ Every dataset has periodic ZFS snapshots. The schedules, and how to restore from
 - **Media stays one dataset.** Radarr and Sonarr hardlink from `downloads/` to
   `movies/` and `series/`, and hardlinks do not work across datasets or across
   separate mounts. Mount the whole dataset once (as `/data`) in the apps that move files.
+- **`downloads/` is only qBittorrent's working folder.** Jellyfin mounts `movies/` and
+  `series/` only, so anything that stays in `downloads/` is not in the media center. Media
+  that should be kept goes into the library (imported by Radarr or Sonarr, or hardlinked
+  by hand); then the `downloads/` copy can be removed without losing anything. The old
+  downloads from before the move to Kubernetes, where imports were full copies, were
+  sorted out this way in November 2026 (#73).
 - **Proxmox's folder layout is fixed:** ISOs go in `template/iso/`, LXC templates in
   `template/cache/`, disks in `images/<vmid>/`. Removing a Proxmox storage does not
   unmount it, so also run `umount /mnt/pve/<name>`.
